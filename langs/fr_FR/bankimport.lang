@@ -1,0 +1,5 @@
+Module104020Name = Import bancaire
+Module104020Desc = Permet d'importer des fichiers bancaire csv pour rapprochement automatique
+
+BankImportSetupPage = Configuration du module d'import bancaire
+BankImportAboutPage = A propos du module d'import bancaire
