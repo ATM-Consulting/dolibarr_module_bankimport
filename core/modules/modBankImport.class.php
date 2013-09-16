@@ -94,14 +94,14 @@ class modBankImport extends DolibarrModules
             // Set this to relative path of css if module has its own css file
             //'css' => '/bankimport/css/mycss.css.php',
             // Set here all hooks context managed by module
-            'hooks' => array('hookcontext1','hookcontext2')
+            //'hooks' => array('hookcontext1','hookcontext2')
             // Set here all workflow context managed by module
             //'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
         );
 
         // Data directories to create when module is enabled.
         // Example: this->dirs = array("/bankimport/temp");
-        $this->dirs = array();
+        $this->dirs = array('/bankimport/');
 
         // Config pages. Put here list of php pages
         // stored into bankimport/admin directory, used to setup module.
@@ -233,18 +233,19 @@ class modBankImport extends DolibarrModules
         // an id, a label, a boolean and two constant strings.
         // Example:
         //// Permission id (must not be already used)
-        //$this->rights[$r][0] = 2000;
+        $this->rights[$r][0] = 104021;
         //// Permission label
-        //$this->rights[$r][1] = 'Permision label';
+        $this->rights[$r][1] = 'Import bancaire';
         //// Permission by default for new user (0/1)
-        //$this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 1;
         //// In php code, permission will be checked by test
         //// if ($user->rights->permkey->level1->level2)
-        //$this->rights[$r][4] = 'level1';
+        $this->rights[$r][4] = 'read';
         //// In php code, permission will be checked by test
         //// if ($user->rights->permkey->level1->level2)
         //$this->rights[$r][5] = 'level2';
-        //$r++;
+        $r++;
+
         // Main menu entries
         $this->menus = array(); // List of menus to add
         $r = 0;
@@ -303,31 +304,32 @@ class modBankImport extends DolibarrModules
         //$r++;
         //
         // Example to declare a Left Menu entry into an existing Top menu entry:
-        //$this->menu[$r]=array(
-        //	// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
-        //	'fk_menu'=>'fk_mainmenu=mainmenucode',
-        //	// This is a Left menu entry
-        //	'type'=>'left',
-        //	'titre'=>'BankImport left menu',
-        //	'mainmenu'=>'mainmenucode',
-        //	'leftmenu'=>'bankimport',
-        //	'url'=>'/bankimport/pagelevel2.php',
-        //	// Lang file to use (without .lang) by module.
-        //	// File must be in langs/code_CODE/ directory.
-        //	'langs'=>'mylangfile',
-        //	'position'=>100,
-        //	// Define condition to show or hide menu entry.
-        //	// Use '$conf->bankimport->enabled' if entry must be visible if module is enabled.
-        //	// Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        //	'enabled'=>'$conf->bankimport->enabled',
-        //	// Use 'perms'=>'$user->rights->bankimport->level1->level2'
-        //	// if you want your menu with a permission rules
-        //	'perms'=>'1',
-        //	'target'=>'',
-        //	// 0=Menu for internal users, 1=external users, 2=both
-        //	'user'=>2
-        //);
-        //$r++;
+        $this->menu[$r]=array(
+        	// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
+        	'fk_menu'=>'fk_mainmenu=bank',
+        	// This is a Left menu entry
+        	'type'=>'left',
+        	'titre'=>'LeftMenuBankImport',
+        	'mainmenu'=>'bank',
+        	'leftmenu'=>'bankimport',
+        	'url'=>'/bankimport/import.php',
+        	// Lang file to use (without .lang) by module.
+        	// File must be in langs/code_CODE/ directory.
+        	'langs'=>'bankimport@bankimport',
+        	'position'=>100,
+        	// Define condition to show or hide menu entry.
+        	// Use '$conf->bankimport->enabled' if entry must be visible if module is enabled.
+        	// Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+        	'enabled'=>'$conf->bankimport->enabled',
+        	// Use 'perms'=>'$user->rights->bankimport->level1->level2'
+        	// if you want your menu with a permission rules
+        	'perms'=>'$user->rights->bankimport->read',
+        	'target'=>'',
+        	// 0=Menu for internal users, 1=external users, 2=both
+        	'user'=>0
+        );
+        $r++;
+
         // Exports
         $r = 1;
 
