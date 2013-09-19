@@ -11,4 +11,10 @@ LeftMenuBankImport = Import bancaire
 # PAGE
 TitleBankImport = Import bancaire
 BankImportFile = Fichier à importer
-BankImport = Importer
+BankCompareTransactions = Comparer les écritures
+BankImport = Procéder aux rapprochements automatiques et aux créations d'écritures
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée
+WillBeReconciledWithStatement = L'écriture sera rapprochée du relevé %s
+AlreadyReconciledWithStatement = L'écriture est déjà rapprochée du relevé %s

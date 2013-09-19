@@ -35,26 +35,27 @@ $tpl = 'tpl/bankimport.new.tpl.php';
 
 $import = new BankImport($db);
 
-$accountId = GETPOST('accountid');
-
 if(GETPOST('compare')) {
 	$datestart=dol_mktime(0, 0, 0, GETPOST('dsmonth'), GETPOST('dsday'), GETPOST('dsyear'));
 	$dateend=dol_mktime(0, 0, 0, GETPOST('demonth'), GETPOST('deday'), GETPOST('deyear'));
+	$numreleve = GETPOST('numreleve');
 	
-	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend)) {
+	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve)) {
 		$import->load_transactions();
+		$TTransactions = $import->compare_transactions();
+		
+		global $bc;
+		$var = true;
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
 } else if(GETPOST('import')) {
-	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'))) {
+	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'))) {
 		// Récupération des actions validées par l'utilisateurs (création écritures et rapprochement)
 		$tpl = 'tpl/bankimport.end.tpl.php';
 	}
 } else {
 	$tpl = 'tpl/bankimport.new.tpl.php';
 }
-// Load translation files required by the page
-//$langs->load("accountingexport@accountingexport");
 
 llxHeader('', $langs->trans('TitleBankImport'));
 

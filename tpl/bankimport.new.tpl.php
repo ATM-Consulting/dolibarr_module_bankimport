@@ -2,9 +2,11 @@
 	<table class="border" width="100%">
 		<tr>
 			<td width="200"><?= $langs->trans("BankAccount") ?></td>
-			<td><?= $form->select_comptes($accountId,'accountid',0,'courant <> 2',1) ?></td>
+			<td><?= $form->select_comptes($import->account->id,'accountid',0,'courant <> 2',1) ?></td>
 			<td width="200"><?= $langs->trans("DateStart") ?></td>
 			<td><?= $form->select_date($import->dateStart, 'ds') ?></td>
+			<td width="200"><?= $langs->trans("AccountStatement") ?></td>
+			<td><input type="text" name="numreleve" value="<?= $import->numReleve ?>" /></td>
 		</tr>
 		<tr>
 			<td><?= $langs->trans("BankImportFile") ?></td>
@@ -13,7 +15,9 @@
 			<td><?= $form->select_date($import->dateEnd, 'de') ?></td>
 		</tr>
 	</table>
+	<br />
+	
 	<center>
-		<input type="submit" class="button" name="compare" value="<?= dol_escape_htmltag($langs->trans("BankImport")) ?>">
+		<input type="submit" class="button" name="compare" value="<?= dol_escape_htmltag($langs->trans("BankCompareTransactions")) ?>">
 	</center>
 </form>
