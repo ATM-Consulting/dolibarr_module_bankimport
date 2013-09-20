@@ -146,19 +146,7 @@ class BankImport {
 			if($amount == $bankline->amount) {
 				unset($this->TBank[$i]);
 				
-				if(!empty($bankline->num_releve)) {
-					$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
-				} else {
-					$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
-				}
-				
-				return array(array(
-					'url' => $bankline->getNomUrl(1)
-					,'date' => dol_print_date($bankline->datev,"day")
-					,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
-					,'amount' => price($bankline->amount)
-					,'result' => $result
-				));
+				return array($this->get_bankline_data($bankline));
 			}
 		}
 		
@@ -177,19 +165,7 @@ class BankImport {
 					if($bankline->fk_bordereau == $bordereau->id) {
 						unset($this->TBank[$i]);
 						
-						if(!empty($bankline->num_releve)) {
-							$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
-						} else {
-							$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
-						}
-						
-						$TBankLine[] = array(
-							'url' => $bankline->getNomUrl(1)
-							,'date' => dol_print_date($bankline->datev,"day")
-							,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
-							,'amount' => price($bankline->amount)
-							,'result' => $result
-						);
+						$TBankLine[] = $this->get_bankline_data($bankline);
 					}
 				}
 				
@@ -198,5 +174,27 @@ class BankImport {
 		}
 		
 		return false;
+	}
+
+	private function get_bankline_data($bankline) {
+		global $langs;
+		
+		if(!empty($bankline->num_releve)) {
+			$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
+			$autoaction = false;
+		} else {
+			$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
+			$autoaction = true;
+		}
+		
+		return array(
+			'id' => $bankline->id
+			,'url' => $bankline->getNomUrl(1)
+			,'date' => dol_print_date($bankline->datev,"day")
+			,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
+			,'amount' => price($bankline->amount)
+			,'result' => $result
+			,'autoaction' => $autoaction
+		);
 	}
 }
