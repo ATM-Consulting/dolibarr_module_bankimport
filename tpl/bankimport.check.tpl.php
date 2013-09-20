@@ -41,16 +41,20 @@
 		</tr>
 		<? foreach($TTransactions as $line) { ?>
 		<tr <?= $bc[$var] ?>>
-			<td><?= $line['date'] ?></td>
-			<td><?= $line['desc'] ?></td>
-			<td><?= $line['debit'] ?></td>
-			<td><?= $line['credit'] ?></td>
+			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['date'] ?></td>
+			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['desc'] ?></td>
+			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['debit'] ?></td>
+			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['credit'] ?></td>
 			<? if(!empty($line['bankline'])) { ?>
-			<td><?= $line['bankline']['url'] ?></td>
-			<td><?= $line['bankline']['date'] ?></td>
-			<td><?= $line['bankline']['label'] ?></td>
-			<td><?= $line['bankline']['amount'] ?></td>
-			<td><?= $line['bankline']['result'] ?></td>
+				<? foreach($line['bankline'] as $i => $bankline) { ?>
+				<? if($i > 0) echo '<tr>' ?>
+				<td><?= $bankline['url'] ?></td>
+				<td><?= $bankline['date'] ?></td>
+				<td><?= $bankline['label'] ?></td>
+				<td><?= $bankline['amount'] ?></td>
+				<td><?= $bankline['result'] ?></td>
+				<? if($i < count($line['bankline'])) echo '</tr>' ?>
+				<? } ?>
 			<? } else { ?>
 			<td colspan="4">&nbsp;</td>
 			<td><?= $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>

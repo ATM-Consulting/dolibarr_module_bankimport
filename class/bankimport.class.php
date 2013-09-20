@@ -1,6 +1,7 @@
 <?php
 
 dol_include_once('/compta/bank/class/account.class.php');
+dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 
 class BankImport {
 	var $db;
@@ -12,13 +13,18 @@ class BankImport {
 	var $dateEnd;
 	var $numReleve;
 	
-	var $TBank;
-	var $TFile;
+	var $TBank = array();
+	var $TCheckReceipt = array();
+	var $TFile = array();
 	
 	function __construct($db) {
 		$this->db = $db;
 		$this->dateStart = strtotime('first day of last month');
 		$this->dateEnd = strtotime('last day of last month');
+		
+		$this->dateStart = strtotime('07/15/13');
+		$this->dateEnd = strtotime('09/14/13');
+		$this->numReleve = 14;
 	}
 	
 	function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve) {
@@ -65,6 +71,7 @@ class BankImport {
 	
 	function load_transactions() {
 		$this->load_bank_transactions();
+		$this->load_check_receipt();
 		$this->load_file_transactions();
 	}
 	
@@ -103,11 +110,28 @@ class BankImport {
 		fclose($f1);
 	}
 	
+	// Chargement des écritures banque de Dolibarr pour la période
+	function load_check_receipt() {
+		foreach($this->TBank as $bankline) {
+			if($bankline->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankline->fk_bordereau])) {
+				$bord = new RemiseCheque($this->db);
+				$bord->fetch($bankline->fk_bordereau);
+				
+				$this->TCheckReceipt[$bankline->fk_bordereau] = $bord;
+			}
+		}
+	}
+	
 	function compare_transactions() {
 		// For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
 		foreach($this->TFile as &$fileline) {
 			$amount = !empty($fileline['debit']) ? $fileline['debit'] : $fileline['credit'];
-			$fileline['bankline'] = $this->search_dolibarr_transaction_by_amount($amount);
+			$amount = price2num($amount); // Transform to numeric string
+			if(is_numeric($amount)) {
+				$transac = $this->search_dolibarr_transaction_by_amount($amount);
+				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
+				$fileline['bankline'] = $transac;
+			}
 		}
 		
 		return $this->TFile;
@@ -117,63 +141,62 @@ class BankImport {
 		global $langs;
 		$langs->load("banks");
 		
-		$amount = price2num($amount); // Transform to numeric string
-		if(is_numeric($amount)) {
-			$amount = floatval($amount); // Transform to float
-			foreach($this->TBank as $i => $bankline) {
-				if($amount == $bankline->amount) {
-					unset($this->TBank[$i]);
-					
-					if(!empty($bankline->num_releve)) {
-						$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
-					} else {
-						$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
-					}
-					
-					return array(
-						'url' => $bankline->getNomUrl(1)
-						,'date' => dol_print_date($bankline->datev,"day")
-						,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
-						,'amount' => price($bankline->amount)
-						,'result' => $result
-					);
+		$amount = floatval($amount); // Transform to float
+		foreach($this->TBank as $i => $bankline) {
+			if($amount == $bankline->amount) {
+				unset($this->TBank[$i]);
+				
+				if(!empty($bankline->num_releve)) {
+					$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
+				} else {
+					$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
 				}
+				
+				return array(array(
+					'url' => $bankline->getNomUrl(1)
+					,'date' => dol_print_date($bankline->datev,"day")
+					,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
+					,'amount' => price($bankline->amount)
+					,'result' => $result
+				));
 			}
 		}
 		
-		return 0;
+		return false;
 	}
 
 	private function search_dolibarr_transaction_by_receipt($amount) {
 		global $langs;
 		$langs->load("banks");
 		
-		$amount = price2num($amount); // Transform to numeric string
-		if(is_numeric($amount)) {
-			$amount = floatval($amount); // Transform to float
-			foreach($this->TBank as $bankline) {
-				if(!empty($bankline->foundinfile)) continue;
-				if($amount == $bankline->amount) {
-					$bankline->foundinfile = true;
-					
-					if(!empty($bankline->num_releve)) {
-						$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
-					} else {
-						$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
+		$amount = floatval($amount); // Transform to float
+		foreach($this->TCheckReceipt as $bordereau) {
+			if($amount == $bordereau->amount) {
+				$TBankLine = array();
+				foreach($this->TBank as $i => $bankline) {
+					if($bankline->fk_bordereau == $bordereau->id) {
+						unset($this->TBank[$i]);
+						
+						if(!empty($bankline->num_releve)) {
+							$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
+						} else {
+							$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
+						}
+						
+						$TBankLine[] = array(
+							'url' => $bankline->getNomUrl(1)
+							,'date' => dol_print_date($bankline->datev,"day")
+							,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
+							,'amount' => price($bankline->amount)
+							,'result' => $result
+						);
 					}
-					
-					return array(
-						'url' => $bankline->getNomUrl(1)
-						,'date' => dol_print_date($bankline->datev,"day")
-						,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
-						,'debit' => $bankline->amount < 0 ? price($bankline->amount) : ''
-						,'credit' => $bankline->amount > 0 ? price($bankline->amount) : ''
-						,'result' => $result
-					);
 				}
+				
+				return $TBankLine;
 			}
 		}
 		
-		return 0;
+		return false;
 	}
 }
