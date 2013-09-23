@@ -15,6 +15,8 @@ BankCompareTransactions = Comparer les écritures
 BankImport = Procéder aux rapprochements automatiques et aux créations d'écritures
 FileTransactions = Transaction bancaires provenant du fichier
 DolibarrTransactions = Transaction bancaires existantes dans Dolibarr
+Action = Action prévue
+DoAction = Valider
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée

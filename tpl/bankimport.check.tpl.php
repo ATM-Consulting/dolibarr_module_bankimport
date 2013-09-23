@@ -37,30 +37,32 @@
 			<td><?= $langs->trans("Date") ?></td>
 			<td><?= $langs->trans("Description") ?></td>
 			<td><?= $langs->trans("Amount") ?></td>
-			<td><?= $langs->trans("Result") ?></td>
-			<td><?= $langs->trans("DoAction") ?></td>
+			<td><?= $langs->trans("Action") ?></td>
+			<td align="center"><?= $langs->trans("DoAction") ?></td>
 		</tr>
 		<? foreach($TTransactions as $i => $line) { ?>
 		<tr <?= $bc[$var] ?>>
 			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['date'] ?></td>
-			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['desc'] ?></td>
+			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['label'] ?></td>
 			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['debit'] ?></td>
 			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['credit'] ?></td>
 			<? if(!empty($line['bankline'])) { ?>
-				<? foreach($line['bankline'] as $i => $bankline) { ?>
-				<? if($i > 0) echo '<tr>' ?>
+				<? foreach($line['bankline'] as $j => $bankline) { ?>
+				<? if($j > 0) echo '<tr>' ?>
 				<td><?= $bankline['url'] ?></td>
 				<td><?= $bankline['date'] ?></td>
 				<td><?= $bankline['label'] ?></td>
 				<td><?= $bankline['amount'] ?></td>
 				<td><?= $bankline['result'] ?></td>
-				<? if($bankline['autoaction']) { ?><td align="center"><input type="checkbox" name="TLine[<?= $bankline['id'] ?>]" value="<?= $i ?>" /></td><? } ?>
-				<? if($i < count($line['bankline'])) echo '</tr>' ?>
+				<td align="center">
+				<? if($bankline['autoaction']) { ?><input type="checkbox" checked="checked" name="TLine[<?= $bankline['id'] ?>]" value="<?= $i ?>" /><? } ?>
+				</td>
+				<? if($j < count($line['bankline'])) echo '</tr>' ?>
 				<? } ?>
 			<? } else { ?>
 			<td colspan="4">&nbsp;</td>
 			<td><?= $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
-			<td align="center"><input type="checkbox" name="TLine[new][]" value="<?= $i ?>" /></td>
+			<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?= $i ?>" /></td>
 			<? } ?>
 			<? $var = !$var ?>
 		</tr>

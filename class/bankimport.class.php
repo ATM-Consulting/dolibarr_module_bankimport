@@ -13,24 +13,23 @@ class BankImport {
 	var $dateEnd;
 	var $numReleve;
 	
-	var $TBank = array();
-	var $TCheckReceipt = array();
-	var $TFile = array();
+	var $TBank = array(); // Will contain all account lines of the period
+	var $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
+	var $TFile = array(); // Will contain all file lines
 	
 	function __construct($db) {
 		$this->db = $db;
 		$this->dateStart = strtotime('first day of last month');
 		$this->dateEnd = strtotime('last day of last month');
-		
-		$this->dateStart = strtotime('07/15/13');
-		$this->dateEnd = strtotime('09/14/13');
-		$this->numReleve = 14;
 	}
 	
+	/**
+	 * Set vars we will work with
+	 */
 	function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve) {
 		global $conf, $langs;
 		
-		// Compte bancaire avec lequel on travaille
+		// Bank account selected
 		if($accountId <= 0) {
 			setEventMessage($langs->trans('ErrorAccountIdNotSelected'), 'errors');
 			return false;
@@ -39,12 +38,14 @@ class BankImport {
 			$this->account->fetch($accountId);
 		}
 		
-		// Date début et fin de la période observée
+		// Start and end date regarding bank statement
 		$this->dateStart = $dateStart;
 		$this->dateEnd = $dateEnd;
+		
+		// Statement number
 		$this->numReleve = $numReleve;
 		
-		// Fichier bancaire CSV
+		// Bank statement file (csv or filename if csv already uploaded)
 		if(is_file($filename)) {
 			$this->file = $filename;
 		} else if(!empty($_FILES[$filename])) {
@@ -56,7 +57,7 @@ class BankImport {
 				return false;
 			} else {
 				dol_include_once('/core/lib/files.lib.php');
-				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName(date('Y-m-d H:i:s'));
+				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
 				dol_add_file_process($upload_dir,0,1,$filename);
 				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
 				
@@ -75,7 +76,7 @@ class BankImport {
 		$this->load_file_transactions();
 	}
 	
-	// Chargement des écritures banque de Dolibarr pour la période
+	// Load bank lines
 	function load_bank_transactions() {
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE fk_account = ".$this->account->id." ";
 		$sql.= "AND dateo BETWEEN '".date('Y-m-d', $this->dateStart)."' AND '".date('Y-m-d', $this->dateEnd)."' ";
@@ -90,27 +91,11 @@ class BankImport {
 		foreach($TBankLineId as $bankid) {
 			$bankline = new AccountLine($this->db);
 			$bankline->fetch($bankid);
-			$this->TBank[] = $bankline;
+			$this->TBank[$bankid] = $bankline;
 		}
 	}
 	
-	// Chargement des écritures banque du fichier pour la période
-	function load_file_transactions() {
-		$delimiter = ';';
-		$enclosure = '"';
-		$mapping = array('date', 'num_ope', 'desc', 'debit', 'credit', 'detail');
-		
-		$f1 = fopen($this->file, 'r');
-		
-		$TInfosGlobale = array();
-		while($dataline = fgetcsv($f1, 1024, $delimiter, $enclosure)) {
-			$this->TFile[] = array_combine($mapping, $dataline);
-		}
-		
-		fclose($f1);
-	}
-	
-	// Chargement des écritures banque de Dolibarr pour la période
+	// Load check receipt regarding bank lines
 	function load_check_receipt() {
 		foreach($this->TBank as $bankline) {
 			if($bankline->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankline->fk_bordereau])) {
@@ -122,11 +107,35 @@ class BankImport {
 		}
 	}
 	
+	// Load file lines
+	function load_file_transactions() {
+		global $conf;
+		
+		$delimiter = $conf->BANKIMPORT_SEPARATOR;
+		$enclosure = '"';
+		$dateFormat = $conf->BANKIMPORT_DATE_FORMAT;
+		$mapping = $conf->BANKIMPORT_MAPPING;
+		
+		$f1 = fopen($this->file, 'r');
+		
+		$TInfosGlobale = array();
+		while($dataline = fgetcsv($f1, 1024, $delimiter, $enclosure)) {
+			$data = array_combine($mapping, $dataline);
+			$data['amount'] = price2num(!empty($data['debit']) ? $data['debit'] : $data['credit']);
+			
+			$time = strptime($data['date'], $dateFormat);
+			$data['datev'] = mktime(0, 0, 0, $time['tm_mon']+1, $time['tm_mday'], $time['tm_year']+1900);
+			
+			$this->TFile[] = $data;
+		}
+		
+		fclose($f1);
+	}
+	
 	function compare_transactions() {
 		// For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
 		foreach($this->TFile as &$fileline) {
-			$amount = !empty($fileline['debit']) ? $fileline['debit'] : $fileline['credit'];
-			$amount = price2num($amount); // Transform to numeric string
+			$amount = price2num($fileline['amount']); // Transform to numeric string
 			if(is_numeric($amount)) {
 				$transac = $this->search_dolibarr_transaction_by_amount($amount);
 				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
@@ -196,5 +205,44 @@ class BankImport {
 			,'result' => $result
 			,'autoaction' => $autoaction
 		);
+	}
+	
+	/**
+	 * Actions made after file check by user
+	 */
+	public function import_data($TLine) {
+		if(!empty($TLine['new'])) {
+			foreach($TLine['new'] as $iFileLine) {
+				$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
+				if($bankLineId > 0) {
+					$bankline = new AccountLine($this->db);
+					$bankline->fetch($bankLineId);
+					$this->reconcile_bank_transaction($bankline, $this->TFile[$iFileLine]);
+				}
+			}
+			
+			unset($TLine['new']);
+		}
+		foreach($TLine as $bankLineId => $iFileLine) {
+			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
+		}
+	}
+	
+	private function create_bank_transaction($fileLine) {
+		global $user;
+		
+		return $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
+	}
+	
+	private function reconcile_bank_transaction($bankLine, $fileLine) {
+		global $user;
+		
+		// Set conciliation
+		$bankLine->num_releve = $this->numReleve;
+		$bankLine->update_conciliation($user, 0);
+		
+		// Update value date
+		$dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
+		$bankLine->datev_change($bankLine->id, $dateDiff);
 	}
 }
