@@ -103,9 +103,9 @@ class BankImport {
 		foreach($this->TBank as $bankLine) {
 			if($bankLine->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankLine->fk_bordereau])) {
 				$bord = new RemiseCheque($this->db);
-				$bord->fetch($bankline->fk_bordereau);
+				$bord->fetch($bankLine->fk_bordereau);
 				
-				$this->TCheckReceipt[$bankline->fk_bordereau] = $bord;
+				$this->TCheckReceipt[$bankLine->fk_bordereau] = $bord;
 			}
 		}
 	}

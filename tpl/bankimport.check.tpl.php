@@ -25,11 +25,12 @@
 	
 	<table class="border" width="100%">
 		<tr class="liste_titre">
-			<td colspan="4"><?= $langs->trans("FileTransactions") ?></td>
+			<td colspan="5"><?= $langs->trans("FileTransactions") ?></td>
 			<td colspan="6"><?= $langs->trans("DolibarrTransactions") ?></td>
 		</tr>
 		<tr class="liste_titre">
-			<td><?= $langs->trans("Value") ?></td>
+			<td><?= $langs->trans("Ligne") ?></td>
+			<td><?= $langs->trans("Date") ?></td>
 			<td><?= $langs->trans("Description") ?></td>
 			<td><?= $langs->trans("Debit") ?></td>
 			<td><?= $langs->trans("Credit") ?></td>
@@ -44,6 +45,7 @@
 		<tr <?= $bc[$var] ?>>
 			<? if(!empty($line['bankline'])) { ?>
 				
+				<td rowspan="<?= count($line['bankline']) ?>"><?= $i + 1 ?></td>
 				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['date'] ?></td>
 				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['label'] ?></td>
 				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['debit'] ?></td>
@@ -63,10 +65,12 @@
 				<? } ?>
 			
 			<? } else if(!empty($line['error'])) { ?>
+				<td><?= $i + 1 ?></td>
 				<td colspan="4"><?= $line['error'] ?></td>
 				<td colspan="6">&nbsp;</td>
 			
 			<? } else { ?>
+				<td><?= $i + 1 ?></td>
 				<td><?= $line['date'] ?></td>
 				<td><?= $line['label'] ?></td>
 				<td><?= $line['debit'] ?></td>
@@ -83,6 +87,6 @@
 	<br />
 	
 	<center>
-		<input type="submit" class="button" name="import" value="<?= dol_escape_htmltag($langs->trans("BankImport")) ?>">
+		<input type="submit" class="button" name="import" value="<?= dol_escape_htmltag($langs->transnoentities("BankImport")) ?>">
 	</center>
 </form>
