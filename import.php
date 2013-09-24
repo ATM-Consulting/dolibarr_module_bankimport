@@ -42,7 +42,9 @@ if(GETPOST('compare')) {
 	
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve)) {
 		$import->load_transactions();
-		$TTransactions = $import->compare_transactions();
+		$import->compare_transactions();
+		
+		$TTransactions = $import->TFile;
 		
 		global $bc;
 		$var = true;
@@ -50,11 +52,10 @@ if(GETPOST('compare')) {
 	}
 } else if(GETPOST('import')) {
 	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'))) {
-		// Récupération des actions validées par l'utilisateurs (création écritures et rapprochement)
+		$import->load_transactions();
+		$import->import_data(GETPOST('TLine'));
 		$tpl = 'tpl/bankimport.end.tpl.php';
 	}
-} else {
-	$tpl = 'tpl/bankimport.new.tpl.php';
 }
 
 llxHeader('', $langs->trans('TitleBankImport'));

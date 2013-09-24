@@ -42,11 +42,13 @@
 		</tr>
 		<? foreach($TTransactions as $i => $line) { ?>
 		<tr <?= $bc[$var] ?>>
-			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['date'] ?></td>
-			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['label'] ?></td>
-			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['debit'] ?></td>
-			<td rowspan="<?= count($line['bankline']) ?>"><?= $line['credit'] ?></td>
 			<? if(!empty($line['bankline'])) { ?>
+				
+				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['date'] ?></td>
+				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['label'] ?></td>
+				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['debit'] ?></td>
+				<td rowspan="<?= count($line['bankline']) ?>"><?= $line['credit'] ?></td>
+				
 				<? foreach($line['bankline'] as $j => $bankline) { ?>
 				<? if($j > 0) echo '<tr>' ?>
 				<td><?= $bankline['url'] ?></td>
@@ -59,11 +61,21 @@
 				</td>
 				<? if($j < count($line['bankline'])) echo '</tr>' ?>
 				<? } ?>
+			
+			<? } else if(!empty($line['error'])) { ?>
+				<td colspan="4"><?= $line['error'] ?></td>
+				<td colspan="6">&nbsp;</td>
+			
 			<? } else { ?>
-			<td colspan="4">&nbsp;</td>
-			<td><?= $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
-			<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?= $i ?>" /></td>
+				<td><?= $line['date'] ?></td>
+				<td><?= $line['label'] ?></td>
+				<td><?= $line['debit'] ?></td>
+				<td><?= $line['credit'] ?></td>
+				<td colspan="4">&nbsp;</td>
+				<td><?= $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
+				<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?= $i ?>" /></td>
 			<? } ?>
+			
 			<? $var = !$var ?>
 		</tr>
 		<? } ?>

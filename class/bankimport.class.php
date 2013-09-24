@@ -17,6 +17,9 @@ class BankImport {
 	var $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
 	var $TFile = array(); // Will contain all file lines
 	
+	var $nbCreated = 0;
+	var $nbReconciled = 0;
+	
 	function __construct($db) {
 		$this->db = $db;
 		$this->dateStart = strtotime('first day of last month');
@@ -58,7 +61,7 @@ class BankImport {
 			} else {
 				dol_include_once('/core/lib/files.lib.php');
 				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
-				dol_add_file_process($upload_dir,0,1,$filename);
+				dol_add_file_process($upload_dir,1,1,$filename);
 				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
 				
 				if(!is_file($this->file)) {
@@ -89,16 +92,16 @@ class BankImport {
 		}
 		
 		foreach($TBankLineId as $bankid) {
-			$bankline = new AccountLine($this->db);
-			$bankline->fetch($bankid);
-			$this->TBank[$bankid] = $bankline;
+			$bankLine = new AccountLine($this->db);
+			$bankLine->fetch($bankid);
+			$this->TBank[$bankid] = $bankLine;
 		}
 	}
 	
 	// Load check receipt regarding bank lines
 	function load_check_receipt() {
-		foreach($this->TBank as $bankline) {
-			if($bankline->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankline->fk_bordereau])) {
+		foreach($this->TBank as $bankLine) {
+			if($bankLine->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankLine->fk_bordereau])) {
 				$bord = new RemiseCheque($this->db);
 				$bord->fetch($bankline->fk_bordereau);
 				
@@ -109,22 +112,29 @@ class BankImport {
 	
 	// Load file lines
 	function load_file_transactions() {
-		global $conf;
+		global $conf, $langs;
 		
-		$delimiter = $conf->BANKIMPORT_SEPARATOR;
+		$delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		$enclosure = '"';
-		$dateFormat = $conf->BANKIMPORT_DATE_FORMAT;
-		$mapping = $conf->BANKIMPORT_MAPPING;
+		$dateFormat = $conf->global->BANKIMPORT_DATE_FORMAT;
+		$mapping = explode($delimiter, $conf->global->BANKIMPORT_MAPPING);
 		
 		$f1 = fopen($this->file, 'r');
 		
 		$TInfosGlobale = array();
 		while($dataline = fgetcsv($f1, 1024, $delimiter, $enclosure)) {
-			$data = array_combine($mapping, $dataline);
-			$data['amount'] = price2num(!empty($data['debit']) ? $data['debit'] : $data['credit']);
-			
-			$time = strptime($data['date'], $dateFormat);
-			$data['datev'] = mktime(0, 0, 0, $time['tm_mon']+1, $time['tm_mday'], $time['tm_year']+1900);
+			if(count($dataline) == count($mapping)) {
+				$data = array_combine($mapping, $dataline);
+				$data['amount'] = price2num(!empty($data['debit']) ? $data['debit'] : $data['credit']);
+				
+				$time = strptime($data['date'], $dateFormat);
+				$data['datev'] = mktime(0, 0, 0, $time['tm_mon']+1, $time['tm_mday'], $time['tm_year']+1900);
+				
+				$data['error'] = '';
+			} else {
+				$data = array();
+				$data['error'] = $langs->trans('LineDoesNotMatchWithMapping');
+			}
 			
 			$this->TFile[] = $data;
 		}
@@ -134,16 +144,14 @@ class BankImport {
 	
 	function compare_transactions() {
 		// For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
-		foreach($this->TFile as &$fileline) {
-			$amount = price2num($fileline['amount']); // Transform to numeric string
+		foreach($this->TFile as &$fileLine) {
+			$amount = price2num($fileLine['amount']); // Transform to numeric string
 			if(is_numeric($amount)) {
 				$transac = $this->search_dolibarr_transaction_by_amount($amount);
 				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
-				$fileline['bankline'] = $transac;
+				$fileLine['bankline'] = $transac;
 			}
 		}
-		
-		return $this->TFile;
 	}
 	
 	private function search_dolibarr_transaction_by_amount($amount) {
@@ -151,11 +159,11 @@ class BankImport {
 		$langs->load("banks");
 		
 		$amount = floatval($amount); // Transform to float
-		foreach($this->TBank as $i => $bankline) {
-			if($amount == $bankline->amount) {
+		foreach($this->TBank as $i => $bankLine) {
+			if($amount == $bankLine->amount) {
 				unset($this->TBank[$i]);
 				
-				return array($this->get_bankline_data($bankline));
+				return array($this->get_bankline_data($bankLine));
 			}
 		}
 		
@@ -170,11 +178,11 @@ class BankImport {
 		foreach($this->TCheckReceipt as $bordereau) {
 			if($amount == $bordereau->amount) {
 				$TBankLine = array();
-				foreach($this->TBank as $i => $bankline) {
-					if($bankline->fk_bordereau == $bordereau->id) {
+				foreach($this->TBank as $i => $bankLine) {
+					if($bankLine->fk_bordereau == $bordereau->id) {
 						unset($this->TBank[$i]);
 						
-						$TBankLine[] = $this->get_bankline_data($bankline);
+						$TBankLine[] = $this->get_bankline_data($bankLine);
 					}
 				}
 				
@@ -185,11 +193,11 @@ class BankImport {
 		return false;
 	}
 
-	private function get_bankline_data($bankline) {
+	private function get_bankline_data($bankLine) {
 		global $langs;
 		
-		if(!empty($bankline->num_releve)) {
-			$result = $langs->trans('AlreadyReconciledWithStatement', $bankline->num_releve);
+		if(!empty($bankLine->num_releve)) {
+			$result = $langs->trans('AlreadyReconciledWithStatement', $bankLine->num_releve);
 			$autoaction = false;
 		} else {
 			$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
@@ -197,11 +205,11 @@ class BankImport {
 		}
 		
 		return array(
-			'id' => $bankline->id
-			,'url' => $bankline->getNomUrl(1)
-			,'date' => dol_print_date($bankline->datev,"day")
-			,'label' => (preg_match('/^\((.*)\)$/i',$bankline->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankline->label,60))
-			,'amount' => price($bankline->amount)
+			'id' => $bankLine->id
+			,'url' => $bankLine->getNomUrl(1)
+			,'date' => dol_print_date($bankLine->datev,"day")
+			,'label' => (preg_match('/^\((.*)\)$/i',$bankLine->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankLine->label,60))
+			,'amount' => price($bankLine->amount)
 			,'result' => $result
 			,'autoaction' => $autoaction
 		);
@@ -215,9 +223,9 @@ class BankImport {
 			foreach($TLine['new'] as $iFileLine) {
 				$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
 				if($bankLineId > 0) {
-					$bankline = new AccountLine($this->db);
-					$bankline->fetch($bankLineId);
-					$this->reconcile_bank_transaction($bankline, $this->TFile[$iFileLine]);
+					$bankLine = new AccountLine($this->db);
+					$bankLine->fetch($bankLineId);
+					$this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
 				}
 			}
 			
@@ -231,7 +239,10 @@ class BankImport {
 	private function create_bank_transaction($fileLine) {
 		global $user;
 		
-		return $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
+		$bankLineId = $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
+		$this->nbCreated++;
+		
+		return $bankLineId;
 	}
 	
 	private function reconcile_bank_transaction($bankLine, $fileLine) {
@@ -244,5 +255,7 @@ class BankImport {
 		// Update value date
 		$dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
 		$bankLine->datev_change($bankLine->id, $dateDiff);
+		
+		$this->nbReconciled++;
 	}
 }

@@ -17,8 +17,10 @@ FileTransactions = Transaction bancaires provenant du fichier
 DolibarrTransactions = Transaction bancaires existantes dans Dolibarr
 Action = Action prévue
 DoAction = Valider
+StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapprochées, dont %s créées
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée
 WillBeReconciledWithStatement = L'écriture sera rapprochée du relevé %s
 AlreadyReconciledWithStatement = L'écriture est déjà rapprochée du relevé %s
+LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas au mapping
