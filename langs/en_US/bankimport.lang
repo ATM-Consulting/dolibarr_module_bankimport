@@ -1,0 +1,32 @@
+Module104020Name = Bank import
+Module104020Desc = Allow to import bank statement csv file to automatically make reconcilement
+
+# ADMIN
+BankImportSetupPage = Bank import module setup
+BankImportAboutPage = About bank import module
+BankImportSeparator = Data separator in csv file
+BankImportMapping = Csv file mapping
+BankImportDateFormat = Csv file date format
+BankImportSeparatorHelp = Character user to separate your csv file columns (usually ";" or ",", only one character).
+BankImportMappingHelp = Column correspondence in your csv file. Codes "date", "label", "debit" and "credit" must be in this data mapping.
+BankImportDateFormatHelp = Date format used in your csv file (%%d is the day on two characters, %%m month on two characters and %%Y year on four characters). For example, the date 07/25/2013 matches the date format %%m/%%d/%%Y.
+
+# MENU
+LeftMenuBankImport = Bank import
+
+# PAGE
+TitleBankImport = Bank import
+BankImportFile = File to import
+BankCompareTransactions = Compare transactions
+BankImport = Do automatic reconcilement and transactions creation
+FileTransactions = Bank transactions from csv file
+DolibarrTransactions = Bank transactions from Dolibarr
+Action = Planned action
+DoAction = Validate
+StatementCreatedAndDataImported = Statement %s created with %s transactions reconciled, including %s created
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciled
+WillBeReconciledWithStatement = Transaction will be reconciled to statement %s
+AlreadyReconciledWithStatement = Transaction already reconciled with statement %s
+LineDoesNotMatchWithMapping = File line doesn't match mapping
