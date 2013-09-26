@@ -1,0 +1,7 @@
++--------------------------+
+| 2013.09.16 - Version 1.0 |
++--------------------------+
+First release including :
+Automatic bank statement reconciliation
+Automatic bank transaction creation when missing
+Date format, file separator and file mapping can be defined in setup
