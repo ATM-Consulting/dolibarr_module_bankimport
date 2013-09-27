@@ -60,6 +60,7 @@ class BankImport {
 				return false;
 			} else {
 				dol_include_once('/core/lib/files.lib.php');
+				dol_include_once('/core/lib/images.lib.php');
 				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
 				dol_add_file_process($upload_dir,1,1,$filename);
 				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
