@@ -55,10 +55,10 @@ class BankImport {
 			if($_FILES[$filename]['error'] != 0) {
 				setEventMessage($langs->trans('ErrorFile'.$_FILES[$filename]['error']), 'errors');
 				return false;
-			} else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain') {
+			}/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] !='application/octet-stream') {
 				setEventMessage($langs->trans('ErrorFileIsNotCSV').' '.$_FILES[$filename]['type'], 'errors');
 				return false;
-			} else {
+			}*/ else {
 				dol_include_once('/core/lib/files.lib.php');
 				dol_include_once('/core/lib/images.lib.php');
 				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
