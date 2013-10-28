@@ -55,8 +55,8 @@ class BankImport {
 			if($_FILES[$filename]['error'] != 0) {
 				setEventMessage($langs->trans('ErrorFile'.$_FILES[$filename]['error']), 'errors');
 				return false;
-			} else if($_FILES[$filename]['type'] != 'text/csv') {
-				setEventMessage($langs->trans('ErrorFileIsNotCSV'), 'errors');
+			} else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain') {
+				setEventMessage($langs->trans('ErrorFileIsNotCSV').' '.$_FILES[$filename]['type'], 'errors');
 				return false;
 			} else {
 				dol_include_once('/core/lib/files.lib.php');
