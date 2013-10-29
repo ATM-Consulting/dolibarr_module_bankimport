@@ -24,6 +24,7 @@
 	<input type="hidden" name="datestart" value="<?= $import->dateStart ?>" />
 	<input type="hidden" name="dateend" value="<?= $import->dateEnd ?>" />
 	<input type="hidden" name="numreleve" value="<?= $import->numReleve ?>" />
+	<input type="hidden" name="hasheader" value="<?= $import->hasHeader ?>" />
 	
 	<table class="border" width="100%">
 		<tr class="liste_titre">
