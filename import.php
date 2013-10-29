@@ -39,8 +39,9 @@ if(GETPOST('compare')) {
 	$datestart=dol_mktime(0, 0, 0, GETPOST('dsmonth'), GETPOST('dsday'), GETPOST('dsyear'));
 	$dateend=dol_mktime(0, 0, 0, GETPOST('demonth'), GETPOST('deday'), GETPOST('deyear'));
 	$numreleve = GETPOST('numreleve');
+	$hasHeader = GETPOST('hasheader');
 	
-	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve)) {
+	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
 		$import->load_transactions();
 		$import->compare_transactions();
 		
@@ -51,7 +52,7 @@ if(GETPOST('compare')) {
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
 } else if(GETPOST('import')) {
-	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'))) {
+	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'), GETPOST('hasheader'))) {
 		$import->load_transactions();
 		$import->import_data(GETPOST('TLine'));
 		$tpl = 'tpl/bankimport.end.tpl.php';

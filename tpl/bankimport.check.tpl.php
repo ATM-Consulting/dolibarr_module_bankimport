@@ -12,6 +12,8 @@
 		<td><?= basename($import->file) ?></td>
 		<td width="200"><?= $langs->trans("DateEnd") ?></td>
 		<td><?= dol_print_date($import->dateEnd, 'day') ?></td>
+		<td width="200"><?= $langs->trans("HasHeader") ?></td>
+		<td><?= $import->hasHeader == 1 ? $langs->trans('Yes') : $langs->trans('No') ?></td>
 	</tr>
 </table>
 <br />
@@ -25,8 +27,8 @@
 	
 	<table class="border" width="100%">
 		<tr class="liste_titre">
-			<td colspan="5"><?= $langs->trans("FileTransactions") ?></td>
-			<td colspan="6"><?= $langs->trans("DolibarrTransactions") ?></td>
+			<td colspan="5" width="50%"><?= $langs->trans("FileTransactions") ?></td>
+			<td colspan="6" width="50%"><?= $langs->trans("DolibarrTransactions") ?></td>
 		</tr>
 		<tr class="liste_titre">
 			<td><?= $langs->trans("Ligne") ?></td>

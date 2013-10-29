@@ -13,6 +13,8 @@
 			<td><input type="file" name="bankimportfile" /></td>
 			<td width="200"><?= $langs->trans("DateEnd") ?></td>
 			<td><?= $form->select_date($import->dateEnd, 'de') ?></td>
+			<td width="200"><?= $langs->trans("FileHasHeader") ?></td>
+			<td><input type="checkbox" name="hasheader" value="1" <?= $import->hasHeader ? ' checked="checked"' : '' ?> /></td>
 		</tr>
 	</table>
 	<br />

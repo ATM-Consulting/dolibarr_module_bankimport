@@ -12,6 +12,7 @@ class BankImport {
 	var $dateStart;
 	var $dateEnd;
 	var $numReleve;
+	var $hasHeader;
 	
 	var $TBank = array(); // Will contain all account lines of the period
 	var $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
@@ -29,7 +30,7 @@ class BankImport {
 	/**
 	 * Set vars we will work with
 	 */
-	function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve) {
+	function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve, $hasHeader) {
 		global $conf, $langs;
 		
 		// Bank account selected
@@ -47,6 +48,7 @@ class BankImport {
 		
 		// Statement number
 		$this->numReleve = $numReleve;
+		$this->hasHeader = $hasHeader;
 		
 		// Bank statement file (csv or filename if csv already uploaded)
 		if(is_file($filename)) {
@@ -121,12 +123,22 @@ class BankImport {
 		$mapping = explode($delimiter, $conf->global->BANKIMPORT_MAPPING);
 		
 		$f1 = fopen($this->file, 'r');
+		if($this->hasHeader) fgetcsv($f1, 1024, $delimiter, $enclosure);
 		
 		$TInfosGlobale = array();
 		while($dataline = fgetcsv($f1, 1024, $delimiter, $enclosure)) {
 			if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
-				$data['amount'] = price2num(!empty($data['debit']) ? $data['debit'] : $data['credit']);
+				
+				// Gestion du montant
+				if(!empty($data['debit'])) {
+					$data['debit'] = price2num($data['debit']);
+					if($data['debit'] > 0) $data['debit'] *= -1;
+				}
+				if(!empty($data['credit'])) {
+					$data['credit'] = price2num($data['credit']);
+				}
+				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
 				
 				$time = strptime($data['date'], $dateFormat);
 				$data['datev'] = mktime(0, 0, 0, $time['tm_mon']+1, $time['tm_mday'], $time['tm_year']+1900);
