@@ -130,7 +130,7 @@ class BankImport {
 			if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
 				
-				// Gestion du montant
+				// Gestion du montant débit / crédit
 				if(!empty($data['debit'])) {
 					$data['debit'] = price2num($data['debit']);
 					if($data['debit'] > 0) $data['debit'] *= -1;
@@ -138,6 +138,12 @@ class BankImport {
 				if(!empty($data['credit'])) {
 					$data['credit'] = price2num($data['credit']);
 				}
+				if(empty($data['debit']) && empty($data['credit'])) {
+					$amount = price2num($data['amount']);
+					if($amount >= 0) $data['credit'] = $amount;
+					if($amount < 0) $data['debit'] = $amount;
+				}
+				
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
 				
 				$time = strptime($data['date'], $dateFormat);
