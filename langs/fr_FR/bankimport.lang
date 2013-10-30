@@ -24,7 +24,7 @@ DolibarrTransactions = Transaction bancaires existantes dans Dolibarr
 Action = Action prévue
 DoAction = Valider
 StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapprochées, dont %s créées
-HasHeader = Le fichier contient une ligne d'en-tête
+FileHasHeader = Le fichier contient une ligne d'en-tête
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée du relevé %s

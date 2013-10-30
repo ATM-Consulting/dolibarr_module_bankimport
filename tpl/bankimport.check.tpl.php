@@ -12,7 +12,7 @@
 		<td><?= basename($import->file) ?></td>
 		<td width="200"><?= $langs->trans("DateEnd") ?></td>
 		<td><?= dol_print_date($import->dateEnd, 'day') ?></td>
-		<td><?= $langs->trans("HasHeader") ?></td>
+		<td><?= $langs->trans("FileHasHeader") ?></td>
 		<td><?= $import->hasHeader == 1 ? $langs->trans('Yes') : $langs->trans('No') ?></td>
 	</tr>
 </table>

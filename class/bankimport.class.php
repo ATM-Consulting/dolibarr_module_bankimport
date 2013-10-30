@@ -216,7 +216,8 @@ class BankImport {
 		global $langs;
 		
 		if(!empty($bankLine->num_releve)) {
-			$result = $langs->trans('AlreadyReconciledWithStatement', $bankLine->num_releve);
+			$link = '<a href="'.dol_buildpath('/compta/bank/releve.php?num='.$bankLine->num_releve.'&account='.$bankLine->fk_account, 2).'">'.$bankLine->num_releve.'</a>';
+			$result = $langs->trans('AlreadyReconciledWithStatement', $link);
 			$autoaction = false;
 		} else {
 			$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
