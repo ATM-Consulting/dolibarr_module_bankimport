@@ -24,6 +24,7 @@ DolibarrTransactions = Bank transactions from Dolibarr
 Action = Planned action
 DoAction = Validate
 StatementCreatedAndDataImported = Statement %s created with %s transactions reconciled, including %s created
+HasHeader = File has a header line
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciled
