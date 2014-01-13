@@ -147,7 +147,9 @@ class BankImport {
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
 				
 				$time = date_parse_from_format($dateFormat, $data['date']);
-				$data['datev'] = mktime(0, 0, 0, $time['tm_mon']+1, $time['tm_mday'], $time['tm_year']+1900);
+				
+				
+				$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
 				
 				$data['error'] = '';
 			} else {
