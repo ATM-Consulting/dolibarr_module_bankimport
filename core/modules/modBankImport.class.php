@@ -111,7 +111,7 @@ class modBankImport extends DolibarrModules
 		$this->const = array(
 			0=>array('BANKIMPORT_MAPPING','chaine','date;label;debit;credit','CSV file mapping for bank import',1,'current', 1),
 			1=>array('BANKIMPORT_SEPARATOR','chaine',';','Data separator for bank import',1,'current', 1),
-			2=>array('BANKIMPORT_DATE_FORMAT','chaine','%d/%m/%Y','Date format in CSV file',1,'current', 1)
+			2=>array('BANKIMPORT_DATE_FORMAT','chaine','d/m/Y','Date format in CSV file',1,'current', 1)
 		);
 
 		// Array to add new pages in new tabs

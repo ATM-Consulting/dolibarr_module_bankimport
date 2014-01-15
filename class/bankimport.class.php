@@ -119,7 +119,8 @@ class BankImport {
 		
 		$delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		$enclosure = '"';
-		$dateFormat = $conf->global->BANKIMPORT_DATE_FORMAT;
+		$dateFormat = strtr( $conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
+		
 		$mapping = explode($delimiter, $conf->global->BANKIMPORT_MAPPING);
 		
 		$f1 = fopen($this->file, 'r');
@@ -146,10 +147,14 @@ class BankImport {
 				
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
 				
-				$time = date_parse_from_format($dateFormat, $data['date']);
+				//$time = date_parse_from_format($dateFormat, $data['date']);
+				//$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
+					
+				$datetime = new DateTime;
 				
+				$datetime= DateTime::createFromFormat($dateFormat, $data['date']);
 				
-				$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
+				$data['datev'] = $datetime->getTimestamp();
 				
 				$data['error'] = '';
 			} else {
