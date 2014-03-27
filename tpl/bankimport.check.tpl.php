@@ -29,7 +29,7 @@
 	<table class="border" width="100%">
 		<tr class="liste_titre">
 			<td colspan="4" width="50%"><?= $langs->trans("FileTransactions") ?></td>
-			<td colspan="6" width="50%"><?= $langs->trans("DolibarrTransactions") ?></td>
+			<td colspan="7" width="50%"><?= $langs->trans("DolibarrTransactions") ?></td>
 		</tr>
 		<tr class="liste_titre">
 			<td><?= $langs->trans("Line") ?></td>
@@ -42,6 +42,7 @@
 			<td width="80"><?= $langs->trans("Amount") ?></td>
 			<td><?= $langs->trans("Action") ?></td>
 			<td align="center"><?= $langs->trans("DoAction") ?></td>
+			<td>&nbsp;</td>
 		</tr>
 		<? foreach($TTransactions as $i => $line) { ?>
 		<tr <?= $bc[$var] ?>>
