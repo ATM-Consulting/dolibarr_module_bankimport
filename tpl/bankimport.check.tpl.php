@@ -44,34 +44,34 @@
 			<td align="center"><?php echo $langs->trans("DoAction") ?></td>
 			<td>&nbsp;</td>
 		</tr>
-		<? foreach($TTransactions as $i => $line) { ?>
+		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
-			<? if(!empty($line['bankline'])) { ?>
+			<?php if(!empty($line['bankline'])) { ?>
 				
 				<td rowspan="<?php echo count($line['bankline']) ?>"><?php echo $i + 1 ?></td>
 				<td rowspan="<?php echo count($line['bankline']) ?>"><?php echo $line['date'] ?></td>
 				<td rowspan="<?php echo count($line['bankline']) ?>"><?php echo $line['label'] ?></td>
 				<td rowspan="<?php echo count($line['bankline']) ?>" align="right"><?php echo price($line['amount']) ?></td>
 				
-				<? foreach($line['bankline'] as $j => $bankline) { ?>
-				<? if($j > 0) echo '<tr>' ?>
+				<?php foreach($line['bankline'] as $j => $bankline) { ?>
+				<?php if($j > 0) echo '<tr>' ?>
 				<td><?php echo $bankline['url'] ?></td>
 				<td><?php echo $bankline['date'] ?></td>
 				<td><?php echo $bankline['label'] ?></td>
 				<td align="right"><?php echo $bankline['amount'] ?></td>
 				<td><?php echo $bankline['result'] ?></td>
 				<td align="center">
-				<? if($bankline['autoaction']) { ?><input type="checkbox" checked="checked" name="TLine[<?php echo $bankline['id'] ?>]" value="<?php echo $i ?>" /><? } ?>
+				<?php if($bankline['autoaction']) { ?><input type="checkbox" checked="checked" name="TLine[<?php echo $bankline['id'] ?>]" value="<?php echo $i ?>" /><?php } ?>
 				</td>
-				<? if($j < count($line['bankline'])) echo '</tr>' ?>
-				<? } ?>
+				<?php if($j < count($line['bankline'])) echo '</tr>' ?>
+				<?php } ?>
 			
-			<? } else if(!empty($line['error'])) { ?>
+			<?php } else if(!empty($line['error'])) { ?>
 				<td><?php echo $i + 1 ?></td>
 				<td colspan="4"><?php echo $line['error'] ?></td>
 				<td colspan="6">&nbsp;</td>
 			
-			<? } else { ?>
+			<?php } else { ?>
 				<td><?php echo $i + 1 ?></td>
 				<td><?php echo $line['date'] ?></td>
 				<td><?php echo $line['label'] ?></td>
@@ -80,11 +80,11 @@
 				<td colspan="4">&nbsp;</td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
 				<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
-			<? } ?>
+			<?php } ?>
 			
-			<? $var = !$var ?>
+			<?php $var = !$var ?>
 		</tr>
-		<? } ?>
+		<?php } ?>
 	</table>
 	<br />
 	
