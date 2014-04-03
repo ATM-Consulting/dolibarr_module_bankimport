@@ -2,7 +2,7 @@
 	<table class="border" width="100%">
 		<tr>
 			<td width="200"><?php echo $langs->trans("BankAccount") ?></td>
-			<td><?php echo $form->select_comptes($import->account->id,'accountid',0,'courant <> 2',1) ?></td>
+			<td><?php echo $form->select_comptes( ($import->account) ? $import->account->id : -1,'accountid',0,'courant <> 2',1) ?></td>
 			<td width="200"><?php echo $langs->trans("DateStart") ?></td>
 			<td><?php echo $form->select_date($import->dateStart, 'ds') ?></td>
 			<td><?php echo $langs->trans("AccountStatement") ?></td>

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 $res = 0;
 if (! $res && file_exists("../main.inc.php")) {
         $res = @include("../main.inc.php");
@@ -36,12 +36,14 @@ $tpl = 'tpl/bankimport.new.tpl.php';
 $import = new BankImport($db);
 
 if(GETPOST('compare')) {
+	
 	$datestart=dol_mktime(0, 0, 0, GETPOST('dsmonth'), GETPOST('dsday'), GETPOST('dsyear'));
 	$dateend=dol_mktime(0, 0, 0, GETPOST('demonth'), GETPOST('deday'), GETPOST('deyear'));
 	$numreleve = GETPOST('numreleve');
 	$hasHeader = GETPOST('hasheader');
 	
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
+			
 		$import->load_transactions();
 		$import->compare_transactions();
 		
@@ -52,8 +54,10 @@ if(GETPOST('compare')) {
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
 } else if(GETPOST('import')) {
+	
 	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'), GETPOST('hasheader'))) {
 		$import->load_transactions();
+		
 		$import->import_data(GETPOST('TLine'));
 		$tpl = 'tpl/bankimport.end.tpl.php';
 	}

@@ -22,7 +22,7 @@ class BankImport {
 	var $nbReconciled = 0;
 	
 	function __construct($db) {
-		$this->db = $db;
+		$this->db = &$db;
 		$this->dateStart = strtotime('first day of last month');
 		$this->dateEnd = strtotime('last day of last month');
 	}
@@ -54,16 +54,20 @@ class BankImport {
 		if(is_file($filename)) {
 			$this->file = $filename;
 		} else if(!empty($_FILES[$filename])) {
+			
 			if($_FILES[$filename]['error'] != 0) {
 				setEventMessage($langs->trans('ErrorFile'.$_FILES[$filename]['error']), 'errors');
 				return false;
 			}/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] !='application/octet-stream') {
 				setEventMessage($langs->trans('ErrorFileIsNotCSV').' '.$_FILES[$filename]['type'], 'errors');
 				return false;
-			}*/ else {
+			}*/ 
+			else {
+				
 				dol_include_once('/core/lib/files.lib.php');
 				dol_include_once('/core/lib/images.lib.php');
 				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
+				
 				dol_add_file_process($upload_dir,1,1,$filename);
 				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
 				
@@ -154,7 +158,7 @@ class BankImport {
 				
 				$datetime= DateTime::createFromFormat($dateFormat, $data['date']);
 				
-				$data['datev'] = $datetime->getTimestamp();
+				$data['datev'] = ($datetime===false) ? 0 : $datetime->getTimestamp() ;
 				
 				$data['error'] = '';
 			} else {
