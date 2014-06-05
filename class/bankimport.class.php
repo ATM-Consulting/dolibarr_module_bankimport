@@ -155,7 +155,7 @@ class BankImport {
 				//$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
 					
 				$datetime = new DateTime;
-				
+				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 .... 
 				$datetime= DateTime::createFromFormat($dateFormat, $data['date']);
 				
 				$data['datev'] = ($datetime===false) ? 0 : $datetime->getTimestamp() ;
