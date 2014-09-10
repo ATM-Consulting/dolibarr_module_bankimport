@@ -28,8 +28,8 @@
 	
 	<table class="border" width="100%">
 		<tr class="liste_titre">
-			<td colspan="4" width="50%"><?php echo $langs->trans("FileTransactions") ?></td>
-			<td colspan="7" width="50%"><?php echo $langs->trans("DolibarrTransactions") ?></td>
+			<td colspan="4" width="40%"><?php echo $langs->trans("FileTransactions") ?></td>
+			<td colspan="7" width="60%"><?php echo $langs->trans("DolibarrTransactions") ?></td>
 		</tr>
 		<tr class="liste_titre">
 			<td><?php echo $langs->trans("Line") ?></td>
@@ -39,10 +39,10 @@
 			<td><?php echo $langs->trans("Transaction") ?></td>
 			<td><?php echo $langs->trans("Date") ?></td>
 			<td><?php echo $langs->trans("Description") ?></td>
+			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
 			<td><?php echo $langs->trans("Action") ?></td>
 			<td align="center"><?php echo $langs->trans("DoAction") ?></td>
-			<td>&nbsp;</td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
@@ -58,6 +58,7 @@
 				<td><?php echo $bankline['url'] ?></td>
 				<td><?php echo $bankline['date'] ?></td>
 				<td><?php echo $bankline['label'] ?></td>
+				<td><?php echo $bankline['relateditem'] ?></td>
 				<td align="right"><?php echo $bankline['amount'] ?></td>
 				<td><?php echo $bankline['result'] ?></td>
 				<td align="center">
@@ -69,15 +70,14 @@
 			<?php } else if(!empty($line['error'])) { ?>
 				<td><?php echo $i + 1 ?></td>
 				<td colspan="4"><?php echo $line['error'] ?></td>
-				<td colspan="6">&nbsp;</td>
+				<td colspan="7">&nbsp;</td>
 			
 			<?php } else { ?>
 				<td><?php echo $i + 1 ?></td>
 				<td><?php echo $line['date'] ?></td>
 				<td><?php echo $line['label'] ?></td>
-				<td><?php echo price($line['debit']) ?></td>
-				<td><?php echo price($line['credit']) ?></td>
-				<td colspan="4">&nbsp;</td>
+				<td align="right"><?php echo price($line['amount']) ?></td>
+				<td colspan="5">&nbsp;</td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
 				<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>

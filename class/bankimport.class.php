@@ -2,6 +2,10 @@
 
 dol_include_once('/compta/bank/class/account.class.php');
 dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 class BankImport {
 	var $db;
@@ -224,7 +228,7 @@ class BankImport {
 	}
 
 	private function get_bankline_data($bankLine) {
-		global $langs;
+		global $langs, $db;
 		
 		if(!empty($bankLine->num_releve)) {
 			$link = '<a href="'.dol_buildpath('/compta/bank/releve.php?num='.$bankLine->num_releve.'&account='.$bankLine->fk_account, 2).'">'.$bankLine->num_releve.'</a>';
@@ -235,6 +239,50 @@ class BankImport {
 			$autoaction = true;
 		}
 		
+		$societestatic = new Societe($db);
+		$userstatic=new User($db);
+		$chargestatic=new ChargeSociales($db);
+		$memberstatic=new Adherent($db);
+		
+		$links = $this->account->get_url($bankLine->id);
+		foreach($links as $key=>$val)
+		{
+			if ($links[$key]['type']=='company')
+			{
+				$societestatic->id=$links[$key]['url_id'];
+				$societestatic->nom=$links[$key]['label'];
+				$relatedItem = $societestatic->getNomUrl(1,'',16);
+			}
+			else if ($links[$key]['type']=='user')
+			{
+				$userstatic->id=$links[$key]['url_id'];
+				$userstatic->lastname=$links[$key]['label'];
+				$relatedItem = $userstatic->getNomUrl(1,'');
+			}
+			else if ($links[$key]['type']=='sc')
+			{
+				// sc=old value
+				$chargestatic->id=$links[$key]['url_id'];
+				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
+				{
+					if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
+					$chargestatic->lib=$langs->trans($reg[1]);
+				}
+				else
+				{
+					$chargestatic->lib=$links[$key]['label'];
+				}
+				$chargestatic->ref=$chargestatic->lib;
+				$relatedItem = $chargestatic->getNomUrl(1,16);
+			}
+			else if ($links[$key]['type']=='member')
+			{
+				$memberstatic->id=$links[$key]['url_id'];
+				$memberstatic->ref=$links[$key]['label'];
+				$relatedItem = $memberstatic->getNomUrl(1,16,'card');
+			}
+		}
+		
 		return array(
 			'id' => $bankLine->id
 			,'url' => $bankLine->getNomUrl(1)
@@ -243,6 +291,7 @@ class BankImport {
 			,'amount' => price($bankLine->amount)
 			,'result' => $result
 			,'autoaction' => $autoaction
+			,'relateditem' => $relatedItem
 		);
 	}
 	
