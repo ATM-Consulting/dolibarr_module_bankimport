@@ -41,7 +41,7 @@
 			<td><?php echo $langs->trans("Description") ?></td>
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
-			<td><?php echo $langs->trans("Action") ?></td>
+			<td><?php echo $langs->trans("PlannedAction") ?></td>
 			<td align="center"><?php echo $langs->trans("DoAction") ?></td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
@@ -78,7 +78,7 @@
 				<td><?php echo $line['label'] ?></td>
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td colspan="5">&nbsp;</td>
-				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled') ?></td>
+				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
 				<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 			
