@@ -8,7 +8,7 @@ BankImportSeparator = Séparateur des données du fichier
 BankImportMapping = Mapping du fichier csv
 BankImportDateFormat = Format de date du fichier csv
 BankImportSeparatorHelp = Caractère utilisé pour séparer les colonnes de votre fichier csv (usuellement ";" ou "," (1 seul caractère).
-BankImportMappingHelp = Correspondance des colonnes de votre fichier csv. Attention, le mapping doit forcément contenir les codes "date", "label", "debit" et "credit".
+BankImportMappingHelp = Correspondance des colonnes de votre fichier csv. Attention, le mapping doit forcément contenir les codes "date", "label", "debit" et "credit".<br>Si votre fichier ne contient qu'une seule colonne pour le montant de la transaction, utiliser "amount" au lieu de "debit" et "credit".<br>Si votre fichier contient d'autres colonnes, nommez-les "null" dans le mapping.
 BankImportDateFormatHelp = Format de date utilisé dans votre fichier csv (%%d correspond au jour sur deux caractères, %%m au mois sur deux caractère et %%Y l'année sur 4 caractères). Par exemple la date 25/07/2013 correspond au format %%d/%%m/%%Y.
 
 # MENU
@@ -21,7 +21,8 @@ BankCompareTransactions = Comparer les écritures
 BankImport = Procéder aux rapprochements automatiques et aux créations d'écritures
 FileTransactions = Transaction bancaires provenant du fichier
 DolibarrTransactions = Transaction bancaires existantes dans Dolibarr
-Action = Action prévue
+RelatedItem = Élément associé
+PlannedAction = Action prévue
 DoAction = Valider
 StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapprochées, dont %s créées
 FileHasHeader = Le fichier contient une ligne d'en-tête
