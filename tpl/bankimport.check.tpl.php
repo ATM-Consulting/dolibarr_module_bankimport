@@ -42,7 +42,7 @@
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
 			<td><?php echo $langs->trans("PlannedAction") ?></td>
-			<td align="center"><?php echo $langs->trans("DoAction") ?></td>
+			<td align="center"><input type="checkbox" checked="checked" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
@@ -62,7 +62,7 @@
 				<td align="right"><?php echo $bankline['amount'] ?></td>
 				<td><?php echo $bankline['result'] ?></td>
 				<td align="center">
-				<?php if($bankline['autoaction']) { ?><input type="checkbox" checked="checked" name="TLine[<?php echo $bankline['id'] ?>]" value="<?php echo $i ?>" /><?php } ?>
+				<?php if($bankline['autoaction']) { ?><input type="checkbox" rel="doImport" checked="checked" name="TLine[<?php echo $bankline['id'] ?>]" value="<?php echo $i ?>" /><?php } ?>
 				</td>
 				<?php if($j < count($line['bankline'])) echo '</tr>' ?>
 				<?php } ?>
@@ -79,7 +79,7 @@
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td colspan="5">&nbsp;</td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
-				<td align="center"><input type="checkbox" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
+				<td align="center"><input type="checkbox" rel="doImport" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 			
 			<?php $var = !$var ?>
@@ -87,7 +87,17 @@
 		<?php } ?>
 	</table>
 	<br />
-	
+	<script type="text/javascript">
+	function checkAll() {
+		if($('input[name=checkall]').is(':checked')) {
+			$(input[rel=doImport]).attr('checked', true);	
+		}
+		else{
+			$(input[rel=doImport]).attr('checked', false);
+		}
+		
+	}
+	</script>
 	<center>
 		<input type="submit" class="button" name="import" value="<?php echo dol_escape_htmltag($langs->transnoentities("BankImport")) ?>">
 	</center>
