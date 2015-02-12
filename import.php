@@ -15,7 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+// Permet de gérer les fichier ayant une fin de ligne MAC (suite retour client) (http://stackoverflow.com/questions/4541749/fgetcsv-fails-to-read-line-ending-in-mac-formatted-csv-file-any-better-solution)
+ini_set("auto_detect_line_endings", "1");
+
 $res = 0;
 if (! $res && file_exists("../main.inc.php")) {
         $res = @include("../main.inc.php");
