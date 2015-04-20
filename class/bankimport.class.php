@@ -131,13 +131,15 @@ class BankImport {
 		$mapping = explode($delimiter, $mapping_string);
 		
 		$f1 = fopen($this->file, 'r');
-		if($this->hasHeader) fgetcsv($f1, 1024, $delimiter, $enclosure);
+		if($this->hasHeader) $ligne= fgets($f1, 4096);
 		
 		$TInfosGlobale = array();
-		while($dataline = fgetcsv($f1, 1024, $delimiter, $enclosure)) {
-			if(count($dataline) == count($mapping)) {
+		while($ligne= fgets($f1, 4096)) {
+		       
+           $dataline = str_getcsv (trim($ligne) , $delimiter, $enclosure );
+          //  var_dump($dataline, $delimiter, $enclosure);    
+		   if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
-				
 				// Gestion du montant débit / crédit
 				if(!empty($data['debit'])) {
 					$data['debit'] = price2num($data['debit']);
