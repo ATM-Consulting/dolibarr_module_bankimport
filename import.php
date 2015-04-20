@@ -47,7 +47,7 @@ if(GETPOST('compare')) {
 	
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
 			
-		$import->load_transactions();
+		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
 		$import->compare_transactions();
 		
 		$TTransactions = $import->TFile;
@@ -56,10 +56,11 @@ if(GETPOST('compare')) {
 		$var = true;
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
-} else if(GETPOST('import')) {
+} 
+else if(GETPOST('import')) {
 	
 	if($import->analyse(GETPOST('accountid','int'), GETPOST('filename','alpha'), GETPOST('datestart','int'), GETPOST('dateend','int'), GETPOST('numreleve'), GETPOST('hasheader'))) {
-		$import->load_transactions();
+		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
 		
 		$import->import_data(GETPOST('TLine'));
 		$tpl = 'tpl/bankimport.end.tpl.php';

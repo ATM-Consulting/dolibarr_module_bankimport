@@ -16,6 +16,16 @@
 			<td><?php echo $langs->trans("FileHasHeader") ?></td>
 			<td><input type="checkbox" name="hasheader" value="1" <?php echo $import->hasHeader ? ' checked="checked"' : '' ?> /></td>
 		</tr>
+
+        <tr>
+            <td width="200"><?php echo $form->textwithpicto($langs->trans("BankImportMapping"), $langs->trans("BankImportMappingHelp")) ?></td>
+            <td><input type="text" name="bankimportmapping" value="<?php echo $conf->global->BANKIMPORT_MAPPING; ?>" /></td>
+            <td><?php echo $form->textwithpicto($langs->trans("BankImportDateFormat"), $langs->trans("BankImportDateFormatHelp")); ?></td>
+            <td><input type="text" name="bankimportdateformat" value="<?php echo $conf->global->BANKIMPORT_DATE_FORMAT; ?>" size="12" /></td>
+            <td><?php echo $form->textwithpicto($langs->trans("BankImportSeparator"), $langs->trans("BankImportSeparatorHelp")); ?></td>
+            <td><input type="text" name="bankimportseparator" value="<?php echo $conf->global->BANKIMPORT_SEPARATOR; ?>" size="3" /></td>
+            
+        </tr>
 	</table>
 	<br />
 	

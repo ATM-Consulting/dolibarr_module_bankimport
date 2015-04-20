@@ -84,10 +84,10 @@ class BankImport {
 		return true;
 	}
 	
-	function load_transactions() {
+	function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure = '"') {
 		$this->load_bank_transactions();
 		$this->load_check_receipt();
-		$this->load_file_transactions();
+		$this->load_file_transactions($delimiter, $dateFormat, $mapping_string, $enclosure);
 	}
 	
 	// Load bank lines
@@ -122,14 +122,13 @@ class BankImport {
 	}
 	
 	// Load file lines
-	function load_file_transactions() {
+	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure = '"') {
 		global $conf, $langs;
 		
-		$delimiter = $conf->global->BANKIMPORT_SEPARATOR;
-		$enclosure = '"';
-		$dateFormat = strtr( $conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
-		
-		$mapping = explode($delimiter, $conf->global->BANKIMPORT_MAPPING);
+		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
+		if(empty($dateFormat)) $dateFormat = strtr( $conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
+		if(empty($mapping_string))$mapping_string = $conf->global->BANKIMPORT_MAPPING;
+		$mapping = explode($delimiter, $mapping_string);
 		
 		$f1 = fopen($this->file, 'r');
 		if($this->hasHeader) fgetcsv($f1, 1024, $delimiter, $enclosure);
