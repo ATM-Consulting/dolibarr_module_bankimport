@@ -246,6 +246,7 @@ class BankImport {
 		$memberstatic=new Adherent($db);
 		
 		$links = $this->account->get_url($bankLine->id);
+		$relatedItem = '';
 		foreach($links as $key=>$val)
 		{
 			if ($links[$key]['type']=='company')
