@@ -23,9 +23,9 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+$res = @include "../../main.inc.php"; // From htdocs directory
 if (! $res) {
-    $res = @include("../../../main.inc.php"); // From "custom" directory
+    $res = @include "../../../main.inc.php"; // From "custom" directory
 }
 
 // Libraries
@@ -82,9 +82,9 @@ $buffer = file_get_contents(dol_buildpath('/bankimport/README.md', 0));
 echo nl2br($buffer);
 
 echo '<br>',
-'<a href="' . dol_buildpath('/bankimport/COPYING', 1) . '">',
-'<img src="' . dol_buildpath('/bankimport/img/gplv3.png', 1) . '"/>',
-'</a>';
+    '<a href="' . dol_buildpath('/bankimport/COPYING', 1) . '">',
+    '<img src="' . dol_buildpath('/bankimport/img/gplv3.png', 1) . '"/>',
+    '</a>';
 
 llxFooter();
 

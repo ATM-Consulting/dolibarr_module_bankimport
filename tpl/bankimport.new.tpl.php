@@ -21,17 +21,20 @@
 			<td width="200"><?php echo $form->textwithpicto(
 				'<label for="bankimportmapping" >' . $langs->trans("BankImportMapping") . '</label>',
 				$langs->trans("BankImportMappingHelp")
-			)?>
+			); ?>
 			</td>
 			<td><input type="text" id="bankimportmapping" name="bankimportmapping" value="<?php echo $conf->global->BANKIMPORT_MAPPING; ?>" /></td>
 			<td><?php echo $form->textwithpicto(
 				'<label for="bankimportdateformat" >' . $langs->trans("BankImportDateFormat") . '</label>',
-				$langs->trans("BankImportDateFormatHelp")); ?>
+				$langs->trans("BankImportDateFormatHelp")
+			); ?>
 			</td>
 			<td><input type="text" id="bankimportdateformat" name="bankimportdateformat" value="<?php echo $conf->global->BANKIMPORT_DATE_FORMAT; ?>" size="12" /></td>
 			<td><?php echo $form->textwithpicto(
 				'<label for="bankimportseparator">' . $langs->trans("BankImportSeparator") . '</label>',
-				$langs->trans("BankImportSeparatorHelp")); ?></label></td>
+				$langs->trans("BankImportSeparatorHelp")
+			); ?>
+			</td>
 			<td><input type="text" id="bankimportseparator" name="bankimportseparator" value="<?php echo $conf->global->BANKIMPORT_SEPARATOR; ?>" size="3" /></td>
 
 		</tr>
