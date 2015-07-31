@@ -17,6 +17,6 @@
 	</tr>
 </table>
 <br />
-<center>
+<div class="center">
 <?php echo $langs->trans('StatementCreatedAndDataImported', $import->numReleve, $import->nbReconciled, $import->nbCreated) ?>
-</center>
+</div>

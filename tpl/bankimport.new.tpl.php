@@ -28,8 +28,8 @@
         </tr>
 	</table>
 	<br />
-	
-	<center>
+
+	<div class="center">
 		<input type="submit" class="button" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("BankCompareTransactions")) ?>">
-	</center>
+	</div>
 </form>

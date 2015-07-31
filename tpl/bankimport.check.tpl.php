@@ -101,7 +101,7 @@
 		
 	}
 	</script>
-	<center>
+	<div class="center">
 		<input type="submit" class="button" name="import" value="<?php echo dol_escape_htmltag($langs->transnoentities("BankImport")) ?>">
-	</center>
+	</div>
 </form>
