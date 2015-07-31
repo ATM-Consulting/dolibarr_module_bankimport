@@ -45,8 +45,8 @@
 			<td><?php echo $langs->trans("Description") ?></td>
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
-			<td><?php echo $langs->trans("PlannedAction") ?></td>
-			<td align="center"><input type="checkbox" checked="checked" name="checkall" value="1" onchange="checkAll()" /></td>
+			<td><label for="checkall"<?php echo $langs->trans("PlannedAction") ?></label></td>
+			<td align="center"><input type="checkbox" checked="checked" id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
