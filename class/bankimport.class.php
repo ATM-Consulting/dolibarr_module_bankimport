@@ -8,22 +8,22 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 class BankImport {
-	var $db;
+	protected $db;
 	
-	var $account;
-	var $file;
+	public $account;
+	public $file;
 	
-	var $dateStart;
-	var $dateEnd;
-	var $numReleve;
-	var $hasHeader;
+	public $dateStart;
+	public $dateEnd;
+	public $numReleve;
+	public $hasHeader;
 	
-	var $TBank = array(); // Will contain all account lines of the period
-	var $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
-	var $TFile = array(); // Will contain all file lines
+	public $TBank = array(); // Will contain all account lines of the period
+	public $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
+	public $TFile = array(); // Will contain all file lines
 	
-	var $nbCreated = 0;
-	var $nbReconciled = 0;
+	public $nbCreated = 0;
+	public $nbReconciled = 0;
 	
 	function __construct($db) {
 		$this->db = &$db;
