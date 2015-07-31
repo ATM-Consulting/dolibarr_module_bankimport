@@ -250,7 +250,7 @@ class BankImport {
 			if ($links[$key]['type']=='company')
 			{
 				$societestatic->id=$links[$key]['url_id'];
-				$societestatic->nom=$links[$key]['label'];
+				$societestatic->name = $links[$key]['label'];
 				$relatedItem = $societestatic->getNomUrl(1,'',16);
 			}
 			else if ($links[$key]['type']=='user')
