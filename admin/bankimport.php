@@ -97,13 +97,18 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 // Separator
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$form->textwithpicto($langs->trans("BankImportSeparator"), $langs->trans("BankImportSeparatorHelp")).'</td>';
+print '<td>';
+print $form->textwithpicto(
+	'<label for="BANKIMPORT_SEPARATOR">' . $langs->trans("BankImportSeparator") . '</label>',
+	$langs->trans("BankImportSeparatorHelp")
+);
+print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANKIMPORT_SEPARATOR">';
-print '<input type="text" name="BANKIMPORT_SEPARATOR" value="'.$conf->global->BANKIMPORT_SEPARATOR.'" size="10" />';
+print '<input type="text" id="BANKIMPORT_SEPARATOR" name="BANKIMPORT_SEPARATOR" value="'.$conf->global->BANKIMPORT_SEPARATOR.'" size="10" />';
 print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
@@ -111,13 +116,18 @@ print '</td></tr>';
 // Mapping
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$form->textwithpicto($langs->trans("BankImportMapping"), $langs->trans("BankImportMappingHelp")).'</td>';
+print '<td>';
+print $form->textwithpicto(
+	'<label for="BANKIMPORT_SEPARATOR">' . $langs->trans("BankImportMapping") . '</label>',
+	$langs->trans("BankImportMappingHelp")
+);
+print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANKIMPORT_MAPPING">';
-print '<input type="text" name="BANKIMPORT_MAPPING" value="'.$conf->global->BANKIMPORT_MAPPING.'" size="50" />';
+print '<input type="text" id="BANKIMPORT_MAPPING" name="BANKIMPORT_MAPPING" value="'.$conf->global->BANKIMPORT_MAPPING.'" size="50" />';
 print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
@@ -125,13 +135,18 @@ print '</td></tr>';
 // Date format
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$form->textwithpicto($langs->trans("BankImportDateFormat"), $langs->trans("BankImportDateFormatHelp")).'</td>';
+print '<td>';
+print $form->textwithpicto(
+	'<label for="BANKIMPORT_DATE_FORMAT">' . $langs->trans("BankImportDateFormat") . '</label>',
+	$langs->trans("BankImportDateFormatHelp")
+);
+print '</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_BANKIMPORT_DATE_FORMAT">';
-print '<input type="text" name="BANKIMPORT_DATE_FORMAT" value="'.$conf->global->BANKIMPORT_DATE_FORMAT.'" size="10" />';
+print '<input type="text" id="BANKIMPORT_DATE_FORMAT" name="BANKIMPORT_DATE_FORMAT" value="'.$conf->global->BANKIMPORT_DATE_FORMAT.'" size="10" />';
 print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
