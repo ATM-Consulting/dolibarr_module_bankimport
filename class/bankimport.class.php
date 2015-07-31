@@ -127,13 +127,12 @@ class BankImport {
 		
 		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		if(empty($dateFormat)) $dateFormat = strtr( $conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
-		if(empty($mapping_string))$mapping_string = $conf->global->BANKIMPORT_MAPPING;
+		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
 		$mapping = explode($delimiter, $mapping_string);
 		
 		$f1 = fopen($this->file, 'r');
 		if($this->hasHeader) $ligne= fgets($f1, 4096);
-		
-		$TInfosGlobale = array();
+
 		while($ligne= fgets($f1, 4096)) {
 		       
            $dataline = str_getcsv (trim($ligne) , $delimiter, $enclosure );
@@ -158,10 +157,9 @@ class BankImport {
 				
 				//$time = date_parse_from_format($dateFormat, $data['date']);
 				//$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
-					
-				$datetime = new DateTime;
-				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 .... 
-				$datetime= DateTime::createFromFormat($dateFormat, $data['date']);
+
+				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
+				$datetime = DateTime::createFromFormat($dateFormat, $data['date']);
 				
 				$data['datev'] = ($datetime===false) ? 0 : $datetime->getTimestamp() ;
 				
