@@ -31,6 +31,8 @@ if (! $res) {
 
 dol_include_once('/bankimport/class/bankimport.class.php');
 
+global $db, $langs;
+
 ini_set("auto_detect_line_endings", true);
 
 $mesg = "";

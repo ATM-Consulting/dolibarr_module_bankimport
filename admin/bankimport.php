@@ -28,11 +28,13 @@ if (! $res) {
     $res = @include("../../../main.inc.php"); // From "custom" directory
 }
 
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/bankimport.lib.php';
 //require_once "../class/myclass.class.php";
+
+global $bc, $conf, $db, $langs, $user;
+
 // Translations
 $langs->load("bankimport@bankimport");
 

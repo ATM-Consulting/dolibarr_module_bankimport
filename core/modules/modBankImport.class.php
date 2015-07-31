@@ -38,8 +38,6 @@ class modBankImport extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-        global $langs,$conf;
-
         $this->db = $db;
 
 		// Id for module (must be unique).
