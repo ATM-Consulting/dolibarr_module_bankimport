@@ -49,7 +49,7 @@ function bankimportAdminPrepareHead()
     //$this->tabs = array(
     //	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bankimport');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'bankimport');
 
     return $head;
 }
