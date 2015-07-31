@@ -94,10 +94,9 @@
 	<script type="text/javascript">
 	function checkAll() {
 		if($('input[name=checkall]').is(':checked')) {
-			$(input[rel=doImport]).attr('checked', true);	
-		}
-		else{
-			$(input[rel=doImport]).attr('checked', false);
+			$('input[rel=doImport]').prop('checked', true);
+		} else {
+			$('input[rel=doImport]').prop('checked', false);
 		}
 		
 	}
