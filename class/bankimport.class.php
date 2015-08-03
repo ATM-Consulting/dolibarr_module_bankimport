@@ -2,28 +2,29 @@
 
 dol_include_once('/compta/bank/class/account.class.php');
 dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
 
-class BankImport {
-	var $db;
+class BankImport
+{
+	protected $db;
 	
-	var $account;
-	var $file;
+	public $account;
+	public $file;
 	
-	var $dateStart;
-	var $dateEnd;
-	var $numReleve;
-	var $hasHeader;
+	public $dateStart;
+	public $dateEnd;
+	public $numReleve;
+	public $hasHeader;
 	
-	var $TBank = array(); // Will contain all account lines of the period
-	var $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
-	var $TFile = array(); // Will contain all file lines
+	public $TBank = array(); // Will contain all account lines of the period
+	public $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
+	public $TFile = array(); // Will contain all file lines
 	
-	var $nbCreated = 0;
-	var $nbReconciled = 0;
+	public $nbCreated = 0;
+	public $nbReconciled = 0;
 	
 	function __construct($db) {
 		$this->db = &$db;
@@ -60,10 +61,10 @@ class BankImport {
 		} else if(!empty($_FILES[$filename])) {
 			
 			if($_FILES[$filename]['error'] != 0) {
-				setEventMessage($langs->trans('ErrorFile'.$_FILES[$filename]['error']), 'errors');
+				setEventMessage($langs->trans('ErrorFile' . $_FILES[$filename]['error']), 'errors');
 				return false;
-			}/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] !='application/octet-stream') {
-				setEventMessage($langs->trans('ErrorFileIsNotCSV').' '.$_FILES[$filename]['type'], 'errors');
+			}/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] != 'application/octet-stream') {
+				setEventMessage($langs->trans('ErrorFileIsNotCSV') . ' ' . $_FILES[$filename]['type'], 'errors');
 				return false;
 			}*/ 
 			else {
@@ -84,7 +85,7 @@ class BankImport {
 		return true;
 	}
 	
-	function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure = '"') {
+	function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
 		$this->load_bank_transactions();
 		$this->load_check_receipt();
 		$this->load_file_transactions($delimiter, $dateFormat, $mapping_string, $enclosure);
@@ -92,8 +93,8 @@ class BankImport {
 	
 	// Load bank lines
 	function load_bank_transactions() {
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE fk_account = ".$this->account->id." ";
-		$sql.= "AND dateo BETWEEN '".date('Y-m-d', $this->dateStart)."' AND '".date('Y-m-d', $this->dateEnd)."' ";
+		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank WHERE fk_account = " . $this->account->id . " ";
+		$sql.= "AND dateo BETWEEN '" . date('Y-m-d', $this->dateStart) . "' AND '" . date('Y-m-d', $this->dateEnd) . "' ";
 		$sql.= "ORDER BY datev DESC";
 		
 		$resql = $this->db->query($sql);
@@ -122,21 +123,20 @@ class BankImport {
 	}
 	
 	// Load file lines
-	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure = '"') {
+	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
 		global $conf, $langs;
 		
 		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
-		if(empty($dateFormat)) $dateFormat = strtr( $conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
-		if(empty($mapping_string))$mapping_string = $conf->global->BANKIMPORT_MAPPING;
+		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
+		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
 		$mapping = explode($delimiter, $mapping_string);
 		
 		$f1 = fopen($this->file, 'r');
-		if($this->hasHeader) $ligne= fgets($f1, 4096);
-		
-		$TInfosGlobale = array();
-		while($ligne= fgets($f1, 4096)) {
+		if($this->hasHeader) $ligne = fgets($f1, 4096);
+
+		while($ligne = fgets($f1, 4096)) {
 		       
-           $dataline = str_getcsv (trim($ligne) , $delimiter, $enclosure );
+           $dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
           //  var_dump($dataline, $delimiter, $enclosure);    
 		   if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
@@ -158,12 +158,11 @@ class BankImport {
 				
 				//$time = date_parse_from_format($dateFormat, $data['date']);
 				//$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
-					
-				$datetime = new DateTime;
-				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 .... 
-				$datetime= DateTime::createFromFormat($dateFormat, $data['date']);
+
+				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
+				$datetime = DateTime::createFromFormat($dateFormat, $data['date']);
 				
-				$data['datev'] = ($datetime===false) ? 0 : $datetime->getTimestamp() ;
+				$data['datev'] = ($datetime === false) ? 0 : $datetime->getTimestamp();
 				
 				$data['error'] = '';
 			} else {
@@ -232,7 +231,13 @@ class BankImport {
 		global $langs, $db;
 		
 		if(!empty($bankLine->num_releve)) {
-			$link = '<a href="'.dol_buildpath('/compta/bank/releve.php?num='.$bankLine->num_releve.'&account='.$bankLine->fk_account, 2).'">'.$bankLine->num_releve.'</a>';
+			$link = '<a href="' . dol_buildpath(
+				'/compta/bank/releve.php'
+					. '?num=' . $bankLine->num_releve
+					. '&account=' . $bankLine->fk_account, 2
+				) . '">'
+				. $bankLine->num_releve
+				. '</a>';
 			$result = $langs->trans('AlreadyReconciledWithStatement', $link);
 			$autoaction = false;
 		} else {
@@ -241,45 +246,35 @@ class BankImport {
 		}
 		
 		$societestatic = new Societe($db);
-		$userstatic=new User($db);
-		$chargestatic=new ChargeSociales($db);
-		$memberstatic=new Adherent($db);
+		$userstatic = new User($db);
+		$chargestatic = new ChargeSociales($db);
+		$memberstatic = new Adherent($db);
 		
 		$links = $this->account->get_url($bankLine->id);
-		foreach($links as $key=>$val)
-		{
-			if ($links[$key]['type']=='company')
-			{
-				$societestatic->id=$links[$key]['url_id'];
-				$societestatic->nom=$links[$key]['label'];
+		$relatedItem = '';
+		foreach($links as $key=>$val) {
+			if ($links[$key]['type'] == 'company') {
+				$societestatic->id = $links[$key]['url_id'];
+				$societestatic->name = $links[$key]['label'];
 				$relatedItem = $societestatic->getNomUrl(1,'',16);
-			}
-			else if ($links[$key]['type']=='user')
-			{
-				$userstatic->id=$links[$key]['url_id'];
-				$userstatic->lastname=$links[$key]['label'];
+			} else if ($links[$key]['type'] == 'user') {
+				$userstatic->id = $links[$key]['url_id'];
+				$userstatic->lastname = $links[$key]['label'];
 				$relatedItem = $userstatic->getNomUrl(1,'');
-			}
-			else if ($links[$key]['type']=='sc')
-			{
+			} else if ($links[$key]['type'] == 'sc') {
 				// sc=old value
-				$chargestatic->id=$links[$key]['url_id'];
-				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg))
-				{
-					if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
-					$chargestatic->lib=$langs->trans($reg[1]);
+				$chargestatic->id = $links[$key]['url_id'];
+				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg)) {
+					if ($reg[1] == 'socialcontribution') $reg[1] = 'SocialContribution';
+					$chargestatic->lib = $langs->trans($reg[1]);
+				} else {
+					$chargestatic->lib = $links[$key]['label'];
 				}
-				else
-				{
-					$chargestatic->lib=$links[$key]['label'];
-				}
-				$chargestatic->ref=$chargestatic->lib;
+				$chargestatic->ref = $chargestatic->lib;
 				$relatedItem = $chargestatic->getNomUrl(1,16);
-			}
-			else if ($links[$key]['type']=='member')
-			{
-				$memberstatic->id=$links[$key]['url_id'];
-				$memberstatic->ref=$links[$key]['label'];
+			} else if ($links[$key]['type'] == 'member') {
+				$memberstatic->id = $links[$key]['url_id'];
+				$memberstatic->ref = $links[$key]['label'];
 				$relatedItem = $memberstatic->getNomUrl(1,16,'card');
 			}
 		}

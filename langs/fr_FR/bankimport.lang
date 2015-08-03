@@ -1,15 +1,15 @@
 Module104020Name = Import bancaire
-Module104020Desc = Permet d'importer des fichiers bancaire csv pour rapprochement automatique
+Module104020Desc = Permet d'importer des fichiers bancaire CSV pour rapprochement automatique
 
 # ADMIN
 BankImportSetupPage = Configuration du module d'import bancaire
 BankImportAboutPage = A propos du module d'import bancaire
 BankImportSeparator = Séparateur des données du fichier
-BankImportMapping = Mapping du fichier csv
-BankImportDateFormat = Format de date du fichier csv
-BankImportSeparatorHelp = Caractère utilisé pour séparer les colonnes de votre fichier csv (usuellement ";" ou "," (1 seul caractère).
-BankImportMappingHelp = Correspondance des colonnes de votre fichier csv. Attention, le mapping doit forcément contenir les codes "date", "label", "debit" et "credit".<br>Si votre fichier ne contient qu'une seule colonne pour le montant de la transaction, utiliser "amount" au lieu de "debit" et "credit".<br>Si votre fichier contient d'autres colonnes, nommez-les "null" dans le mapping.
-BankImportDateFormatHelp = Format de date utilisé dans votre fichier csv (%%d correspond au jour sur deux caractères, %%m au mois sur deux caractère et %%Y l'année sur 4 caractères). Par exemple la date 25/07/2013 correspond au format %%d/%%m/%%Y.
+BankImportMapping = Mapping du fichier CSV
+BankImportDateFormat = Format de date du fichier CSV
+BankImportSeparatorHelp = Caractère utilisé pour séparer les colonnes de votre fichier CSV (habituellement ";" ou ",". Un seul caractère).
+BankImportMappingHelp = Correspondance des colonnes de votre fichier CSV. Attention, la correspondance doit obligatoirement contenir les codes "date", "label", "debit" et "credit".<br>Si votre fichier ne contient qu'une seule colonne pour le montant de la transaction, utiliser "amount" au lieu de "debit" et "credit".<br>Si votre fichier contient d'autres colonnes, nommez-les "null" dans la correspondance.
+BankImportDateFormatHelp = Format de date utilisé dans votre fichier CSV (%%d correspond au jour sur deux caractères, %%m au mois sur deux caractère et %%Y l'année sur 4 caractères). Par exemple la date 25/07/2013 correspond au format %%d/%%m/%%Y.
 
 # MENU
 LeftMenuBankImport = Import bancaire
@@ -28,7 +28,7 @@ StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapproch�
 FileHasHeader = Le fichier contient une ligne d'en-tête
 
 # DATA
-BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée du relevé %s
-WillBeReconciledWithStatement = L'écriture sera rapprochée du relevé %s
-AlreadyReconciledWithStatement = L'écriture est déjà rapprochée du relevé %s
-LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas au mapping
+BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s
+WillBeReconciledWithStatement = L'écriture sera rapprochée sur le relevé %s
+AlreadyReconciledWithStatement = L'écriture est déjà rapprochée sur le relevé %s
+LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la correspondance déclarée
