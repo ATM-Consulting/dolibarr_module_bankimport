@@ -36,7 +36,8 @@ require_once '../lib/bankimport.lib.php';
 global $bc, $conf, $db, $langs, $user;
 
 // Translations
-$langs->load("bankimport@bankimport");
+$langs->load('admin');
+$langs->load('bankimport@bankimport');
 
 // Access control
 if (! $user->admin) {
