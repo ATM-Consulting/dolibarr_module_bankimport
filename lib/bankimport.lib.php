@@ -1,6 +1,6 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file		lib/mymodule.lib.php
- *	\ingroup	mymodule
+ *	\file		lib/bankimport.lib.php
+ *	\ingroup	bankimport
  *	\brief		This file is an example module library
  *				Put some comments here
  */
@@ -27,16 +27,16 @@ function bankimportAdminPrepareHead()
 {
     global $langs, $conf;
 
-    $langs->load("mymodule@mymodule");
+    $langs->load("bankimport@bankimport");
 
     $h = 0;
     $head = array();
 
-    $head[$h][0] = dol_buildpath("/bankimport/admin/admin_bankimport.php", 1);
-    $head[$h][1] = $langs->trans("Settings");
+    $head[$h][0] = dol_buildpath("/bankimport/admin/bankimport_setup.php", 1);
+    $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'settings';
     $h++;
-    $head[$h][0] = dol_buildpath("/bankimport/admin/about.php", 1);
+    $head[$h][0] = dol_buildpath("/bankimport/admin/bankimport_about.php", 1);
     $head[$h][1] = $langs->trans("About");
     $head[$h][2] = 'about';
     $h++;
@@ -44,12 +44,12 @@ function bankimportAdminPrepareHead()
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     //$this->tabs = array(
-    //	'entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
+    //	'entity:+tabname:Title:@bankimport:/bankimport/mypage.php?id=__ID__'
     //); // to add new tab
     //$this->tabs = array(
-    //	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
+    //	'entity:-tabname:Title:@bankimport:/bankimport/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'bankimport');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'bankimport');
 
     return $head;
 }
