@@ -9,6 +9,9 @@ require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.ph
 
 class BankImport
 {
+	/** @var string Negative direction token */
+	private $neg_dir;
+
 	protected $db;
 	
 	public $account;
@@ -121,37 +124,49 @@ class BankImport
 			}
 		}
 	}
-	
+
 	// Load file lines
 	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
 		global $conf, $langs;
-		
+
 		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
 		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
+		$mapping_string = preg_replace_callback('|=(.*)' . $delimiter . '|', 'BankImport::extractNegDir', $mapping_string);
 		$mapping = explode($delimiter, $mapping_string);
-		
+
 		$f1 = fopen($this->file, 'r');
 		if($this->hasHeader) $ligne = fgets($f1, 4096);
 
 		while($ligne = fgets($f1, 4096)) {
-		       
-           $dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
-          //  var_dump($dataline, $delimiter, $enclosure);    
-		   if(count($dataline) == count($mapping)) {
+			$dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
+			//  var_dump($dataline, $delimiter, $enclosure);
+
+			if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
+
 				// Gestion du montant débit / crédit
-				if(!empty($data['debit'])) {
-					$data['debit'] = price2num($data['debit']);
-					if($data['debit'] > 0) $data['debit'] *= -1;
-				}
-				if(!empty($data['credit'])) {
-					$data['credit'] = price2num($data['credit']);
-				}
-				if(empty($data['debit']) && empty($data['credit'])) {
+				if (empty($data['debit']) && empty($data['credit'])) {
 					$amount = price2num($data['amount']);
-					if($amount >= 0) $data['credit'] = $amount;
-					if($amount < 0) $data['debit'] = $amount;
+
+					// Direction support
+					if (!empty($data['direction'])) {
+						if ($data['direction'] == $this->neg_dir) {
+							$amount *= -1;
+						}
+					}
+
+					if ($amount >= 0) {
+						$data['credit'] = $amount;
+					} elseif ($amount < 0) {
+						$data['debit'] = $amount;
+					}
+				} else {
+					$data['debit'] = price2num($data['debit']);
+					if ($data['debit'] > 0) {
+						$data['debit'] *= -1;
+					}
+					$data['credit'] = price2num($data['credit']);
 				}
 				
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
@@ -333,5 +348,16 @@ class BankImport
 		$bankLine->datev_change($bankLine->id, $dateDiff);
 		
 		$this->nbReconciled++;
+	}
+
+	/**
+	 * Extract negative direction token from direction key
+	 *
+	 * @param array $matches Regex matches
+	 * @return string Last separator (Effectively removing the extracted negative direction)
+	 */
+	private function extractNegDir(array $matches) {
+		$this->neg_dir = $matches[1];
+		return substr($matches[0], -1);
 	}
 }

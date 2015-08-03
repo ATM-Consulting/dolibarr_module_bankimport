@@ -8,7 +8,7 @@ BankImportSeparator = Séparateur des données du fichier
 BankImportMapping = Mapping du fichier CSV
 BankImportDateFormat = Format de date du fichier CSV
 BankImportSeparatorHelp = Caractère utilisé pour séparer les colonnes de votre fichier CSV (habituellement ";" ou ",". Un seul caractère).
-BankImportMappingHelp = Correspondance des colonnes de votre fichier CSV. Attention, la correspondance doit obligatoirement contenir les codes "date", "label", "debit" et "credit".<br>Si votre fichier ne contient qu'une seule colonne pour le montant de la transaction, utiliser "amount" au lieu de "debit" et "credit".<br>Si votre fichier contient d'autres colonnes, nommez-les "null" dans la correspondance.
+BankImportMappingHelp = Correspondance des colonnes de votre fichier CSV. Attention, la correspondance doit forcément contenir les codes "date", "label", "debit" et "credit".<br>Si votre fichier ne contient qu'une seule colonne pour le montant de la transaction, utiliser "amount" et éventuellement, si vous avez une colonne sens, "direction=Mot clé pour débit" (par example "direction=DÉBIT" ou "direction=-") au lieu de "debit" et "credit".<br>Si votre fichier contient d'autres colonnes, nommez-les "null" dans la correspondance.
 BankImportDateFormatHelp = Format de date utilisé dans votre fichier CSV (%%d correspond au jour sur deux caractères, %%m au mois sur deux caractère et %%Y l'année sur 4 caractères). Par exemple la date 25/07/2013 correspond au format %%d/%%m/%%Y.
 
 # MENU
