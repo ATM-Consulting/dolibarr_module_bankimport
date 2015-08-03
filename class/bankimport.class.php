@@ -13,7 +13,8 @@ class BankImport
 	private $neg_dir;
 
 	protected $db;
-	
+
+	/** @var Account */
 	public $account;
 	public $file;
 	

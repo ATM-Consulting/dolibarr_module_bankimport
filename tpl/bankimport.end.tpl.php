@@ -18,5 +18,7 @@
 </table>
 <br />
 <div class="center">
-<?php echo $langs->trans('StatementCreatedAndDataImported', $import->numReleve, $import->nbReconciled, $import->nbCreated) ?>
+<a href="<?php echo DOL_URL_ROOT . '/compta/bank/releve.php' ?>?account=<?php echo $import->account->id ?>&amp;num=<?php echo $import->numReleve ?>">
+	<?php echo $langs->trans('StatementCreatedAndDataImported', $import->numReleve, $import->nbReconciled, $import->nbCreated) ?>
+</a>
 </div>
