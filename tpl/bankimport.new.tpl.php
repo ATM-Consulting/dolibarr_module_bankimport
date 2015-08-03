@@ -14,7 +14,7 @@
 			<td width="200"><label for="de"><?php echo $langs->trans("DateEnd") ?></label></td>
 			<td><?php echo $form->select_date($import->dateEnd, 'de') ?></td>
 			<td><label for="hasheader"><?php echo $langs->trans("FileHasHeader") ?></label></td>
-			<td><input type="checkbox" id="hasheader" name="hasheader" value="1" <?php echo $import->hasHeader ? ' checked="checked"' : '' ?> /></td>
+			<td><input type="checkbox" id="hasheader" name="hasheader" value="1" <?php echo $conf->global->BANKIMPORT_HEADER ? ' checked="checked"' : '' ?> /></td>
 		</tr>
 
 		<tr>
