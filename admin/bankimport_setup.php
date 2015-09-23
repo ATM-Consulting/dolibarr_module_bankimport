@@ -166,20 +166,14 @@ print '</td></tr>';
 
 // File header
 $var = !$var;
-print '<tr ' . $bc[$var] . '>';
-print '<td>';
-print '<label for="BANKIMPORT_HEADER">' . $langs->trans("FileHasHeader") . '</label>';
-print '</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="500">';
-print '<form method="POST" action="' . $_SERVER['PHP_SELF'] . '">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-print '<input type="hidden" name="action" value="set_BANKIMPORT_HEADER">';
-print '<input type="checkbox" id="BANKIMPORT_HEADER" name="BANKIMPORT_HEADER" value="1"' . ($conf->global->BANKIMPORT_HEADER ? ' checked = "checked"' : '') . '>';
-print '&nbsp;<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
-print '</form>';
-print '</td></tr>';
+?><tr <?php echo $bc[$var] ?>>
+       <td><?php echo $langs->trans('FileHasHeader') ?></td><td></td><td><?php echo ajax_constantonoff('BANKIMPORT_HEADER'); ?></td>
+</tr> <?php
 
+$var = !$var;
+?><tr <?php echo $bc[$var] ?>>
+				<td><?php echo $langs->trans('UseMacCompatibility') ?></td><td></td><td><?php echo ajax_constantonoff('BANKIMPORT_MAC_COMPATIBILITY'); ?></td>
+			</tr> <?php
 print '</table>';
 
 llxFooter();

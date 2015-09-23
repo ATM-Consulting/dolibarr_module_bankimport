@@ -138,10 +138,19 @@ class BankImport
 
 		$f1 = fopen($this->file, 'r');
 		if($this->hasHeader) $ligne = fgets($f1, 4096);
+		
+		while(!feof($f1)) {
 
-		while($ligne = fgets($f1, 4096)) {
-			$dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
-			//  var_dump($dataline, $delimiter, $enclosure);
+			if(!empty($conf->global->BANKIMPORT_MAC_COMPATIBILITY)) {
+				$ligne = fgets($f1, 4096);
+//				print '<hr>'.$ligne.'<br />';
+				$dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
+
+			}
+			else {
+				$dataline = fgetcsv($f1, 4096, $delimiter, $enclosure);
+			}
+//			  var_dump($dataline, $delimiter, $enclosure);
 
 			if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
