@@ -81,7 +81,50 @@
 				<td><?php echo $line['date'] ?></td>
 				<td><?php echo $line['label'] ?></td>
 				<td align="right"><?php echo price($line['amount']) ?></td>
-				<td colspan="5">&nbsp;</td>
+				<td colspan="5"><?php
+					
+					$comboName = 'Tline[fk_soc]['.$i.']';
+					echo $form->select_company('', $comboName,'',1,0,1);
+					
+					
+					
+				?>
+				<select name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+					<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
+					<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
+					<option value="charge"><?php echo $langs->trans('Charges') ?></option>
+					
+				</select>
+				
+				<div id="line_pieces_<?php echo $i ?>"></div>
+				
+				<script type="text/javascript">
+					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
+						
+						var type = $('#select_line_type_<?php echo $i ?>').val();
+						
+						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
+						var fk_soc = $fk_soc.val();
+						
+						if(type == 'charge')$fk_soc.hide();
+						else $fk_soc.show();
+						
+						$.ajax({
+							url:"<?php echo dol_buildpath('/bankimport/script/interface.php',1) ?>"
+							,data: {
+								get:'pieceList'
+								,fk_soc:fk_soc
+								,type:type
+								,i:<?php echo $i ?>
+							}
+						}).done(function( data) {
+							$("#line_pieces_<?php echo $i ?>").html(data);
+						});
+						
+					});
+					
+						
+				</script></td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
 				<td align="center"><input type="checkbox" rel="doImport" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>

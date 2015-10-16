@@ -35,3 +35,5 @@ BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapproch
 WillBeReconciledWithStatement = L'écriture sera rapprochée sur le relevé %s
 AlreadyReconciledWithStatement = L'écriture est déjà rapprochée sur le relevé %s
 LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la correspondance déclarée
+
+SupplierInvoices=Factures fournisseur
