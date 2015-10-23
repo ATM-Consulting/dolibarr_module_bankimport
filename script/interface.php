@@ -36,7 +36,7 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new Facture($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TPiece['.$i.'][facture]['.$f->id.'][reglement]" size="5" class="flat" /></div>';
+			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="5" class="flat" /></div>';
 			
 			
 		}				
@@ -54,7 +54,7 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new FactureFournisseur($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TPiece['.$i.'][fournfacture]['.$f->id.'][reglement]" size="5" class="flat" /></div>';
+			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" size="5" class="flat" /></div>';
 			
 			
 		}		
@@ -72,7 +72,7 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new ChargeSociales($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.$f->lib.' '.price($f->amount) .'</span> <input type="text" value="" name="TPiece['.$i.'][charge]['.$f->id.'][reglement]" size="5" class="flat" /></div>';
+			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.$f->lib.' '.price($f->amount) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][charge]['.$f->id.']" size="5" class="flat" /></div>';
 			
 			
 		}		

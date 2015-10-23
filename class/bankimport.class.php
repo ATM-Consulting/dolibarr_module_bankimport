@@ -134,7 +134,11 @@ class BankImport
 		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
 		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
 		$mapping_string = preg_replace_callback('|=(.*)' . $delimiter . '|', 'BankImport::extractNegDir', $mapping_string);
-		$mapping = explode($delimiter, $mapping_string);
+		
+		if($delimiter == '\t')$delimiter="\t";
+		
+		if(strpos($mapping_string,$delimiter) === false) $mapping = explode(";", $mapping_string); // pour le \t
+		else $mapping = explode($delimiter, $mapping_string); // pour le \t
 
 		$f1 = fopen($this->file, 'r');
 		if($this->hasHeader) $ligne = fgets($f1, 4096);
@@ -150,7 +154,7 @@ class BankImport
 			else {
 				$dataline = fgetcsv($f1, 4096, $delimiter, $enclosure);
 			}
-//			  var_dump($dataline, $delimiter, $enclosure);
+//		  var_dump($dataline, $delimiter, $enclosure);
 
 			if(count($dataline) == count($mapping)) {
 				$data = array_combine($mapping, $dataline);
@@ -313,6 +317,7 @@ class BankImport
 			,'result' => $result
 			,'autoaction' => $autoaction
 			,'relateditem' => $relatedItem
+			,'time' => $bankLine->datev
 		);
 	}
 	
@@ -320,6 +325,136 @@ class BankImport
 	 * Actions made after file check by user
 	 */
 	public function import_data($TLine) {
+		global $langs,$user;
+		
+		if(!empty($TLine['piece'])) {
+			dol_include_once('/compta/paiement/class/paiement.class.php');
+			dol_include_once('/fourn/class/paiementfourn.class.php');
+			dol_include_once('/fourn/class/fournisseur.facture.class.php');
+			dol_include_once('/compta/sociales/class/paymentsocialcontribution.class.php');
+			
+			/*
+			 * Reglemenent créé manuellement
+			 */
+			
+			$db = &$this->db;
+			foreach($TLine['piece'] as $iFileLine=>$TObject) {
+				
+				if(!empty($TLine['fk_soc'][$iFileLine])) {
+					$l_societe = new Societe($db);
+					$l_societe->fetch($TLine['fk_soc'][$iFileLine]);
+				}
+				$fk_payment = $TLine['fk_payment'][$iFileLine];
+				
+				foreach($TObject as $typeObject=>$TAmounts) {
+					
+					if($typeObject!='facture' && $typeObject!='fournfacture' && $typeObject!='charge' ) continue;
+					
+						if(!empty($TAmounts)) {
+							// TODO sub function
+							if($typeObject == 'facture') {
+								
+								$paiement = new Paiement($db);
+							    $paiement->datepaye     = $this->TFile[$iFileLine]['datev'];
+							    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
+							    $paiement->paiementid   = $fk_payment;
+							    $paiement->num_paiement = '';
+							    $paiement->note         = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
+								
+								$paiement_id = $paiement->create($user, 1);
+								
+								if($paiement_id>0) {
+									$bankLineId=$paiement->addPaymentToBank($user,'payment',$langs->trans('TitleBankImport') .' - '.$this->numReleve,$this->account->id,$l_societe->name,'');
+								
+									$TLine[$bankLineId] = $iFileLine;
+								
+									$bankLine = new AccountLine($this->db);
+									$bankLine->fetch($bankLineId);
+									$this->TBank[$bankLineId] = $bankLine;
+								
+									// On supprime le new saisi
+									foreach($TLine['new'] as $k=>$iFileLineNew) {
+										if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
+									}
+								}
+								
+							}
+							else if($typeObject == 'fournfacture') {
+								
+								$paiement = new PaiementFourn($db);
+							    $paiement->datepaye     = $this->TFile[$iFileLine]['datev'];
+							    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
+							    $paiement->paiementid   = $fk_payment;
+							    $paiement->num_paiement = '';
+							    $paiement->note         = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
+								
+								$paiement_id = $paiement->create($user, 1);
+								
+								if($paiement_id>0) {
+									$bankLineId=$paiement->addPaymentToBank($user,'payment_supplier',$langs->trans('TitleBankImport') .' - '.$this->numReleve,$this->account->id,$l_societe->name,'');
+								
+									$TLine[$bankLineId] = $iFileLine;
+								
+									$bankLine = new AccountLine($this->db);
+									$bankLine->fetch($bankLineId);
+									$this->TBank[$bankLineId] = $bankLine;
+								
+									// On supprime le new saisi
+									foreach($TLine['new'] as $k=>$iFileLineNew) {
+										if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
+									}
+								}
+								
+							}
+							else if($typeObject == 'charge') {
+								
+								$paiement = new PaymentSocialContribution($db);
+								$paiement->datepaye     = $this->TFile[$iFileLine]['datev'];
+							    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
+							    $paiement->paiementid   = $fk_payment;
+							    $paiement->num_paiement = '';
+							    $paiement->note         = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
+								
+								$paiement_id = $paiement->create($user, 1);
+								
+								if($paiement_id>0) {
+									$bankLineId=$paiement->addPaymentToBank($user,'payment_sc',$langs->trans('TitleBankImport') .' - '.$this->numReleve,$this->account->id,$l_societe->name,'');
+								
+									$TLine[$bankLineId] = $iFileLine;
+								
+									$bankLine = new AccountLine($this->db);
+									$bankLine->fetch($bankLineId);
+									$this->TBank[$bankLineId] = $bankLine;
+								
+									// On supprime le new saisi
+									foreach($TLine['new'] as $k=>$iFileLineNew) {
+										if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
+									}
+								}
+								
+							}
+							
+							
+					        
+							var_dump($this->TFile[$iFileLine]['datev'],$fk_payment,$TAmounts,$paiement_id,$result, $paiement,$this);exit;
+						
+						// On rajoute l'écriture pour le rapprochement
+						
+						
+					}
+					
+				}
+				
+				
+			}
+			
+			unset($TLine['piece']);
+		}
+		
+		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
+		
+	//	exit;
+		
 		if(!empty($TLine['new'])) {
 			foreach($TLine['new'] as $iFileLine) {
 				$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
@@ -332,6 +467,7 @@ class BankImport
 			
 			unset($TLine['new']);
 		}
+		
 		foreach($TLine as $bankLineId => $iFileLine) {
 			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
 		}

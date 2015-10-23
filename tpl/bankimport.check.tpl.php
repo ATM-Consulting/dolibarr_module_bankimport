@@ -83,10 +83,19 @@
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td colspan="5"><?php
 					
-					$comboName = 'Tline[fk_soc]['.$i.']';
-					echo $form->select_company('', $comboName,'',1,0,1);
+					$comboName = 'TLine[fk_soc]['.$i.']';
 					
+					$line['code_client'] = trim($line['code_client']);
 					
+					$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe 
+							WHERE code_compta='".$db->escape($line['code_client'])."' OR code_compta_fournisseur='".$db->escape($line['code_client'])."' 
+							LIMIT 1");
+					if($obj_soc = $db->fetch_object($res)) $fk_soc = $obj_soc->rowid;
+					else $fk_soc = 0;
+					
+					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+					
+					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					
 				?>
 				<select name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
