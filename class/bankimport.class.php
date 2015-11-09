@@ -436,7 +436,7 @@ class BankImport
 							
 							
 					        
-							var_dump($this->TFile[$iFileLine]['datev'],$fk_payment,$TAmounts,$paiement_id,$result, $paiement,$this);exit;
+						//	var_dump($this->TFile[$iFileLine]['datev'],$fk_payment,$TAmounts,$paiement_id,$result, $paiement,$this);exit;
 						
 						// On rajoute l'écriture pour le rapprochement
 						
