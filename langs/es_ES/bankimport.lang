@@ -1,0 +1,37 @@
+Module104020Name = Importación de movimientos bancarios
+Module104020Desc = Permite importar movimientos bancarios de archivos CSV para reconciliación automática
+
+ATMAbout = Este módulo ha sido desarrollado por <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Puedes encontrar documentación en nuestro <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Para preguntas o valoraciones, contáctenos en <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Para preguntas comerciales, contáctenos en  <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> or at +33 9 77 19 50 70<br><br>Find our other modules on <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
+
+BankImportSetup = Configuración del módulo de importación para Bancos
+BankImportAbout = Acerca del módulo de importación para bancos
+
+# ADMIN
+BankImportSeparator = Separador de datos en el archivo CSV
+BankImportMapping = Mapeo del archivo CSV
+BankImportDateFormat = Formato de fecha del archivo CSV
+BankImportSeparatorHelp = Carácter usado como separador de columnas en el archivo CSV (Habitualmente "," o ";". Un sólo carácter)
+BankImportMappingHelp = Correspondencia de columnas en su archivo CSV. Los códigos "date", "label", "debit" and "credit" deben existir en este mapeo de datos.<br>Si su archivo contiene una única columna para el importe, utilice “amount” y posiblemente "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") en lugar de "debit" y "credit".<br>Si su archivo contiene otras columnas, establezca “full” en la correspondencia. 
+BankImportDateFormatHelp = Formato de fecha usado en su archivo CSV (%%d es el día en dos caracteres, %%m mes en dos caracteres y %%Y año en cuatro carácteres). Por ejemplo, la fecha 07/25/2013 se corresponde con el formato de fecha %%m/%%d/%%Y.
+
+# MENU
+LeftMenuBankImport = Importar movimientos banco
+
+# PAGE
+TitleBankImport = Importación de movimientos bancarios
+BankImportFile = Archivo a importar
+BankCompareTransactions = Comparar movimientos
+BankImport = Realizar reconciliaciones automáticas y creación de transacciones
+FileTransactions = Movimientos bancarios del fichero CSV
+DolibarrTransactions = Movimientos bancarios de Dolibarr
+RelatedItem = Elemento relacionado
+Action = Acción prevista
+DoAction = Validar
+StatementCreatedAndDataImported = Movimiento %s creado con %s transacciones reconciliadas, incluyendo %s creado
+FileHasHeader = Archivo tiene linea de cabecera
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = La transacciones va a ser creada y reconciliada
+WillBeReconciledWithStatement = La transacción va a ser reconciliada con el movimiento %s
+AlreadyReconciledWithStatement = Transacción ya reconciliada con el movimiento %s
+LineDoesNotMatchWithMapping = Linea de archivo no cumple el mapa de correspondencia
