@@ -176,6 +176,8 @@ $var = !$var;
 			</tr> <?php
 print '</table>';
 
+dol_fiche_end();
+
 llxFooter();
 
 $db->close();
