@@ -36,7 +36,7 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new Facture($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="5" class="flat" /></div>';
+			$r.='<div style="margin:2px 0;"><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="5" class="flat" /></div>';
 			
 			
 		}				

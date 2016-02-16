@@ -29,6 +29,8 @@ PlannedAction = Action prévue
 DoAction = Valider
 StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapprochées, dont %s créées
 FileHasHeader = Le fichier contient une ligne d'en-tête
+bankImport_selectCompanyPls=Sélectionnez une société
+bankImport_selectPaymentTypePls=Sélectionnez paiement
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s

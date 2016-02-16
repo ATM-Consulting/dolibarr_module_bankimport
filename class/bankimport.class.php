@@ -206,6 +206,7 @@ class BankImport
 	}
 	
 	function compare_transactions() {
+		
 		// For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
 		foreach($this->TFile as &$fileLine) {
 			$amount = price2num($fileLine['amount']); // Transform to numeric string
@@ -454,17 +455,19 @@ class BankImport
 		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
 		
 	//	exit;
-		
-		if(!empty($TLine['new'])) {
-			foreach($TLine['new'] as $iFileLine) {
-				$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
-				if($bankLineId > 0) {
-					$bankLine = new AccountLine($this->db);
-					$bankLine->fetch($bankLineId);
-					$this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
+	
+		if (isset($TLine['new'])) 
+		{
+			if(!empty($TLine['new'])) {
+				foreach($TLine['new'] as $iFileLine) {
+					$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
+					if($bankLineId > 0) {
+						$bankLine = new AccountLine($this->db);
+						$bankLine->fetch($bankLineId);
+						$this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
+					}
 				}
 			}
-			
 			unset($TLine['new']);
 		}
 		

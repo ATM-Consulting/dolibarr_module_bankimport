@@ -29,6 +29,8 @@ Action = Planned action
 DoAction = Validate
 StatementCreatedAndDataImported = Statement %s created with %s transactions reconciliated, including %s created
 FileHasHeader = File has a header line
+bankImport_selectCompanyPls=Select company
+bankImport_selectPaymentTypePls=select payment
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciliated

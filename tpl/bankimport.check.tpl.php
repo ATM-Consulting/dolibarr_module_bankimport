@@ -94,18 +94,19 @@
 					else $fk_soc = 0;
 					
 					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
-					
+					echo '<br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
+					echo '<br />';
 					
 				?>
-				<select name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+				<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
 					<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
 					<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
 					<option value="charge"><?php echo $langs->trans('Charges') ?></option>
 					
 				</select>
 				
-				<div id="line_pieces_<?php echo $i ?>"></div>
+				<div style="margin-top:5px;" id="line_pieces_<?php echo $i ?>"></div>
 				
 				<script type="text/javascript">
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
@@ -144,14 +145,19 @@
 	</table>
 	<br />
 	<script type="text/javascript">
-	function checkAll() {
-		if($('input[name=checkall]').is(':checked')) {
-			$('input[rel=doImport]').prop('checked', true);
-		} else {
-			$('input[rel=doImport]').prop('checked', false);
-		}
 		
-	}
+		$('select[name*="TLine[fk_soc]"] > option[value=-1]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectCompanyPls'); ?>');
+		$('select[name*="TLine[fk_payment]"] > option[value=0]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectPaymentTypePls'); ?>');
+		$('select[name*="TLine[fk_payment]"]').css('margin', '3px 0 2px');
+	
+		function checkAll() {
+			if($('input[name=checkall]').is(':checked')) {
+				$('input[rel=doImport]').prop('checked', true);
+			} else {
+				$('input[rel=doImport]').prop('checked', false);
+			}
+			
+		}
 	</script>
 	<div class="center">
 		<input type="submit" class="button" name="import" value="<?php echo dol_escape_htmltag($langs->transnoentities("BankImport")) ?>">

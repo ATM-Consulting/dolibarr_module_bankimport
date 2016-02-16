@@ -30,8 +30,11 @@ if (! $res) {
 }
 
 dol_include_once('/bankimport/class/bankimport.class.php');
+dol_include_once('/compta/facture/class/facture.class.php');
 
 global $db, $langs;
+
+$langs->load('bills');
 
 ini_set("auto_detect_line_endings", true);
 
