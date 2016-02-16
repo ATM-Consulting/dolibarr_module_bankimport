@@ -510,3 +510,22 @@ class BankImport
 		return substr($matches[0], -1);
 	}
 }
+
+
+class TBankImportHistory extends TObjetStd
+{
+	function __construct() 
+	{
+		global $conf;
+		
+		$this->set_table( MAIN_DB_PREFIX.'bankimport_history' );
+    	 
+		$this->add_champs('fk_bank',array('type'=>'integer','index'=>true));
+        $this->add_champs('line_imported_title,line_imported_value', array('type'=>'text'));
+        
+        $this->_init_vars();
+        
+	    $this->start();
+	}
+	
+}

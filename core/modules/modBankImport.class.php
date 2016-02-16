@@ -271,6 +271,11 @@ class modBankImport extends DolibarrModules
 	{
 		$sql = array();
 
+		define('INC_FROM_DOLIBARR',true);
+		
+		dol_include_once('/bankimport/config.php');
+		dol_include_once('/bankimport/script/create-maj-base.php');
+
 		$result=$this->_load_tables('/bankimport/sql/');
 
 		return $this->_init($sql, $options);
