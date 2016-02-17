@@ -58,7 +58,7 @@ class modBankImport extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Allow to import csv files to reconcile bank accounts";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.0';
+		$this->version = '2.1';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -141,7 +141,10 @@ class modBankImport extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array();
+        $this->tabs = array(
+			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport::/bankimport/releve.php?account=__ID__'
+			,'bank:-statement:NU:$conf->bankimport->enabled'
+		);
 
         // Dictionaries
 	    if (! isset($conf->bankimport->enabled))
