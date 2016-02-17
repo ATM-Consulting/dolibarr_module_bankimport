@@ -31,11 +31,12 @@ StatementCreatedAndDataImported = Statement %s created with %s transactions reco
 FileHasHeader = File has a header line
 bankImport_selectCompanyPls=Select company
 bankImport_selectPaymentTypePls=select payment
-
-BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible
+bankImportNoReccordFound=No reccord found
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciliated
 WillBeReconciledWithStatement = Transaction will be reconciliated with statement %s
 AlreadyReconciledWithStatement = Transaction already reconciliated with statement %s
 LineDoesNotMatchWithMapping = File line doesn't match mapping
+
+BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible

@@ -149,12 +149,14 @@ class BankImport
 
 			if(!empty($conf->global->BANKIMPORT_MAC_COMPATIBILITY)) {
 				$ligne = fgets($f1, 4096);
+				if (empty($ligne)) continue;
 //				print '<hr>'.$ligne.'<br />';
 				$dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
 
 			}
 			else {
 				$dataline = fgetcsv($f1, 4096, $delimiter, $enclosure);
+				if (empty($dataline)) continue;
 			}
 //		  var_dump($dataline, $delimiter, $enclosure);
 
@@ -575,23 +577,4 @@ class TBankImportHistory extends TObjetStd
 	    $this->start();
 	}
 	
-	/*
-	 * Retourne un array contenant le detail de l'import de l'écriture bancaire groupé par title
-	 */
-	public function getAllHistoryByNumReleve(&$PDOdb, $num_releve)
-	{
-		$sql = 'SELECT rowid, line_imported_title FROM '.$this->get_table().' WHERE num_releve = '.$PDOdb->quote($num_releve);
-		$PDOdb->Execute($sql);
-		
-		$TEcriture = array();
-		$PDOdb2 = new TPDOdb;
-		while ($line = $PDOdb->Get_line())
-		{
-			$o = new TBankImportHistory;
-			$o->load($PDOdb2, $line->rowid);
-			$TEcriture[$line->line_imported_title][$o->fk_bank] = $o;
-		}
-		
-		return $TEcriture;
-	}
 }

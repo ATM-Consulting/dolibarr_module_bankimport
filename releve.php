@@ -294,6 +294,7 @@ else
 			$TEcriture[$objp->line_imported_title][] = $objp;
 		}
 	}
+	$db->free($result);
 	
 	if (!empty($TEcriture))
 	{
@@ -332,9 +333,13 @@ else
 			printTableFooter($title_serialize, $totald, $totalc, $total);
 		}
 	}
-exit;
+	else
+	{
+		print '<div class="warning">'.$langs->trans('bankImportNoReccordFound').'</div>';
+	}
+
 	
-	dol_syslog("sql=".$sql);
+	/*dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -385,7 +390,7 @@ exit;
 
 			/*
 			 * Ajout les liens (societe, company...)
-			 */
+			 
 			$newline=1;
 			$links = $acct->get_url($objp->rowid);
 			foreach($links as $key=>$val)
@@ -538,7 +543,7 @@ exit;
 		}
 		$db->free($result);
 	}
-
+*/
 /*
 	// Line Total
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";

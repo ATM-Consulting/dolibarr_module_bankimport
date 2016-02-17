@@ -31,6 +31,7 @@ StatementCreatedAndDataImported = Relevé %s créé avec %s écritures rapproch�
 FileHasHeader = Le fichier contient une ligne d'en-tête
 bankImport_selectCompanyPls=Sélectionnez une société
 bankImport_selectPaymentTypePls=Sélectionnez paiement
+bankImportNoReccordFound=Aucune information trouvée
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s
