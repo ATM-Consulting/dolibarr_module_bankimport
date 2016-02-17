@@ -357,7 +357,6 @@ class BankImport
 				
 				$fk_payment = $TLine['fk_payment'][$iFileLine];
 				$date_paye = $this->TFile[$iFileLine]['datev'];
-				$TFkBank = array();
 				
 				foreach($TObject as $typeObject=>$TAmounts) 
 				{
@@ -377,12 +376,6 @@ class BankImport
 							default:
 								continue;
 								break;
-						}
-						
-						// TODO créer la conf en admin et supprimer le test "true"
-						if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $fk_bank > 0)
-						{
-							$this->insertHistoryLine($PDOdb, $iFileLine, $fk_bank);
 						}
 						
 					}

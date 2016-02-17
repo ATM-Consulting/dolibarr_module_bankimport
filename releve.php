@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -303,12 +304,12 @@ else
 		foreach ($TEcriture as $title_serialize => $TObjp)
 		{
 			printTableHeader($title_serialize, $solde_initial, $acct->id);
-				
+			$totald = $totalc = 0;
+			
 			foreach ($TObjp as $objp)
 			{
 				$var=!$var;
 				$total = $total + $objp->amount;
-				$totald = $totalc = 0;
 				
 				print "<tr ".$bc[$var].">";
 	
@@ -602,8 +603,8 @@ function printTableFooter($title_serialize, $totald, $totalc, $total)
 	
 	// Line Total
 	print '	<td align="right" colspan="4">'.$langs->trans("Total").' :</td>
-			<td align="right">'.price($totald).'</td>
-			<td align="right">'.price($totalc).'</td>
+			<td align="right" class="nowrap">'.price($totald).'</td>
+			<td align="right" class="nowrap">'.price($totalc).'</td>
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>';
 	print '</tr>';
@@ -613,7 +614,7 @@ function printTableFooter($title_serialize, $totald, $totalc, $total)
 	if (!empty($TTitle)) print '<td colspan="'.count($TTitle).'"></td>';
 	print '	<td align="right" colspan="4">&nbsp;</td>
 			<td align="right" colspan="2"><b>'.$langs->trans("EndBankBalance").' :</b></td>
-			<td align="right"><b>'.price($total).'</b></td>
+			<td align="right" class="nowrap" ><b>'.price($total).'</b></td>
 			<td>&nbsp;</td>';
 	print '</tr>';
 			
@@ -623,10 +624,10 @@ function printTableFooter($title_serialize, $totald, $totalc, $total)
 function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$totald, &$totalc, &$paymentsupplierstatic, &$paymentstatic, &$paymentvatstatic, &$bankstatic, &$banklinestatic)
 {
 	// Date operation
-	print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
+	print '<td class="standard_td nowrap" align="center">'.dol_print_date($db->jdate($objp->do),"day").'</td>';
 
 	// Date de valeur
-	print '<td align="center" valign="center" class="nowrap">';
+	print '<td align="center" valign="center" class="standard_td nowrap">';
 	print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
 	print img_previous().'</a> ';
 	print dol_print_date($db->jdate($objp->dv),"day") .' ';
@@ -640,10 +641,10 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
     } else {
         $type_label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
     }
-	print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+	print '<td class="standard_td nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
 	// Description
-	print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+	print '<td valign="center" class="standard_td nowrap"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 	$reg=array();
 	preg_match('/\((.+)\)/i',$objp->label,$reg);	// Si texte entoure de parenthese on tente recherche de traduction
 	if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -663,14 +664,44 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 		{
 			$paymentstatic->id=$links[$key]['url_id'];
 			$paymentstatic->ref=$langs->trans("Payment");
+			
+			$sql = "SELECT pf.fk_facture 
+					FROM ".MAIN_DB_PREFIX."paiement_facture as pf
+						LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
+					WHERE p.rowid = ".$paymentstatic->id;
+			$resql = $db->query($sql);
+			$res = $db->fetch_object($resql);
+			if ($res)
+			{
+				$facture = new Facture($db);
+				$facture->fetch($res->fk_facture);
+				if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1);
+			}
+			
 			print ' '.$paymentstatic->getNomUrl(1);
+			
 			$newline=0;
 		}
 		elseif ($links[$key]['type']=='payment_supplier')
 		{
 			$paymentsupplierstatic->id=$links[$key]['url_id'];
-			$paymentsupplierstatic->ref=$langs->trans("Payment");;
+			$paymentsupplierstatic->ref=$langs->trans("Payment");
+			
+			$sql = "SELECT pf.fk_facture 
+					FROM ".MAIN_DB_PREFIX."paiement_facture as pf
+						LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
+					WHERE p.rowid = ".$paymentstatic->id;
+			$resql = $db->query($sql);
+			$res = $db->fetch_object($resql);
+			if ($res)
+			{
+				$facture = new Facture($db);
+				$facture->fetch($res->fk_facture);
+				if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1);
+			}
+			
 			print ' '.$paymentsupplierstatic->getNomUrl(1);
+			
 			$newline=0;
 		}
 		elseif ($links[$key]['type']=='payment_sc')
@@ -779,15 +810,15 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	if ($objp->amount < 0)
 	{
 		$totald = $totald + abs($objp->amount);
-		print '<td align="right" nowrap=\"nowrap\">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+		print '<td align="right" class="nowrap">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 	}
 	else
 	{
 		$totalc = $totalc + abs($objp->amount);
-		print "<td>&nbsp;</td><td align=\"right\" nowrap=\"nowrap\">".price($objp->amount)."</td>\n";
+		print "<td>&nbsp;</td><td align=\"right\" class='nowrap' >".price($objp->amount)."</td>\n";
 	}
 
-	print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
+	print "<td align=\"right\" class='nowrap' >".price($total)."</td>\n";
 
 	if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 	{
