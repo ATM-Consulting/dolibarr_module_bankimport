@@ -81,10 +81,18 @@
 				<td><?php echo $line['date'] ?></td>
 				<td><?php echo $line['label'] ?></td>
 				<td align="right"><?php echo price($line['amount']) ?></td>
-				<td colspan="5"><?php
+				<td colspan="5">
+					<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+						<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
+						<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
+						<option value="charge"><?php echo $langs->trans('Charges') ?></option>
+						
+					</select>
+					
+					<?php
+					// TODO sur le select du dessus activer les options que si les modules concernés sont activés
 					
 					$comboName = 'TLine[fk_soc]['.$i.']';
-					
 					$line['code_client'] = trim($line['code_client']);
 					
 					$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe 
@@ -93,18 +101,13 @@
 					if($obj_soc = $db->fetch_object($res)) $fk_soc = $obj_soc->rowid;
 					else $fk_soc = 0;
 					
+					echo '<br />';
 					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
 					echo '<br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
-					echo '<br />';
 					
 				?>
-				<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
-					<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
-					<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
-					<option value="charge"><?php echo $langs->trans('Charges') ?></option>
-					
-				</select>
+				
 				
 				<div style="margin-top:5px;" id="line_pieces_<?php echo $i ?>"></div>
 				
@@ -148,7 +151,7 @@
 		
 		$('select[name*="TLine[fk_soc]"] > option[value=-1]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectCompanyPls'); ?>');
 		$('select[name*="TLine[fk_payment]"] > option[value=0]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectPaymentTypePls'); ?>');
-		$('select[name*="TLine[fk_payment]"]').css('margin', '3px 0 2px');
+		$('select[name*="TLine[fk_soc]"]').css('margin', '3px 0 2px');
 	
 		function checkAll() {
 			if($('input[name=checkall]').is(':checked')) {

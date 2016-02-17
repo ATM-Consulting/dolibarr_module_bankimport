@@ -18,16 +18,7 @@
 
 // Permet de gérer les fichier ayant une fin de ligne MAC (suite retour client) (http://stackoverflow.com/questions/4541749/fgetcsv-fails-to-read-line-ending-in-mac-formatted-csv-file-any-better-solution)
 
-$res = 0;
-if (! $res && file_exists("../main.inc.php")) {
-        $res = @include "../main.inc.php";
-}
-if (! $res && file_exists("../../main.inc.php")) {
-        $res = @include "../../main.inc.php";
-}
-if (! $res) {
-    die("Main include failed");
-}
+require 'config.php';
 
 dol_include_once('/bankimport/class/bankimport.class.php');
 dol_include_once('/compta/facture/class/facture.class.php');

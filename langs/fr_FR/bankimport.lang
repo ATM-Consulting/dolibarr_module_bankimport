@@ -38,4 +38,6 @@ WillBeReconciledWithStatement = L'écriture sera rapprochée sur le relevé %s
 AlreadyReconciledWithStatement = L'écriture est déjà rapprochée sur le relevé %s
 LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la correspondance déclarée
 
+BankImport_FatalError_PaymentType_NotPossible=Erreur : le type de paiement [%s] n'est pas possible
+
 SupplierInvoices=Factures fournisseur
