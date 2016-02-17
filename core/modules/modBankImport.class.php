@@ -142,8 +142,8 @@ class modBankImport extends DolibarrModules
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
         $this->tabs = array(
-			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport::/bankimport/releve.php?account=__ID__'
-			,'bank:-statement:NU:$conf->bankimport->enabled'
+			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
+			,'bank:-statement:NU:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT'
 		);
 
         // Dictionaries

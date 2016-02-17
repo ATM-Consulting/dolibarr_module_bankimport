@@ -355,32 +355,34 @@ class BankImport
 				
 				$fk_payment = $TLine['fk_payment'][$iFileLine];
 				$date_paye = $this->TFile[$iFileLine]['datev'];
+				$TFkBank = array();
 				
 				foreach($TObject as $typeObject=>$TAmounts) 
 				{
 					if(!empty($TAmounts)) 
 					{
-						// TODO créer la conf en admin et supprimer le test "true"
-						if (true || !empty($conf->global->BANKIMPORT_HISTORY_IMPORT))
-						{
-							$this->insertHistoryLine($PDOdb, $iFileLine);
-						}
-						
 						switch ($typeObject) 
 						{
 							case 'facture':
-								$this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+								$fk_bank = $this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'fournfacture':
-								$this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+								$fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'charge':
-								$this->doPaymentForCharge();
+								$fk_bank = $this->doPaymentForCharge();
 								break;
 							default:
 								continue;
 								break;
 						}
+						
+						// TODO créer la conf en admin et supprimer le test "true"
+						if (true || !empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $fk_bank > 0)
+						{
+							$this->insertHistoryLine($PDOdb, $iFileLine, $fk_bank);
+						}
+						
 					}
 				}
 				
@@ -408,8 +410,6 @@ class BankImport
 			unset($TLine['new']);
 		}
 		
-		
-		
 		foreach($TLine as $bankLineId => $iFileLine) 
 		{
 			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
@@ -418,17 +418,17 @@ class BankImport
 
 	private function doPaymentForFacture(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
 	{
-		$this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
+		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
 	}
 
 	private function doPaymentForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
 	{
-		$this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
+		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
 	}
 	
 	private function doPaymentForCharge(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
 	{
-		$this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_sc');
+		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_sc');
 	}
 
 	private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment')
@@ -464,10 +464,14 @@ class BankImport
 			{
 				if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
 			}
+			
+			return $bankLineId;
 		}
+		
+		return 0; // Payment fail, can't return bankLineId
 	}
 
-	private function insertHistoryLine(&$PDOdb, $iFileLine)
+	private function insertHistoryLine(&$PDOdb, $iFileLine, $fk_bank)
 	{
 		if (!empty($this->hasHeader) && !empty($this->TOriginLine[$iFileLine]))
 		{
@@ -475,9 +479,11 @@ class BankImport
 			$line = $this->parseLine($this->TOriginLine[$iFileLine]);
 			
 			$historyLine = new TBankImportHistory;
+			
 			$historyLine->num_releve = $this->numReleve;
+			$historyLine->fk_bank = $fk_bank;
 			$historyLine->line_imported_title = $header;
-			$historyLine->line_imported_value = $this->TOriginLine[$iFileLine];
+			$historyLine->line_imported_value = $line;
 			
 			$historyLine->save($PDOdb);
 		}
@@ -561,6 +567,7 @@ class TBankImportHistory extends TObjetStd
 		$this->set_table( MAIN_DB_PREFIX.'bankimport_history' );
     	 
 		$this->add_champs('num_releve',array('type'=>'varchar','length'=>50,'index'=>true));
+		$this->add_champs('fk_bank',array('type'=>'integer','index'=>true));
         $this->add_champs('line_imported_title,line_imported_value', array('type'=>'array'));
         
         $this->_init_vars();
@@ -568,4 +575,23 @@ class TBankImportHistory extends TObjetStd
 	    $this->start();
 	}
 	
+	/*
+	 * Retourne un array contenant le detail de l'import de l'écriture bancaire groupé par title
+	 */
+	public function getAllHistoryByNumReleve(&$PDOdb, $num_releve)
+	{
+		$sql = 'SELECT rowid, line_imported_title FROM '.$this->get_table().' WHERE num_releve = '.$PDOdb->quote($num_releve);
+		$PDOdb->Execute($sql);
+		
+		$TEcriture = array();
+		$PDOdb2 = new TPDOdb;
+		while ($line = $PDOdb->Get_line())
+		{
+			$o = new TBankImportHistory;
+			$o->load($PDOdb2, $line->rowid);
+			$TEcriture[$line->line_imported_title][$o->fk_bank] = $o;
+		}
+		
+		return $TEcriture;
+	}
 }
