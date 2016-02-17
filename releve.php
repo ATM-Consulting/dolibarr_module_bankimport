@@ -142,7 +142,6 @@ if (empty($num))
 		print '<br>';
 
 
-
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$acct->id, $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';

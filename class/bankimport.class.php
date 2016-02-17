@@ -380,7 +380,7 @@ class BankImport
 						}
 						
 						// TODO créer la conf en admin et supprimer le test "true"
-						if (true || !empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $fk_bank > 0)
+						if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $fk_bank > 0)
 						{
 							$this->insertHistoryLine($PDOdb, $iFileLine, $fk_bank);
 						}
@@ -415,6 +415,10 @@ class BankImport
 		foreach($TLine as $bankLineId => $iFileLine) 
 		{
 			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
+			if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
+			{
+				$this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
+			}
 		}
 	}
 

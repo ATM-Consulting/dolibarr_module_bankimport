@@ -163,17 +163,32 @@ print '<input type="text" id="BANKIMPORT_DATE_FORMAT" name="BANKIMPORT_DATE_FORM
 print '&nbsp;<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 print '</form>';
 print '</td></tr>';
+			
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FileHasHeader").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_HEADER');
+print '</td></tr>';	
 
-// File header
-$var = !$var;
-?><tr <?php echo $bc[$var] ?>>
-       <td><?php echo $langs->trans('FileHasHeader') ?></td><td></td><td><?php echo ajax_constantonoff('BANKIMPORT_HEADER'); ?></td>
-</tr> <?php
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UseMacCompatibility").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_MAC_COMPATIBILITY');
+print '</td></tr>';	
 
-$var = !$var;
-?><tr <?php echo $bc[$var] ?>>
-				<td><?php echo $langs->trans('UseMacCompatibility') ?></td><td></td><td><?php echo ajax_constantonoff('BANKIMPORT_MAC_COMPATIBILITY'); ?></td>
-			</tr> <?php
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("bankImportUseHistory").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_HISTORY_IMPORT');
+print '</td></tr>';	
+
 print '</table>';
 
 dol_fiche_end();
