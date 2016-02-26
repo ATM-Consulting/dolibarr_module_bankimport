@@ -35,6 +35,12 @@ bankImport_selectCompanyPls=Sélectionnez une société
 bankImport_selectPaymentTypePls=Sélectionnez paiement
 bankImportNoReccordFound=Aucune information trouvée
 
+bankImportFieldBankAccountRequired=Compte bancaire obligatoire
+bankImportFieldNumReleveRequired=Numéro de relevé obligatoire
+bankImportFieldBankImportFileRequired=Fichier obligatoire
+bankImportFieldCompanyRequired=Société obligatoire
+bankImportFieldPaymentRequired=Type de règlement obligatoire
+
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s
 WillBeReconciledWithStatement = L'écriture sera rapprochée sur le relevé %s

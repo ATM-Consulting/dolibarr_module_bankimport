@@ -35,6 +35,12 @@ bankImport_selectCompanyPls=Select company
 bankImport_selectPaymentTypePls=select payment
 bankImportNoReccordFound=No reccord found
 
+bankImportFieldBankAccountRequired=Bank account required
+bankImportFieldNumReleveRequired=Account statement required
+bankImportFieldBankImportFileRequired=File required
+bankImportFieldCompanyRequired=Company required
+bankImportFieldPaymentRequired=Payment type required
+
 # DATA
 BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciliated
 WillBeReconciledWithStatement = Transaction will be reconciliated with statement %s
