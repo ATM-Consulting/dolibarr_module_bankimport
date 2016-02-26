@@ -1,15 +1,15 @@
 <form method="post" enctype="multipart/form-data" name="bankimport">
 	<table class="border" width="100%">
 		<tr>
-			<td width="200"><label for="selectaccountid"><?php echo $langs->trans("BankAccount") ?></label></td>
+			<td width="200"><label class="fieldrequired" for="selectaccountid"><?php echo $langs->trans("BankAccount") ?></label></td>
 			<td><?php echo $form->select_comptes( ($import->account) ? $import->account->id : -1,'accountid',0,'courant <> 2',1) ?></td>
 			<td width="200"><label for="ds"><?php echo $langs->trans("DateStart") ?></label></td>
 			<td><?php echo $form->select_date($import->dateStart, 'ds') ?></td>
-			<td><label for="numreleve"><?php echo $langs->trans("AccountStatement") ?></label></td>
+			<td><label class="fieldrequired" for="numreleve"><?php echo $langs->trans("AccountStatement") ?></label></td>
 			<td><input type="text" id="numreleve" name="numreleve" value="<?php echo $import->numReleve ?>" /></td>
 		</tr>
 		<tr>
-			<td width="200"><label for="bankimportfile"><?php echo $langs->trans("BankImportFile") ?></label></td>
+			<td width="200"><label class="fieldrequired" for="bankimportfile"><?php echo $langs->trans("BankImportFile") ?></label></td>
 			<td><input type="file" id="bankimportfile" name="bankimportfile" /></td>
 			<td width="200"><label for="de"><?php echo $langs->trans("DateEnd") ?></label></td>
 			<td><?php echo $form->select_date($import->dateEnd, 'de') ?></td>
@@ -45,3 +45,27 @@
 		<input type="submit" class="button" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("BankCompareTransactions")) ?>">
 	</div>
 </form>
+
+<script type="text/javascript">
+	$(function() {
+		$('form[name=bankimport]').submit(function(event) {
+			var TError = new Array;
+			
+			if ($('#selectaccountid').val() == -1) 	TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankAccountRequired'); ?>");
+			if (!$('#numreleve').val().trim()) 		TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldNumReleveRequired'); ?>");
+			if ($('#bankimportfile').val() == '') 	TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankImportFileRequired'); ?>");
+			
+			if (TError.length > 0)
+			{
+				for (var i = 0; i < TError.length; i++)
+				{
+					$.jnotify(TError[i], 'error', true);
+				}
+				
+				return false;
+			}
+			
+			return true;
+		});
+	});
+</script>

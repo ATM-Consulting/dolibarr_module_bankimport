@@ -13,6 +13,8 @@ BankImportDateFormat = CSV file date format
 BankImportSeparatorHelp = Character used to separate your CSV file columns (Usually "," or ";". A single character).
 BankImportMappingHelp = Column correspondence in your CSV file. Codes "date", "label", "debit" and "credit" must be in this data mapping.<br>If your file contains only one column for the amount, use "amount" and possibly "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") instead of "debit" and "credit".<br>If your file contains other columns, name them "null" in the correspondence.
 BankImportDateFormatHelp = Date format used in your CSV file (%%d is the day on two characters, %%m month on two characters and %%Y year on four characters). For example, the date 07/25/2013 matches the date format %%m/%%d/%%Y.
+UseMacCompatibility=
+bankImportUseHistory=Enable the import history with the file content (<b>Carreful: a header line must be exists in you file</b>)
 
 # MENU
 LeftMenuBankImport = Bank import
@@ -29,9 +31,20 @@ Action = Planned action
 DoAction = Validate
 StatementCreatedAndDataImported = Statement %s created with %s transactions reconciliated, including %s created
 FileHasHeader = File has a header line
+bankImport_selectCompanyPls=Select company
+bankImport_selectPaymentTypePls=select payment
+bankImportNoReccordFound=No reccord found
+
+bankImportFieldBankAccountRequired=Bank account required
+bankImportFieldNumReleveRequired=Account statement required
+bankImportFieldBankImportFileRequired=File required
+bankImportFieldCompanyRequired=Company required
+bankImportFieldPaymentRequired=Payment type required
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = Transaction will be created and reconciliated
 WillBeReconciledWithStatement = Transaction will be reconciliated with statement %s
 AlreadyReconciledWithStatement = Transaction already reconciliated with statement %s
 LineDoesNotMatchWithMapping = File line doesn't match mapping
+
+BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible

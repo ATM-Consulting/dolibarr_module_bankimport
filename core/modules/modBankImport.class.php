@@ -58,7 +58,7 @@ class modBankImport extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Allow to import csv files to reconcile bank accounts";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.0';
+		$this->version = '2.1';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -111,10 +111,10 @@ class modBankImport extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			0 => array('BANKIMPORT_MAPPING', 'chaine', 'date;label;debit;credit', 'CSV file mapping for bank import', 1, 'current', 1),
-			1 => array('BANKIMPORT_SEPARATOR', 'chaine', ';', 'Data separator for bank import', 1, 'current', 1),
-			2 => array('BANKIMPORT_DATE_FORMAT', 'chaine', 'd/m/Y', 'Date format in CSV file', 1, 'current', 1),
-			3 => array('BANKIMPORT_HEADER', 'bool', true, 'File header line presence', 1, 'current', 1)
+			0 => array('BANKIMPORT_MAPPING', 'chaine', 'date;label;debit;credit', 'CSV file mapping for bank import', 1, 'current', 0),
+			1 => array('BANKIMPORT_SEPARATOR', 'chaine', ';', 'Data separator for bank import', 1, 'current', 0),
+			2 => array('BANKIMPORT_DATE_FORMAT', 'chaine', 'd/m/Y', 'Date format in CSV file', 1, 'current', 0),
+			3 => array('BANKIMPORT_HEADER', 'bool', true, 'File header line presence', 1, 'current', 0)
 		);
 
 		// Array to add new pages in new tabs
@@ -141,7 +141,10 @@ class modBankImport extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array();
+        $this->tabs = array(
+			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
+			,'bank:-statement:NU:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT'
+		);
 
         // Dictionaries
 	    if (! isset($conf->bankimport->enabled))
@@ -270,6 +273,11 @@ class modBankImport extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
+
+		define('INC_FROM_DOLIBARR',true);
+		
+		dol_include_once('/bankimport/config.php');
+		dol_include_once('/bankimport/script/create-maj-base.php');
 
 		$result=$this->_load_tables('/bankimport/sql/');
 
