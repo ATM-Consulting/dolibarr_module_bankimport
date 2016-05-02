@@ -114,6 +114,7 @@
 				
 				<script type="text/javascript">
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
+						var container_td = $(this).parent(); // td
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
 						
@@ -132,7 +133,21 @@
 								,i:<?php echo $i ?>
 							}
 						}).done(function( data) {
-							$("#line_pieces_<?php echo $i ?>").html(data);
+							$(container_td).find('input[name^="TLine[piece]"]').each(function(i) {
+								var line = $('input[name="'+$(this).attr('name')+'"]');
+								console.log($(this).attr('name'));
+								if(line.val() <= 0){
+									//console.log(line);
+									line.parent().remove();
+								}
+							});
+							/*$(data).find('input[name^="TLine[piece]"]').each(function(i, item) {
+								if ($(container_td).find(item).length > 0) {}
+								else {
+									append.
+								}
+							});*/
+							$("#line_pieces_<?php echo $i ?>").append(data);
 						});
 						
 					});
