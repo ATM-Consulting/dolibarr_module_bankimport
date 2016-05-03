@@ -141,13 +141,16 @@
 									line.parent().remove();
 								}
 							});
-							/*$(data).find('input[name^="TLine[piece]"]').each(function(i, item) {
-								if ($(container_td).find(item).length > 0) {}
+							
+							//console.log(data);
+							$(data).find('input[name^="TLine[piece]"]').each(function(i, item) {
+								if ($(container_td).find($(item)).length > 0) {}
 								else {
-									append.
+									//console.log($(item).parent());
+									$("#line_pieces_<?php echo $i ?>").append($(item).parent());
 								}
-							});*/
-							$("#line_pieces_<?php echo $i ?>").append(data);
+							});
+							//$("#line_pieces_<?php echo $i ?>").append(data);
 						});
 						
 					});
