@@ -118,6 +118,10 @@
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
 						
+						if(this.name.toString().indexOf('TLine[type]') !== -1) {
+							$("#line_pieces_<?php echo $i; ?>").empty();
+						}
+						
 						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
 						var fk_soc = $fk_soc.val();
 						
@@ -133,24 +137,34 @@
 								,i:<?php echo $i ?>
 							}
 						}).done(function( data) {
-							$(container_td).find('input[name^="TLine[piece]"]').each(function(i) {
-								var line = $('input[name="'+$(this).attr('name')+'"]');
-								console.log($(this).attr('name'));
-								if(line.val() <= 0){
-									//console.log(line);
-									line.parent().remove();
-								}
-							});
+							var told_input = $(container_td).find('input[name^="TLine[piece]"]');
 							
-							//console.log(data);
-							$(data).find('input[name^="TLine[piece]"]').each(function(i, item) {
-								if ($(container_td).find($(item)).length > 0) {}
-								else {
-									//console.log($(item).parent());
-									$("#line_pieces_<?php echo $i ?>").append($(item).parent());
-								}
-							});
-							//$("#line_pieces_<?php echo $i ?>").append(data);
+							if(told_input.length == 0) {
+								console.log($("#line_pieces_<?php echo $i ?>"));
+								$("#line_pieces_<?php echo $i ?>").append(data);
+							} else {
+							
+								told_input.each(function(i) {
+									var line = $('input[name="'+$(this).attr('name')+'"]');
+
+									if(line.val() <= 0){
+										line.parent().remove();
+									}
+								});
+								
+								
+								var input_tline = $(data).find('input[name^="TLine[piece]"]');
+								input_tline.each(function(i, item) {
+									
+									if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
+										console.log(item);
+									} else {
+										$("#line_pieces_<?php echo $i ?>").append($(item).parent());
+									}
+
+								});
+							}
+							
 						});
 						
 					});
