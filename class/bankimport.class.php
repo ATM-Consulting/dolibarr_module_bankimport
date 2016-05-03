@@ -415,6 +415,24 @@ class BankImport
 		}
 	}
 
+	private function validateInvoices(&$TAmounts, $type) {
+		
+		global $db, $user;
+		
+		dol_include_once('/compta/facture/class/facture.class.php');
+		dol_include_once('/fourn/class/fournisseur.facture.class.php');
+		
+		$TTypeElement = array('payment'=>'Facture', 'payment_supplier'=>'FactureFournisseur');
+		
+		if(!empty($TAmounts) && in_array($type, array_keys($TTypeElement))) {
+			foreach($TAmounts as $facid=>$amount) {
+				$f = new $TTypeElement[$type]($db);
+				if($f->fetch($facid) > 0 && $f->statut == 0 && $amount > 0) $f->validate($user);
+			}
+		}
+		
+	}
+
 	private function doPaymentForFacture(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
 	{
 		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
@@ -432,7 +450,7 @@ class BankImport
 
 	private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment')
 	{
-		global $langs,$user;
+		global $conf, $langs,$user;
 		
 		$note = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
 		
@@ -440,6 +458,8 @@ class BankImport
 		elseif ($type == 'payment_supplier') $paiement = new PaiementFourn($this->db);
 		elseif ($type == 'payment_supplier') $paiement = new PaymentSocialContribution($this->db);
 		else exit($langs->trans('BankImport_FatalError_PaymentType_NotPossible', $type));
+		
+		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $this->validateInvoices($TAmounts, $type);
 		
 	    $paiement->datepaye     = $date_paye;
 	    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching

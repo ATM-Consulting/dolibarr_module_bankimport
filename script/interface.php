@@ -18,7 +18,7 @@
 
 	
 function _pieceList($i, $fk_soc, $type) {
-	global $db, $langs;
+	global $db, $langs, $conf;
 	
 	
 	
@@ -27,7 +27,9 @@ function _pieceList($i, $fk_soc, $type) {
 	if($type == 'facture') {
 		
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture 
-				WHERE fk_statut IN (1,3) AND fk_soc=".$fk_soc." ORDER BY datef";
+				WHERE fk_statut IN (";
+		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $sql.= "0,";
+		$sql.= "1,3) AND fk_soc=".$fk_soc." ORDER BY datef";
 				
 		$res = $db->query($sql);
 		
@@ -45,7 +47,9 @@ function _pieceList($i, $fk_soc, $type) {
 	else if($type == 'fournfacture') {
 		
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn 
-				WHERE fk_statut IN (1) AND fk_soc=".$fk_soc." ORDER BY datef";
+				WHERE fk_statut IN (";
+		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $sql.= "0,";
+		$sql.= "1) AND fk_soc=".$fk_soc." ORDER BY datef";
 				
 		$res = $db->query($sql);
 		
