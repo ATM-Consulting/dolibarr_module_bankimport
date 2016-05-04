@@ -25,6 +25,8 @@
 
 require('config.php');
 dol_include_once('/bankimport/class/bankimport.class.php');
+dol_include_once('/compta/facture/class/facture.class.php');
+dol_include_once('/fourn/class/fournisseur.facture.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -122,7 +124,7 @@ if (empty($num))
 
 		// Onglets
 		$head=bank_prepare_head($acct);
-		dol_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0,'account');
+		dol_fiche_head($head,'bankimport_statement',$langs->trans("FinancialAccount"),0,'account');
 
 		print '<table class="border" width="100%">';
 
@@ -665,6 +667,8 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			$paymentstatic->id=$links[$key]['url_id'];
 			$paymentstatic->ref=$langs->trans("Payment");
 			
+			print '<br />'.$paymentstatic->getNomUrl(1);
+			
 			$sql = "SELECT pf.fk_facture 
 					FROM ".MAIN_DB_PREFIX."paiement_facture as pf
 						LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
@@ -675,10 +679,8 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			{
 				$facture = new Facture($db);
 				$facture->fetch($res->fk_facture);
-				if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1);
+				//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
 			}
-			
-			print ' '.$paymentstatic->getNomUrl(1);
 			
 			$newline=0;
 		}
@@ -687,20 +689,20 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			$paymentsupplierstatic->id=$links[$key]['url_id'];
 			$paymentsupplierstatic->ref=$langs->trans("Payment");
 			
-			$sql = "SELECT pf.fk_facture 
-					FROM ".MAIN_DB_PREFIX."paiement_facture as pf
-						LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
-					WHERE p.rowid = ".$paymentstatic->id;
+			print '<br />'.$paymentsupplierstatic->getNomUrl(1);
+			
+			$sql = "SELECT pf.fk_facturefourn
+					FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf
+						LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
+					WHERE p.rowid = ".$paymentsupplierstatic->id;
 			$resql = $db->query($sql);
 			$res = $db->fetch_object($resql);
 			if ($res)
 			{
-				$facture = new Facture($db);
-				$facture->fetch($res->fk_facture);
-				if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1);
+				$facture = new FactureFournisseur($db);
+				$facture->fetch($res->fk_facturefourn);
+				//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
 			}
-			
-			print ' '.$paymentsupplierstatic->getNomUrl(1);
 			
 			$newline=0;
 		}
@@ -775,6 +777,12 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			$newline=0;
 		}
 	}
+	
+	if($links[1]['type']=='payment_supplier') $param = 'fourn';
+	print '<br />'.getListFacture($links[1]['url_id'], $param);
+
+	// Avec la nouvelle version de bankimport, on peut régler des factures de différents tiers avec un même paiement, donc on les affiche toutes
+	
 
 	// Categories
 	if ($ve)
@@ -830,4 +838,41 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	{
 		print "<td align=\"center\">&nbsp;</td>";
 	}
+}
+
+function getListFacture($id_reglement, $fourn='') {
+	
+	global $db;
+	
+	$sql = 'SELECT pf.fk_facture'.$fourn;
+	// empty($fourn) = Spécificité pour les factures clients
+	if(empty($fourn)) $sql.= ', rem.fk_facture  as fac_finale';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement'.$fourn.'_facture'.$fourn.' as pf';
+	if(empty($fourn)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_except as rem ON (pf.fk_facture = rem.fk_facture_source)';
+	$sql.= ' WHERE fk_paiement'.$fourn.' = '.$id_reglement;
+	//echo $sql;exit;
+	$resql = $db->query($sql);
+	
+	$Tfact = array();
+	
+	$classname = 'Facture'.(empty($fourn) ? '' : 'Fournisseur');
+	while($res = $db->fetch_object($resql)) {
+		
+		$f = new $classname($db);
+		if($f->fetch($res->{'fk_facture'.$fourn}) > 0) {
+			
+			// On affiche la facture finale s'il s'agit d'un acompte
+			$suite = '';
+			if(empty($fourn) && !empty($res->fac_finale)) {
+				$fac_finale = new Facture($db);
+				$fac_finale->fetch($res->fac_finale);
+				$suite = ' / '.$fac_finale->getNomUrl(1);
+			}
+			
+			$Tfact[] = $f->getNomURL(1).$suite;
+		}
+	}
+	
+	return implode('<br />', $Tfact);
+	
 }
