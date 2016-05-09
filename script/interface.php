@@ -27,7 +27,7 @@ function _pieceList($i, $fk_soc, $type) {
 	
 	if($type == 'facture') {
 		
-		$sql = "SELECT rowid, datef, fk_soc FROM ".MAIN_DB_PREFIX."facture 
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture 
 				WHERE fk_statut IN (";
 		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $sql.= "0,";
 		$sql.= "1,3) AND fk_soc=".$fk_soc." ORDER BY datef";
@@ -43,12 +43,13 @@ function _pieceList($i, $fk_soc, $type) {
 			$s->fetch($f->socid);
 			
 			$r.='<div style="margin:2px 0;"><span style="width:400px;display:inline-block;">'
-				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' '.price($f->total_ttc).'</span>'
+				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' <strong>'.price($f->total_ttc).'</strong></span>'
 				.'<input type="hidden" name="price_TLine[piece]['.$i.'][facture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
-				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][facture]['.$f->id.']" class="auto_price"').'<input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="6" class="flat" /></div>';
+				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][facture]['.$f->id.']" class="auto_price"')
+				.'<input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="6" class="flat" /></div>';
 			
 			
-		}				
+		}			
 		
 	}
 	else if($type == 'fournfacture') {
@@ -65,7 +66,14 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new FactureFournisseur($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" size="5" class="flat" /></div>';
+			$s = new Societe($db);
+			$s->fetch($f->socid);
+			
+			$r.='<div style="margin:2px 0;"><span style="width:400px;display:inline-block;">'
+				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' <strong>'.price($f->total_ttc).'</strong></span>'
+				.'<input type="hidden" name="price_TLine[piece]['.$i.'][facture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
+				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][facture]['.$f->id.']" class="auto_price"')
+				.'<input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="6" class="flat" /></div>';
 			
 			
 		}		
