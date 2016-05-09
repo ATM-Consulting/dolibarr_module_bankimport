@@ -175,6 +175,10 @@
 	
 									});
 								}
+					
+								$(".auto_price").click(function() {
+									$('[name="'+$(this).attr('id')+'"]').val($('[name="price_'+$(this).attr('id')+'"]').val());
+								});
 							
 							<?php } ?>
 							
@@ -182,7 +186,6 @@
 						
 					});
 					
-						
 				</script></td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
 				<td align="center"><input type="checkbox" rel="doImport" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
