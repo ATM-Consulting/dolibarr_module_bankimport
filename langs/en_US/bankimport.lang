@@ -15,6 +15,7 @@ BankImportMappingHelp = Column correspondence in your CSV file. Codes "date", "l
 BankImportDateFormatHelp = Date format used in your CSV file (%%d is the day on two characters, %%m month on two characters and %%Y year on four characters). For example, the date 07/25/2013 matches the date format %%m/%%d/%%Y.
 UseMacCompatibility=
 bankImportUseHistory=Enable the import history with the file content (<b>Carreful: a header line must be exists in you file</b>)
+bankImportAllowInvoiceFromSeveralThird=Allow to pay / reconcile payments from different third parties
 bankImportAllowDraftInvoice=Allow to reconcile draft invoice payments (invoices will be validated and payments created)
 
 # MENU

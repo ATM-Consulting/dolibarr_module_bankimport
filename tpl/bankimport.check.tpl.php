@@ -118,9 +118,13 @@
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
 						
-						if(this.name.toString().indexOf('TLine[type]') !== -1) {
-							$("#line_pieces_<?php echo $i; ?>").empty();
-						}
+						<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+						
+							if(this.name.toString().indexOf('TLine[type]') !== -1) {
+								$("#line_pieces_<?php echo $i; ?>").empty();
+							}
+						
+						<?php } ?>
 						
 						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
 						var fk_soc = $fk_soc.val();
@@ -137,33 +141,42 @@
 								,i:<?php echo $i ?>
 							}
 						}).done(function( data) {
-							var told_input = $(container_td).find('input[name^="TLine[piece]"]');
 							
-							if(told_input.length == 0) {
-								console.log($("#line_pieces_<?php echo $i ?>"));
-								$("#line_pieces_<?php echo $i ?>").append(data);
-							} else {
+							<?php if(empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
 							
-								told_input.each(function(i) {
-									var line = $('input[name="'+$(this).attr('name')+'"]');
-
-									if(line.val() <= 0){
-										line.parent().remove();
-									}
-								});
+								$("#line_pieces_<?php echo $i ?>").html(data);
+							
+							<?php } else { ?>
+							
+								var told_input = $(container_td).find('input[name^="TLine[piece]"]');
 								
+								if(told_input.length == 0) {
+									console.log($("#line_pieces_<?php echo $i ?>"));
+									$("#line_pieces_<?php echo $i ?>").append(data);
+								} else {
 								
-								var input_tline = $(data).find('input[name^="TLine[piece]"]');
-								input_tline.each(function(i, item) {
+									told_input.each(function(i) {
+										var line = $('input[name="'+$(this).attr('name')+'"]');
+	
+										if(line.val() <= 0){
+											line.parent().remove();
+										}
+									});
 									
-									if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
-										console.log(item);
-									} else {
-										$("#line_pieces_<?php echo $i ?>").append($(item).parent());
-									}
-
-								});
-							}
+									
+									var input_tline = $(data).find('input[name^="TLine[piece]"]');
+									input_tline.each(function(i, item) {
+										
+										if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
+											console.log(item);
+										} else {
+											$("#line_pieces_<?php echo $i ?>").append($(item).parent());
+										}
+	
+									});
+								}
+							
+							<?php } ?>
 							
 						});
 						

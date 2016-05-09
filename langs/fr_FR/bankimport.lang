@@ -15,6 +15,7 @@ BankImportMappingHelp = Correspondance des colonnes de votre fichier CSV. Attent
 BankImportDateFormatHelp = Format de date utilisé dans votre fichier CSV (%%d correspond au jour sur deux caractères, %%m au mois sur deux caractère et %%Y l'année sur 4 caractères). Par exemple la date 25/07/2013 correspond au format %%d/%%m/%%Y.
 UseMacCompatibility=
 bankImportUseHistory=Activer l'historisation des imports avec le contenu du fichier (<b>Attention : une ligne d'en-tête doit être présent dans votre fichier</b>)
+bankImportAllowInvoiceFromSeveralThird=Autoriser le règlement / rapprochement sur des factures appartenant à différents tiers
 bankImportAllowDraftInvoice=Autoriser le rapprochement sur des factures au statut brouillon (validation de la facture et création du règlement)
 
 # MENU
