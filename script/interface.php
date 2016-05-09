@@ -71,9 +71,9 @@ function _pieceList($i, $fk_soc, $type) {
 			
 			$r.='<div style="margin:2px 0;"><span style="width:400px;display:inline-block;">'
 				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' <strong>'.price($f->total_ttc).'</strong></span>'
-				.'<input type="hidden" name="price_TLine[piece]['.$i.'][facture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
-				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][facture]['.$f->id.']" class="auto_price"')
-				.'<input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="6" class="flat" /></div>';
+				.'<input type="hidden" name="price_TLine[piece]['.$i.'][fournfacture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
+				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" class="auto_price"')
+				.'<input type="text" value="" name="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" size="6" class="flat" /></div>';
 			
 			
 		}		
