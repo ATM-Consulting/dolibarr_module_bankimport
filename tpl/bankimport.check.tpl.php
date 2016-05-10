@@ -175,12 +175,12 @@
 	
 									});
 								}
-					
-								$(".auto_price").click(function() {
-									$('[name="'+$(this).attr('id')+'"]').val($('[name="price_'+$(this).attr('id')+'"]').val());
-								});
 							
 							<?php } ?>
+					
+							$(".auto_price").click(function() {
+								$('[name="'+$(this).attr('id')+'"]').val($('[name="price_'+$(this).attr('id')+'"]').val());
+							});
 							
 						});
 						
