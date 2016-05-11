@@ -109,8 +109,9 @@
 					
 				?>
 				
-				
-				<div style="margin-top:5px;" id="line_pieces_<?php echo $i ?>"></div>
+				<div class="container">
+					<div style="margin-top:5px;" id="line_pieces_<?php echo $i ?>"></div>
+				</div>
 				
 				<script type="text/javascript">
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
@@ -122,6 +123,9 @@
 						
 							if(this.name.toString().indexOf('TLine[type]') !== -1) {
 								$("#line_pieces_<?php echo $i; ?>").empty();
+								$div = $(container_td).find('div.container');
+								console.log($div);
+								$div.find('div[rel=total]').remove();
 							}
 						
 						<?php } ?>
@@ -179,7 +183,25 @@
 							<?php } ?>
 					
 							$(".auto_price").click(function() {
-								$('[name="'+$(this).attr('id')+'"]').val($('[name="price_'+$(this).attr('id')+'"]').val());
+								$input = $('input[name="'+$(this).attr('id')+'"]');
+								$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
+								$input.change();
+							});
+							
+							$('input[rel=priceToPaiment]').unbind().change(function() {
+								
+								$div = $(this).closest('div.container');
+								console.log($div);
+								$div.find('div[rel=total]').remove();
+								
+								total = 0;
+								$div.find('input[rel=priceToPaiment]').each(function(i,item) {
+									var price = parseFloat($(item).val());
+									total += price;
+								});
+								
+								$div.append('<div style="font-weight:bold;" rel="total" align="left">Total : '+total+'</div>');
+								
 							});
 							
 						});
