@@ -114,8 +114,17 @@
 				
 				<script type="text/javascript">
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
+						var container_td = $(this).parent(); // td
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
+						
+						<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+						
+							if(this.name.toString().indexOf('TLine[type]') !== -1) {
+								$("#line_pieces_<?php echo $i; ?>").empty();
+							}
+						
+						<?php } ?>
 						
 						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
 						var fk_soc = $fk_soc.val();
@@ -132,12 +141,51 @@
 								,i:<?php echo $i ?>
 							}
 						}).done(function( data) {
-							$("#line_pieces_<?php echo $i ?>").html(data);
+							
+							<?php if(empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+							
+								$("#line_pieces_<?php echo $i ?>").html(data);
+							
+							<?php } else { ?>
+							
+								var told_input = $(container_td).find('input[name^="TLine[piece]"]');
+								
+								if(told_input.length == 0) {
+									console.log($("#line_pieces_<?php echo $i ?>"));
+									$("#line_pieces_<?php echo $i ?>").append(data);
+								} else {
+								
+									told_input.each(function(i) {
+										var line = $('input[name="'+$(this).attr('name')+'"]');
+	
+										if(line.val() <= 0){
+											line.parent().remove();
+										}
+									});
+									
+									
+									var input_tline = $(data).find('input[name^="TLine[piece]"]');
+									input_tline.each(function(i, item) {
+										
+										if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
+											console.log(item);
+										} else {
+											$("#line_pieces_<?php echo $i ?>").append($(item).parent());
+										}
+	
+									});
+								}
+							
+							<?php } ?>
+					
+							$(".auto_price").click(function() {
+								$('[name="'+$(this).attr('id')+'"]').val($('[name="price_'+$(this).attr('id')+'"]').val());
+							});
+							
 						});
 						
 					});
 					
-						
 				</script></td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
 				<td align="center"><input type="checkbox" rel="doImport" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>

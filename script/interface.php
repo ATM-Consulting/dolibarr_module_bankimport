@@ -2,6 +2,7 @@
 
 	require '../config.php';
 	dol_include_once('/compta/facture/class/facture.class.php');
+	dol_include_once('/societe/class/societe.class.php');
 	dol_include_once('/fourn/class/fournisseur.facture.class.php');
 	dol_include_once('/compta/sociales/class/chargesociales.class.php');
 	
@@ -20,7 +21,7 @@
 function _pieceList($i, $fk_soc, $type) {
 	global $db, $langs, $conf;
 	
-	
+	$langs->load('compta');
 	
 	$r='';
 	
@@ -38,10 +39,17 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new Facture($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div style="margin:2px 0;"><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="5" class="flat" /></div>';
+			$s = new Societe($db);
+			$s->fetch($f->socid);
+			
+			$r.='<div style="margin:2px 0;"><span style="width:400px;display:inline-block;">'
+				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' <strong>'.price($f->total_ttc).'</strong></span>'
+				.'<input type="hidden" name="price_TLine[piece]['.$i.'][facture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
+				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][facture]['.$f->id.']" class="auto_price"')
+				.'<input type="text" value="" name="TLine[piece]['.$i.'][facture]['.$f->id.']" size="6" class="flat" /></div>';
 			
 			
-		}				
+		}			
 		
 	}
 	else if($type == 'fournfacture') {
@@ -58,7 +66,14 @@ function _pieceList($i, $fk_soc, $type) {
 			$f=new FactureFournisseur($db);
 			$f->fetch($obj->rowid);
 			
-			$r.='<div><span style="width:200px;display:inline-block;">'. $f->getNomUrl(1).' '.price($f->total_ttc) .'</span> <input type="text" value="" name="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" size="5" class="flat" /></div>';
+			$s = new Societe($db);
+			$s->fetch($f->socid);
+			
+			$r.='<div style="margin:2px 0;"><span style="width:400px;display:inline-block;">'
+				.$f->getNomUrl(1).' ('.date('d/m/Y', $f->date).') '.$s->getNomUrl(1, '', 12).' <strong>'.price($f->total_ttc).'</strong></span>'
+				.'<input type="hidden" name="price_TLine[piece]['.$i.'][fournfacture]['.$f->id.']" value="'.price2num($f->total_ttc).'" />'
+				.img_picto($langs->trans('AddRemind'),'rightarrow.png', 'id="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" class="auto_price"')
+				.'<input type="text" value="" name="TLine[piece]['.$i.'][fournfacture]['.$f->id.']" size="6" class="flat" /></div>';
 			
 			
 		}		
