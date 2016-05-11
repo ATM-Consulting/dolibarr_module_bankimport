@@ -840,6 +840,11 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	}
 }
 
+/**
+ * @param $id_regelement : numéro du paiement
+ * @param $fourn : contient chaine vide ou "fourn", parce que s'il s'agit d'un paiement fournisseur,
+ * la table s'appelle llx_paiementfourn_facturefourn
+ */
 function getListFacture($id_reglement, $fourn='') {
 	
 	global $db;
@@ -855,7 +860,9 @@ function getListFacture($id_reglement, $fourn='') {
 	
 	$Tfact = array();
 	
-	$classname = 'Facture'.(empty($fourn) ? '' : 'Fournisseur');
+	$classname = 'Facture';
+	if (!empty($fourn)) $classname = 'FactureFournisseur';
+	
 	while($res = $db->fetch_object($resql)) {
 		
 		$f = new $classname($db);

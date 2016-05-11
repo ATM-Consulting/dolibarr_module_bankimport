@@ -19,7 +19,7 @@
 
 	
 function _pieceList($i, $fk_soc, $type) {
-	global $db, $langs, $conf, $langs;
+	global $db, $langs, $conf;
 	
 	$langs->load('compta');
 	
