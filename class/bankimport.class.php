@@ -160,13 +160,17 @@ class BankImport
 			}
 //		  var_dump($dataline, $delimiter, $enclosure);
 
-			if(count($dataline) == count($mapping)) {
+			$mapping_en_colonne = (strpos($mapping_string, ':') !== false) ? true : false;
+
+			if((count($dataline) == count($mapping)) || $mapping_en_colonne) {
 				$this->TOriginLine[] = $dataline;
 				$data = array_combine($mapping, $dataline);
-
+				
+				if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
+				
 				// Gestion du montant débit / crédit
 				if (empty($data['debit']) && empty($data['credit'])) {
-					$amount = price2num($data['amount']);
+					$amount = (float)price2num($data['amount']);
 
 					// Direction support
 					if (!empty($data['direction'])) {
@@ -181,11 +185,12 @@ class BankImport
 						$data['debit'] = $amount;
 					}
 				} else {
-					$data['debit'] = price2num($data['debit']);
+					$data['debit'] = (float)price2num($data['debit']);
+					 
 					if ($data['debit'] > 0) {
 						$data['debit'] *= -1;
 					}
-					$data['credit'] = price2num($data['credit']);
+					$data['credit'] = (float)price2num($data['credit']);
 				}
 				
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
@@ -208,6 +213,26 @@ class BankImport
 		}
 		
 		fclose($f1);
+	}
+
+	function construct_data_tab_column_file(&$mapping, $data) {
+		
+		$TDataFinal = array();
+		$pos = 0;
+		foreach($mapping as $m) {
+			
+			$TTemp = explode(':', $m);
+			
+			$label_colonne = $TTemp[0];
+			$nb_car = $TTemp[1];
+			$res = substr($data, $pos, $nb_car);
+			$res = trim($res);
+			$TDataFinal[$label_colonne] = $res;
+			$pos += $nb_car;
+		}
+		
+		return $TDataFinal;
+		
 	}
 	
 	function compare_transactions() {
