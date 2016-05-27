@@ -170,7 +170,7 @@ class BankImport
 				
 				// Gestion du montant débit / crédit
 				if (empty($data['debit']) && empty($data['credit'])) {
-					$amount = price2num($data['amount']);
+					$amount = (float)price2num($data['amount']);
 
 					// Direction support
 					if (!empty($data['direction'])) {
@@ -185,11 +185,12 @@ class BankImport
 						$data['debit'] = $amount;
 					}
 				} else {
-					$data['debit'] = price2num($data['debit']);
+					$data['debit'] = (float)price2num($data['debit']);
+					 
 					if ($data['debit'] > 0) {
 						$data['debit'] *= -1;
 					}
-					$data['credit'] = price2num($data['credit']);
+					$data['credit'] = (float)price2num($data['credit']);
 				}
 				
 				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
