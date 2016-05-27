@@ -168,6 +168,12 @@ class BankImport
 				
 				if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
 				
+				if($mapping_en_colonne
+					&& (substr($data['num_compte'], 0, 3) !== '411')
+					&& (substr($data['num_compte'], 0, 3) !== '413')
+					&& (substr($data['num_compte'], 0, 3) !== '401')
+					&& (substr($data['num_compte'], 0, 3) !== '403')) continue;
+				
 				// Gestion du montant débit / crédit
 				if (empty($data['debit']) && empty($data['credit'])) {
 					$amount = (float)price2num($data['amount']);
