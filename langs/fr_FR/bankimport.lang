@@ -18,6 +18,7 @@ bankImportUseHistory=Activer l'historisation des imports avec le contenu du fich
 bankImportAllowInvoiceFromSeveralThird=Autoriser le règlement / rapprochement sur des factures appartenant à différents tiers
 bankImportAllowDraftInvoice=Autoriser le rapprochement sur des factures au statut brouillon (validation de la facture et création du règlement)
 bankImportUncheckAllLines=Décocher toutes les lignes lors de l'affichage des transactions provenant du fichier
+bankImportAutoCreateDiscount=Convertir automatiquement les acomptes en reduction future si totalement réglés
 
 # MENU
 LeftMenuBankImport = Import bancaire
