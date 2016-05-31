@@ -196,6 +196,7 @@
 								
 								total = 0;
 								$div.find('input[rel=priceToPaiment]').each(function(i,item) {
+									$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
 									var price = parseFloat($(item).val());
 									total += price;
 								});
