@@ -17,6 +17,7 @@ UseMacCompatibility=
 bankImportUseHistory=Activer l'historisation des imports avec le contenu du fichier (<b>Attention : une ligne d'en-tête doit être présent dans votre fichier</b>)
 bankImportAllowInvoiceFromSeveralThird=Autoriser le règlement / rapprochement sur des factures appartenant à différents tiers
 bankImportAllowDraftInvoice=Autoriser le rapprochement sur des factures au statut brouillon (validation de la facture et création du règlement)
+bankImportAutoCreateDiscount=Convertir automatiquement les acomptes en reduction future si totalement réglés
 
 # MENU
 LeftMenuBankImport = Import bancaire
