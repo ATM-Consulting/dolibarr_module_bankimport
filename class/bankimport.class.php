@@ -515,10 +515,101 @@ class BankImport
 				if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
 			}
 			
+			// Uniquement pour les factures client (les acomptes fournisseur n'existent pas)
+			if($conf->global->BANKIMPORT_AUTO_CREATE_DISCOUNT && $type === 'payment') $this->createDiscount($TAmounts);
+			
 			return $bankLineId;
 		}
 		
 		return 0; // Payment fail, can't return bankLineId
+	}
+
+	private function createDiscount(&$TAmounts) {
+		
+		global $db, $user;
+		
+		dol_include_once('/core/class/discount.class.php');
+		
+		foreach($TAmounts as $id_fac => $amount) {
+			
+			$object = new Facture($db);
+			$object->fetch($id_fac);
+			if($object->type != 3) continue; // Uniquement les acomptes
+			
+			$object->fetch_thirdparty();
+			
+			// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+			$discountcheck=new DiscountAbsolute($db);
+			$result=$discountcheck->fetch(0,$object->id);
+			
+			$canconvert=0;
+			if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+			if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+			if ($canconvert)
+			{
+				$db->begin();
+			
+				// Boucle sur chaque taux de tva
+				$i = 0;
+				foreach ($object->lines as $line) {
+					$amount_ht [$line->tva_tx] += $line->total_ht;
+					$amount_tva [$line->tva_tx] += $line->total_tva;
+					$amount_ttc [$line->tva_tx] += $line->total_ttc;
+					$i ++;
+				}
+			
+				// Insert one discount by VAT rate category
+				$discount = new DiscountAbsolute($db);
+				if ($object->type == Facture::TYPE_CREDIT_NOTE)
+					$discount->description = '(CREDIT_NOTE)';
+				elseif ($object->type == Facture::TYPE_DEPOSIT)
+					$discount->description = '(DEPOSIT)';
+				else {
+					setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
+				}
+				$discount->tva_tx = abs($object->total_ttc);
+				$discount->fk_soc = $object->socid;
+				$discount->fk_facture_source = $object->id;
+			
+				$error = 0;
+				foreach ($amount_ht as $tva_tx => $xxx) {
+					$discount->amount_ht = abs($amount_ht [$tva_tx]);
+					$discount->amount_tva = abs($amount_tva [$tva_tx]);
+					$discount->amount_ttc = abs($amount_ttc [$tva_tx]);
+					$discount->tva_tx = abs($tva_tx);
+			
+					$result = $discount->create($user);
+					if ($result < 0)
+					{
+						$error++;
+						break;
+					}
+				}
+			
+				if (empty($error))
+				{
+					// Classe facture
+					$result = $object->set_paid($user);
+					if ($result >= 0)
+					{
+						//$mesgs[]='OK'.$discount->id;
+						$db->commit();
+					}
+					else
+					{
+						setEventMessage($object->error,'errors');
+						$db->rollback();
+					}
+				}
+				else
+				{
+					setEventMessage($discount->error,'errors');
+					$db->rollback();
+				}
+			}
+
+		}
+
 	}
 
 	private function insertHistoryLine(&$PDOdb, $iFileLine, $fk_bank)

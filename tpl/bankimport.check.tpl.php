@@ -46,7 +46,7 @@
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
 			<td><label for="checkall"<?php echo $langs->trans("PlannedAction") ?></label></td>
-			<td align="center"><input type="checkbox" checked="checked" id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
+			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
@@ -196,6 +196,7 @@
 								
 								total = 0;
 								$div.find('input[rel=priceToPaiment]').each(function(i,item) {
+									$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
 									var price = parseFloat($(item).val());
 									total += price;
 								});
@@ -210,7 +211,7 @@
 					
 				</script></td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
-				<td align="center"><input type="checkbox" rel="doImport" checked="checked" name="TLine[new][]" value="<?php echo $i ?>" /></td>
+				<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 			
 			<?php $var = !$var ?>

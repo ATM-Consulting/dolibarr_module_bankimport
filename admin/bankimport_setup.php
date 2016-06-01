@@ -204,6 +204,22 @@ print '<td align="center" width="300">';
 print ajax_constantonoff('BANKIMPORT_ALLOW_DRAFT_INVOICE');
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("bankImportUncheckAllLines").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_UNCHECK_ALL_LINES');
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("bankImportAutoCreateDiscount").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_AUTO_CREATE_DISCOUNT');
+print '</td></tr>';
+
 print '</table>';
 
 dol_fiche_end();
