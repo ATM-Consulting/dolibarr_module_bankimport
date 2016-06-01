@@ -102,8 +102,23 @@
 					else $fk_soc = 0;
 					
 					echo '<br />';
-					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
-					echo '&nbsp;<span class="fieldrequired">*</span><br />';
+					$s = new Societe($db);
+					if(!empty($conf->global->BANKIMPORT_NO_PRINT_SELECT) && $s->fetch($fk_soc) > 0) {
+						echo $s->getNomUrl(1);
+						print '<input type="HIDDEN" id="'.$comboName.'" name="'.$comboName.'" value="'.$fk_soc.'" />';
+						?>
+						<script type="text/javascript">
+							var input = $("input[name=\"<?php echo $comboName ?>\"]");
+							console.log(input);
+							input.change();
+						</script>
+						<?php
+					}
+					else {
+						echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+						echo '&nbsp;<span class="fieldrequired">*</span>';
+					}
+					echo '<br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';
 					
@@ -114,7 +129,7 @@
 				</div>
 				
 				<script type="text/javascript">
-					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
+					$("select[name=\"<?php echo $comboName ?>\"], input[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
 						var container_td = $(this).parent(); // td
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
@@ -131,6 +146,9 @@
 						<?php } ?>
 						
 						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
+						if($fk_soc.val() == '') {
+							$fk_soc = $("input[name=\"<?php echo $comboName ?>\"]");
+						}
 						var fk_soc = $fk_soc.val();
 						
 						if(type == 'charge')$fk_soc.hide();

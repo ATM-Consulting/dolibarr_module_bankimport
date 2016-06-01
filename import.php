@@ -20,6 +20,7 @@
 
 require 'config.php';
 
+dol_include_once('/societe/class/societe.class.php');
 dol_include_once('/bankimport/class/bankimport.class.php');
 dol_include_once('/compta/facture/class/facture.class.php');
 
