@@ -359,10 +359,10 @@ class BankImport
 	{
 		global $conf;
 		
+		$PDOdb = new TPDOdb;
+		
 		if (!empty($TLine['piece'])) 
 		{
-			$PDOdb = new TPDOdb;
-
 			dol_include_once('/compta/paiement/class/paiement.class.php');
 			dol_include_once('/fourn/class/paiementfourn.class.php');
 			dol_include_once('/fourn/class/fournisseur.facture.class.php');
