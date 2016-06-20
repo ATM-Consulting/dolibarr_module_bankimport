@@ -45,7 +45,7 @@
 			<td><?php echo $langs->trans("Description") ?></td>
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
-			<td><label for="checkall"<?php echo $langs->trans("PlannedAction") ?></label></td>
+			<td><label for="checkall"><?php echo $langs->trans("PlannedAction") ?></label></td>
 			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
 		<?php foreach($TTransactions as $i => $line) { ?>
