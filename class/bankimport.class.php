@@ -241,20 +241,22 @@ class BankImport
 		foreach($this->TFile as &$fileLine) {
 			$amount = price2num($fileLine['amount']); // Transform to numeric string
 			if(is_numeric($amount)) {
-				$transac = $this->search_dolibarr_transaction_by_amount($amount);
+				$transac = $this->search_dolibarr_transaction_by_amount($amount, $fileLine['label']);
 				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
 				$fileLine['bankline'] = $transac;
 			}
 		}
 	}
 	
-	private function search_dolibarr_transaction_by_amount($amount) {
-		global $langs;
+	private function search_dolibarr_transaction_by_amount($amount, $label) {
+		global $conf, $langs;
 		$langs->load("banks");
 		
 		$amount = floatval($amount); // Transform to float
 		foreach($this->TBank as $i => $bankLine) {
-			if($amount == $bankLine->amount) {
+			$test = ($amount == $bankLine->amount);
+			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
+			if(!empty($test)) {
 				unset($this->TBank[$i]);
 				
 				return array($this->get_bankline_data($bankLine));
