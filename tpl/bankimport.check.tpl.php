@@ -83,6 +83,11 @@
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td class="fields_required" colspan="5">
 					<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+						<?php
+							if(!empty($conf->global->BANKIMPORT_ALLOW_FREELINES)) {
+								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
+							}
+						?>
 						<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
 						<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
 						<option value="charge"><?php echo $langs->trans('Charges') ?></option>
@@ -252,12 +257,12 @@
 				
 				if (td_required)
 				{
-					if ($(td_required).children('select[name*="TLine[fk_soc]"]').val() == -1) 
+					if ($(td_required).children('select[name*="TLine[fk_soc]"]').val() == -1 && $(td_required).children('select[name*="TLine[type]"]').val() != 'freeline')
 					{console.log($(td_required).parent().children('td.num_line'));
 						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldCompanyRequired'); ?>");
 						$(td_required).children('select[name*="TLine[fk_soc]"]').focus();
 					}
-					if ($(td_required).children('select[name*="TLine[fk_payment]"]').val() == 0)
+					if ($(td_required).children('select[name*="TLine[fk_payment]"]').val() == 0 && $(td_required).children('select[name*="TLine[type]"]').val() != 'freeline')
 					{
 						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldPaymentRequired'); ?>");
 						if (TError.length == 1) $(td_required).children('select[name*="TLine[fk_payment]"]').focus();
