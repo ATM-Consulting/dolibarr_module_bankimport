@@ -498,7 +498,7 @@ class BankImport
 
 		if ($paiement_id > 0) 
 		{
-			$bankLineId = $paiement->addPaymentToBank($user, $type, $note, $this->account->id, $l_societe->name, '');
+			$bankLineId = $paiement->addPaymentToBank($user, $type, !empty($this->TFile[$iFileLine]['label']) ? $this->TFile[$iFileLine]['label'] : $note, $this->account->id, $l_societe->name, '');
 			$TLine[$bankLineId] = $iFileLine;
 			
 			$bankLine = new AccountLine($this->db);
