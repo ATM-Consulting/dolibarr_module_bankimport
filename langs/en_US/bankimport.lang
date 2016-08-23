@@ -50,3 +50,5 @@ AlreadyReconciledWithStatement = Transaction already reconciliated with statemen
 LineDoesNotMatchWithMapping = File line doesn't match mapping
 
 BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible
+
+bankimport_loading=%s rows currently loading...

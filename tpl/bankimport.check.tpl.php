@@ -29,7 +29,7 @@
     <input type="hidden" name="bankimportseparator" value="<?php echo GETPOST('bankimportseparator') ?>" />
     <input type="hidden" name="bankimportdateformat" value="<?php echo GETPOST('bankimportdateformat') ?>" />
     <input type="hidden" name="bankimportmapping" value="<?php echo GETPOST('bankimportmapping') ?>" />
-	
+	<div id="bankimport_info_loading" class="warning"><?php echo $langs->trans('bankimport_loading', count($TTransactions)); ?></div>
 	<table id="bankimport_line_to_import" class="border" width="100%">
 		<tr class="liste_titre">
 			<td colspan="4" width="40%"><?php echo $langs->trans("FileTransactions") ?></td>
@@ -48,8 +48,21 @@
 			<td><label for="checkall"><?php echo $langs->trans("PlannedAction") ?></label></td>
 			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
+		<?php
+			$optionsCompany = '<option value=""></option>';
+			$sql = 'SELECT rowid, nom, zip, town FROM '.MAIN_DB_PREFIX.'societe WHERE entity IN ('.getEntity('societe', 1).') ORDER BY nom';
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				while ($l = $db->fetch_array($resql))
+				{
+					$optionsCompany .= '<option value="'.$l['rowid'].'">'.$l['nom']. ' ('.$l['zip'].' '.$l['town'].')</option>';
+				}
+			}
+			
+		?>
 		<?php foreach($TTransactions as $i => $line) { ?>
-		<tr <?php echo $bc[$var] ?>>
+		<tr <?php echo $bc[$var]. ' style="display:none;"'; ?>>
 			<?php if(!empty($line['bankline'])) { ?>
 				
 				<td class="num_line" rowspan="<?php echo count($line['bankline']) ?>"><?php echo $i + 1 ?></td>
@@ -107,7 +120,10 @@
 					else $fk_soc = 0;
 					
 					echo '<br />';
-					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+					//echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+					
+					echo $line['code_client'].' <select id="'.$comboName.'" name="'.$comboName.'" data-fk-soc="'.$fk_soc.'" class="flat">'.$optionsCompany.'</select>';
+					
 					echo '&nbsp;<span class="fieldrequired">*</span><br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';
@@ -119,6 +135,10 @@
 				</div>
 				
 				<script type="text/javascript">
+				//TODO il faut déplacer tout le bloc script en dehors de la boucle et revoir le bind de l'event
+				//selecteur 1 : select[name=\"<?php echo $comboName ?>\"]    => peut être remplacer actuellement par "select[name*='TLine[fk_soc][']"
+				//selecteur 2 : #select_line_type_<?php echo $i ?>"    	     => peut être remplacer actuellement par "select[name*='TLine[type][']"
+				// puis dans le traitement faire en sorte de récupérer le $i dans un attribut
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
 						var container_td = $(this).parent(); // td
 						
@@ -222,6 +242,64 @@
 			<?php $var = !$var ?>
 		</tr>
 		<?php } ?>
+		
+		<script type="text/javascript">
+			$(function() {
+				var TSelectCompany = $("select[name*='TLine[fk_soc][']");
+				setValueToSelect(TSelectCompany);
+				
+				function setValueToSelect(TSelectCompany) {
+					var length = TSelectCompany.length;
+					var chunk = 10;
+				    var index = 0;
+				    
+				    function doChunk() 
+				    {
+				        var cnt = chunk;
+				        while (cnt-- && index < length) 
+				        {
+				        	var fk_soc = $(TSelectCompany[index]).data('fk-soc');
+				        	if (fk_soc) $(TSelectCompany[index]).children("option[value="+fk_soc+"]").attr("selected", true);
+				        	++index;
+				        }
+				        
+				        if (index < length) {
+				            // set Timeout for async iteration
+				            setTimeout(doChunk, 1);
+				        } else {
+				        	var TTr = $("#bankimport_line_to_import > tbody > tr");
+							showTr(TTr);
+				        }
+				    }    
+				    doChunk();
+				}
+				
+				function showTr(TTr) {
+					var length = TTr.length;
+					var chunk = 10;
+				    var index = 0;
+				    
+				    function doChunk() 
+				    {
+				        var cnt = chunk;
+				        while (cnt-- && index < length) 
+				        {
+				        	$(TTr[index]).show();
+				        	++index;
+				        }
+				        
+				        if (index < length) {
+				            // set Timeout for async iteration
+				            setTimeout(doChunk, 1);
+				        } else {
+				        	$("#bankimport_info_loading").hide();
+				        }
+				    }    
+				    doChunk();
+				}
+			});
+		</script>
+		
 	</table>
 	<br />
 	<script type="text/javascript">
