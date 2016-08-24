@@ -59,4 +59,4 @@ BankImport_FatalError_PaymentType_NotPossible=Erreur : le type de paiement [%s] 
 SupplierInvoices=Factures fournisseur
 
 bankimport_no_customer_selected_click_to_select_one=Aucun tiers associé, cliquez ici pour un choisir un
-bankimport_customer_selected_click_to_select_one=%s (cliquez ici pour choisir un autre tiers)
+bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour choisir un autre tiers)
