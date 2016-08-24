@@ -164,9 +164,9 @@ class BankImport
 
 			if((count($dataline) == count($mapping)) || $mapping_en_colonne) {
 				$this->TOriginLine[] = $dataline;
-				$data = array_combine($mapping, $dataline);
 				
 				if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
+				else $data = array_combine($mapping, $dataline);
 				
 				if($mapping_en_colonne
 					&& (substr($data['num_compte'], 0, 3) !== '411')
@@ -247,20 +247,22 @@ class BankImport
 		foreach($this->TFile as &$fileLine) {
 			$amount = price2num($fileLine['amount']); // Transform to numeric string
 			if(is_numeric($amount)) {
-				$transac = $this->search_dolibarr_transaction_by_amount($amount);
+				$transac = $this->search_dolibarr_transaction_by_amount($amount, $fileLine['label']);
 				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
 				$fileLine['bankline'] = $transac;
 			}
 		}
 	}
 	
-	private function search_dolibarr_transaction_by_amount($amount) {
-		global $langs;
+	private function search_dolibarr_transaction_by_amount($amount, $label) {
+		global $conf, $langs;
 		$langs->load("banks");
 		
 		$amount = floatval($amount); // Transform to float
 		foreach($this->TBank as $i => $bankLine) {
-			if($amount == $bankLine->amount) {
+			$test = ($amount == $bankLine->amount);
+			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
+			if(!empty($test)) {
 				unset($this->TBank[$i]);
 				
 				return array($this->get_bankline_data($bankLine));
@@ -365,10 +367,10 @@ class BankImport
 	{
 		global $conf;
 		
+		$PDOdb = new TPDOdb;
+		
 		if (!empty($TLine['piece'])) 
 		{
-			$PDOdb = new TPDOdb;
-
 			dol_include_once('/compta/paiement/class/paiement.class.php');
 			dol_include_once('/fourn/class/paiementfourn.class.php');
 			dol_include_once('/fourn/class/fournisseur.facture.class.php');
@@ -502,7 +504,7 @@ class BankImport
 
 		if ($paiement_id > 0) 
 		{
-			$bankLineId = $paiement->addPaymentToBank($user, $type, $note, $this->account->id, $l_societe->name, '');
+			$bankLineId = $paiement->addPaymentToBank($user, $type, !empty($this->TFile[$iFileLine]['label']) ? $this->TFile[$iFileLine]['label'] : $note, $this->account->id, $l_societe->name, '');
 			$TLine[$bankLineId] = $iFileLine;
 			
 			$bankLine = new AccountLine($this->db);
