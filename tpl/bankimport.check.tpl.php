@@ -48,6 +48,7 @@
 			<td><label for="checkall"><?php echo $langs->trans("PlannedAction") ?></label></td>
 			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
+		
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
 			<?php if(!empty($line['bankline'])) { ?>
@@ -100,14 +101,21 @@
 					$comboName = 'TLine[fk_soc]['.$i.']';
 					$line['code_client'] = trim($line['code_client']);
 					
-					$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe 
+					$res = $db->query("SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe 
 							WHERE code_compta='".$db->escape($line['code_client'])."' OR code_compta_fournisseur='".$db->escape($line['code_client'])."' 
 							LIMIT 1");
-					if($obj_soc = $db->fetch_object($res)) $fk_soc = $obj_soc->rowid;
-					else $fk_soc = 0;
+					$fk_soc = 0;
+					$name = $langs->trans('bankimport_no_customer_selected_click_to_select_one');
+					if($obj_soc = $db->fetch_object($res)) 
+					{
+						$fk_soc = $obj_soc->rowid;
+						$name = $langs->trans('bankimport_customer_selected_click_to_select_another_one', $obj_soc);
+					}
+					
+					$select_company = $form->select_company(fk_soc, $comboName,'',1,0,1);
 					
 					echo '<br />';
-					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+					echo $line['code_client'].' <span onclick="$(\'#span_for_company_'.$i.'\').show(); $(this).hide();"><b>'.$name.'</b></span><span id="span_for_company_'.$i.'" style="display:none">'.$select_company.'</span>';
 					echo '&nbsp;<span class="fieldrequired">*</span><br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';

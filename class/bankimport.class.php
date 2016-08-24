@@ -164,9 +164,9 @@ class BankImport
 
 			if((count($dataline) == count($mapping)) || $mapping_en_colonne) {
 				$this->TOriginLine[] = $dataline;
-				$data = array_combine($mapping, $dataline);
 				
 				if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
+				else $data = array_combine($mapping, $dataline);
 				
 				// Gestion du montant débit / crédit
 				if (empty($data['debit']) && empty($data['credit'])) {
