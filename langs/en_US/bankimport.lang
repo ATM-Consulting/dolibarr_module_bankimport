@@ -51,5 +51,5 @@ LineDoesNotMatchWithMapping = File line doesn't match mapping
 
 BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible
 
-bankimport_no_customer_selected_click_to_select_one=No customer found, click here to choose one
-bankimport_customer_selected_click_to_select_one=%s (click here to choose another one)
+bankimport_no_customer_selected_click_to_select_one=No thirdparty found, click here to choose one
+bankimport_customer_selected_click_to_select_one=%s (click here to choose another thirdparty)
