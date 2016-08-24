@@ -45,9 +45,10 @@
 			<td><?php echo $langs->trans("Description") ?></td>
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
-			<td><label for="checkall"<?php echo $langs->trans("PlannedAction") ?></label></td>
+			<td><label for="checkall"><?php echo $langs->trans("PlannedAction") ?></label></td>
 			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
+		
 		<?php foreach($TTransactions as $i => $line) { ?>
 		<tr <?php echo $bc[$var] ?>>
 			<?php if(!empty($line['bankline'])) { ?>
@@ -83,6 +84,11 @@
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td class="fields_required" colspan="5">
 					<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+						<?php
+							if(!empty($conf->global->BANKIMPORT_ALLOW_FREELINES)) {
+								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
+							}
+						?>
 						<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
 						<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
 						<option value="charge"><?php echo $langs->trans('Charges') ?></option>
@@ -95,14 +101,21 @@
 					$comboName = 'TLine[fk_soc]['.$i.']';
 					$line['code_client'] = trim($line['code_client']);
 					
-					$res = $db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."societe 
+					$res = $db->query("SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe 
 							WHERE code_compta='".$db->escape($line['code_client'])."' OR code_compta_fournisseur='".$db->escape($line['code_client'])."' 
 							LIMIT 1");
-					if($obj_soc = $db->fetch_object($res)) $fk_soc = $obj_soc->rowid;
-					else $fk_soc = 0;
+					$fk_soc = 0;
+					$name = $langs->trans('bankimport_no_customer_selected_click_to_select_one');
+					if($obj_soc = $db->fetch_object($res)) 
+					{
+						$fk_soc = $obj_soc->rowid;
+						$name = $langs->trans('bankimport_customer_selected_click_to_select_another_one', $obj_soc);
+					}
+					
+					$select_company = $form->select_company(fk_soc, $comboName,'',1,0,1);
 					
 					echo '<br />';
-					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
+					echo $line['code_client'].' <span onclick="$(\'#span_for_company_'.$i.'\').show(); $(this).hide();"><b>'.$name.'</b></span><span id="span_for_company_'.$i.'" style="display:none">'.$select_company.'</span>';
 					echo '&nbsp;<span class="fieldrequired">*</span><br />';
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';
@@ -252,12 +265,12 @@
 				
 				if (td_required)
 				{
-					if ($(td_required).children('select[name*="TLine[fk_soc]"]').val() == -1) 
+					if ($(td_required).children('select[name*="TLine[fk_soc]"]').val() == -1 && $(td_required).children('select[name*="TLine[type]"]').val() != 'freeline')
 					{console.log($(td_required).parent().children('td.num_line'));
 						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldCompanyRequired'); ?>");
 						$(td_required).children('select[name*="TLine[fk_soc]"]').focus();
 					}
-					if ($(td_required).children('select[name*="TLine[fk_payment]"]').val() == 0)
+					if ($(td_required).children('select[name*="TLine[fk_payment]"]').val() == 0 && $(td_required).children('select[name*="TLine[type]"]').val() != 'freeline')
 					{
 						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldPaymentRequired'); ?>");
 						if (TError.length == 1) $(td_required).children('select[name*="TLine[fk_payment]"]').focus();

@@ -19,6 +19,8 @@ bankImportAllowInvoiceFromSeveralThird=Autoriser le règlement / rapprochement s
 bankImportAllowDraftInvoice=Autoriser le rapprochement sur des factures au statut brouillon (validation de la facture et création du règlement)
 bankImportUncheckAllLines=Décocher toutes les lignes lors de l'affichage des transactions provenant du fichier
 bankImportAutoCreateDiscount=Convertir automatiquement les acomptes en reduction future si totalement réglés
+bankImportMatchBanklinesByAmountAndLabel=Chercher les lignes d'écritures bancaires par montant ET par libellé
+bankImportAllowFreelines=Autoriser la création d'écritures bancaires libres (non liées à un règlement)
 
 # MENU
 LeftMenuBankImport = Import bancaire
@@ -44,6 +46,7 @@ bankImportFieldNumReleveRequired=Numéro de relevé obligatoire
 bankImportFieldBankImportFileRequired=Fichier obligatoire
 bankImportFieldCompanyRequired=Société obligatoire
 bankImportFieldPaymentRequired=Type de règlement obligatoire
+bankImportCretaFreeLine=Ecriture bancaire libre
 
 # DATA
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s
@@ -54,3 +57,6 @@ LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la corres
 BankImport_FatalError_PaymentType_NotPossible=Erreur : le type de paiement [%s] n'est pas possible
 
 SupplierInvoices=Factures fournisseur
+
+bankimport_no_customer_selected_click_to_select_one=Aucun client associé, cliquez ici pour un choisir un
+bankimport_customer_selected_click_to_select_one=%s (cliquez ici pour en choisir un autre)

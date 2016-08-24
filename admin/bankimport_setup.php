@@ -220,6 +220,22 @@ print '<td align="center" width="300">';
 print ajax_constantonoff('BANKIMPORT_AUTO_CREATE_DISCOUNT');
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("bankImportMatchBanklinesByAmountAndLabel").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL');
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("bankImportAllowFreelines").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('BANKIMPORT_ALLOW_FREELINES');
+print '</td></tr>';
+
 print '</table>';
 
 dol_fiche_end();

@@ -1,5 +1,6 @@
-.settings/
+.buildpath
 .project
-
-/config.php
+.settings/
 *.log
+/config.php
+
