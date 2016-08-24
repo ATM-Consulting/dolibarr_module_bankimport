@@ -109,7 +109,7 @@
 					if($obj_soc = $db->fetch_object($res)) 
 					{
 						$fk_soc = $obj_soc->rowid;
-						$name = $langs->trans('bankimport_customer_selected_click_to_select_another_one', $obj_soc);
+						$name = $langs->trans('bankimport_customer_selected_click_to_select_another_one', $obj_soc->nom);
 					}
 					
 					$select_company = $form->select_company(fk_soc, $comboName,'',1,0,1);
