@@ -57,3 +57,6 @@ LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la corres
 BankImport_FatalError_PaymentType_NotPossible=Erreur : le type de paiement [%s] n'est pas possible
 
 SupplierInvoices=Factures fournisseur
+
+bankimport_no_customer_selected_click_to_select_one=Aucun client associé, cliquez ici pour un choisir un
+bankimport_customer_selected_click_to_select_one=%s (cliquez ici pour en choisir un autre)
