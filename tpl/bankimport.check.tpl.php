@@ -104,7 +104,7 @@
 					echo '<br />';
 					echo $line['code_client'].' '.$form->select_company($fk_soc, $comboName,'',1,0,1);
 					echo '&nbsp;<span class="fieldrequired">*</span><br />';
-					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
+					echo $form->select_types_paiements(2, 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';
 					
 				?>
