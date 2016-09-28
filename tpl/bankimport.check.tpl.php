@@ -129,11 +129,11 @@
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
-							select_updated(this,<?php echo $comboName ?>,<?php echo $i ?>);
+							select_updated(this,"<?php echo $comboName ?>","<?php echo $i ?>");
 						});
 						
 						$select = $("select[name=\"<?php echo $comboName ?>\"]");
-						select_updated($select,<?php echo $comboName ?>,<?php echo $i ?>);
+						select_updated($select,"<?php echo $comboName ?>","<?php echo $i ?>");
 	                });
 					
 				</script></td>
@@ -147,13 +147,13 @@
 	</table>
 	<br />
 	<script type="text/javascript">
-		function select_updated(this, htmlname, iteration) {
-			var container_td = $(this).parent(); // td
+		function select_updated(object, htmlname, iteration) {
+			var container_td = $(object).parent(); // td
 			var type = $('#select_line_type_' + iteration).val();
 			
 			<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
 			
-				if(this.name.toString().indexOf('TLine[type]') !== -1) {
+				if(object.name.toString().indexOf('TLine[type]') !== -1) {
 					$("#line_pieces_" + iteration).empty();
 					$div = $(container_td).find('div.container');
 					console.log($div);
@@ -192,7 +192,7 @@
 					} else {
 					
 						told_input.each(function(i) {
-							var line = $('input[name="'+$(this).attr('name')+'"]');
+							var line = $('input[name="'+$(object).attr('name')+'"]');
 
 							if(line.val() <= 0){
 								line.parent().remove();
@@ -215,14 +215,14 @@
 				<?php } ?>
 		
 				$(".auto_price").click(function() {
-					$input = $('input[name="'+$(this).attr('id')+'"]');
-					$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
+					$input = $('input[name="'+$(object).attr('id')+'"]');
+					$input.val($('[name="price_'+$(object).attr('id')+'"]').val());
 					$input.change();
 				});
 				
 				$('input[rel=priceToPaiment]').unbind().change(function() {
 					
-					$div = $(this).closest('div.container');
+					$div = $(object).closest('div.container');
 					console.log($div);
 					$div.find('div[rel=total]').remove();
 					
@@ -238,7 +238,7 @@
 				});
 				
 			});
-		}
+		} // Fin fonction
 		
 		$('select[name*="TLine[fk_soc]"] > option[value=-1]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectCompanyPls'); ?>');
 		$('select[name*="TLine[fk_payment]"] > option[value=0]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectPaymentTypePls'); ?>');
