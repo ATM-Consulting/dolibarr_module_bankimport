@@ -129,107 +129,16 @@
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
-						var container_td = $(this).parent(); // td
-						
-						var type = $('#select_line_type_<?php echo $i ?>').val();
-						
-						<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
-						
-							if(this.name.toString().indexOf('TLine[type]') !== -1) {
-								$("#line_pieces_<?php echo $i; ?>").empty();
-								$div = $(container_td).find('div.container');
-								console.log($div);
-								$div.find('div[rel=total]').remove();
-							}
-						
-						<?php } ?>
-						
-						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
-						var fk_soc = $fk_soc.val();
-						
-						if(type == 'charge')$fk_soc.hide();
-						else $fk_soc.show();
-						
-						$.ajax({
-							url:"<?php echo dol_buildpath('/bankimport/script/interface.php',1) ?>"
-							,data: {
-								get:'pieceList'
-								,fk_soc:fk_soc
-								,type:type
-								,i:<?php echo $i ?>
-							}
-						}).done(function( data) {
-							
-							<?php if(empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
-							
-								$("#line_pieces_<?php echo $i ?>").html(data);
-							
-							<?php } else { ?>
-							
-								var told_input = $(container_td).find('input[name^="TLine[piece]"]');
-								
-								if(told_input.length == 0) {
-									console.log($("#line_pieces_<?php echo $i ?>"));
-									$("#line_pieces_<?php echo $i ?>").append(data);
-								} else {
-								
-									told_input.each(function(i) {
-										var line = $('input[name="'+$(this).attr('name')+'"]');
-	
-										if(line.val() <= 0){
-											line.parent().remove();
-										}
-									});
-									
-									
-									var input_tline = $(data).find('input[name^="TLine[piece]"]');
-									input_tline.each(function(i, item) {
-										
-										if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
-											console.log(item);
-										} else {
-											$("#line_pieces_<?php echo $i ?>").append($(item).parent());
-										}
-	
-									});
-								}
-							
-							<?php } ?>
-					
-							$(".auto_price").click(function() {
-								$input = $('input[name="'+$(this).attr('id')+'"]');
-								$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
-								$input.change();
-							});
-							
-							$('input[rel=priceToPaiment]').unbind().change(function() {
-								
-								$div = $(this).closest('div.container');
-								console.log($div);
-								$div.find('div[rel=total]').remove();
-								
-								total = 0;
-								$div.find('input[rel=priceToPaiment]').each(function(i,item) {
-									$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
-									var price = parseFloat($(item).val());
-									total += price;
-								});
-								
-								$div.append('<div style="font-weight:bold;" rel="total" align="left">Total : '+total+'</div>');
-								
-							});
-							
+							select_updated(this,<?php echo $comboName ?>,<?php echo $i ?>);
 						});
 						
-					});
-				});
-				$(document).ready(function(){
-                	$('#<?php echo $comboName; ?>').trigger("change");
-                });
+						$select = $("select[name=\"<?php echo $comboName ?>\"]");
+						select_updated($select,<?php echo $comboName ?>,<?php echo $i ?>);
+	                });
 					
-			</script></td>
-			<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
-			<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
+				</script></td>
+				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
+				<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 			
 			<?php $var = !$var ?>
@@ -238,6 +147,98 @@
 	</table>
 	<br />
 	<script type="text/javascript">
+		function select_updated(this, htmlname, iteration) {
+			var container_td = $(this).parent(); // td
+			var type = $('#select_line_type_' + iteration).val();
+			
+			<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+			
+				if(this.name.toString().indexOf('TLine[type]') !== -1) {
+					$("#line_pieces_" + iteration).empty();
+					$div = $(container_td).find('div.container');
+					console.log($div);
+					$div.find('div[rel=total]').remove();
+				}
+			
+			<?php } ?>
+			
+			$fk_soc = $("select[name=\"" + htmlname + "\"]");
+			var fk_soc = $fk_soc.val();
+			
+			if(type == 'charge')$fk_soc.hide();
+			else $fk_soc.show();
+			
+			$.ajax({
+				url:"<?php echo dol_buildpath('/bankimport/script/interface.php',1) ?>"
+				,data: {
+					get:'pieceList'
+					,fk_soc:fk_soc
+					,type:type
+					,i:iteration
+				}
+			}).done(function( data) {
+				
+				<?php if(empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+				
+					$("#line_pieces_" + iteration).html(data);
+				
+				<?php } else { ?>
+				
+					var told_input = $(container_td).find('input[name^="TLine[piece]"]');
+					
+					if(told_input.length == 0) {
+						console.log($("#line_pieces_" + iteration));
+						$("#line_pieces_" + iteration).append(data);
+					} else {
+					
+						told_input.each(function(i) {
+							var line = $('input[name="'+$(this).attr('name')+'"]');
+
+							if(line.val() <= 0){
+								line.parent().remove();
+							}
+						});
+						
+						
+						var input_tline = $(data).find('input[name^="TLine[piece]"]');
+						input_tline.each(function(iteration, item) {
+							
+							if($(container_td).find('input[name="' + $(item).attr("name") + '"]').length > 0) {
+								console.log(item);
+							} else {
+								$("#line_pieces_" + iteration).append($(item).parent());
+							}
+
+						});
+					}
+				
+				<?php } ?>
+		
+				$(".auto_price").click(function() {
+					$input = $('input[name="'+$(this).attr('id')+'"]');
+					$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
+					$input.change();
+				});
+				
+				$('input[rel=priceToPaiment]').unbind().change(function() {
+					
+					$div = $(this).closest('div.container');
+					console.log($div);
+					$div.find('div[rel=total]').remove();
+					
+					total = 0;
+					$div.find('input[rel=priceToPaiment]').each(function(iteration,item) {
+						$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
+						var price = parseFloat($(item).val());
+						total += price;
+					});
+					
+					$div.append('<div style="font-weight:bold;" rel="total" align="left">Total : '+total+'</div>');
+					
+				});
+				
+			});
+		}
 		
 		$('select[name*="TLine[fk_soc]"] > option[value=-1]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectCompanyPls'); ?>');
 		$('select[name*="TLine[fk_payment]"] > option[value=0]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectPaymentTypePls'); ?>');
