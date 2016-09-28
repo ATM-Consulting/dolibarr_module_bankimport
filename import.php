@@ -26,6 +26,7 @@ dol_include_once('/compta/facture/class/facture.class.php');
 global $db, $langs;
 
 $langs->load('bills');
+$langs->load('bankimport@bankimport');
 
 ini_set("auto_detect_line_endings", true);
 
