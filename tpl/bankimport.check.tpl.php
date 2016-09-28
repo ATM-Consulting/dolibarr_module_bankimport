@@ -127,7 +127,8 @@
 				</div>
 				
 				<script type="text/javascript">
-					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
+					$(document).ready(function(){
+						$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
 						var container_td = $(this).parent(); // td
 						
 						var type = $('#select_line_type_<?php echo $i ?>').val();
@@ -221,10 +222,14 @@
 						});
 						
 					});
+				});
+				$(document).ready(function(){
+                	$('#<?php echo $comboName; ?>').trigger("change");
+                });
 					
-				</script></td>
-				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
-				<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
+			</script></td>
+			<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
+			<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 			
 			<?php $var = !$var ?>
