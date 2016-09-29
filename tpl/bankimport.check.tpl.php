@@ -213,32 +213,35 @@
 					}
 				
 				<?php } ?>
-		
-				$(".auto_price").click(function() {
-					$input = $('input[name="'+$(object).attr('id')+'"]');
-					$input.val($('[name="price_'+$(object).attr('id')+'"]').val());
-					$input.change();
-				});
-				
-				$('input[rel=priceToPaiment]').unbind().change(function() {
-					
-					$div = $(object).closest('div.container');
-					console.log($div);
-					$div.find('div[rel=total]').remove();
-					
-					total = 0;
-					$div.find('input[rel=priceToPaiment]').each(function(iteration,item) {
-						$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
-						var price = parseFloat($(item).val());
-						total += price;
-					});
-					
-					$div.append('<div style="font-weight:bold;" rel="total" align="left">Total : '+total+'</div>');
-					
-				});
-				
 			});
 		} // Fin fonction
+		
+		$(document).ready(function(){
+			
+			$(".auto_price").click(function() {
+				$input = $('input[name="'+$(this).attr('id')+'"]');
+				$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
+				$input.change();
+			});
+			
+			$('input[rel=priceToPaiment]').unbind().change(function() {
+				
+				$div = $(this).closest('div.container');
+				console.log($div);
+				$div.find('div[rel=total]').remove();
+				
+				total = 0;
+				$div.find('input[rel=priceToPaiment]').each(function(iteration,item) {
+					$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
+					var price = parseFloat($(item).val());
+					if(price == '') price = 0;
+					total += price;
+				});
+				
+				$div.append('<div style="font-weight:bold;" rel="total" align="left">Total : '+total+'</div>');
+				
+			});
+		});
 		
 		$('select[name*="TLine[fk_soc]"] > option[value=-1]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectCompanyPls'); ?>');
 		$('select[name*="TLine[fk_payment]"] > option[value=0]').text('<?php echo $langs->transnoentitiesnoconv('bankImport_selectPaymentTypePls'); ?>');
