@@ -230,7 +230,7 @@
 				$div.find('input[rel=priceToPaiment]').each(function(iteration,item) {
 					$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
 					var price = parseFloat($(item).val());
-					if(price == '') price = 0;
+					if(isNaN(price)) price = 0;
 					total += price;
 				});
 				
