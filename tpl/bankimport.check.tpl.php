@@ -156,7 +156,6 @@
 				if(object.name.toString().indexOf('TLine[type]') !== -1) {
 					$("#line_pieces_" + iteration).empty();
 					$div = $(container_td).find('div.container');
-					console.log($div);
 					$div.find('div[rel=total]').remove();
 				}
 			
@@ -187,7 +186,6 @@
 					var told_input = $(container_td).find('input[name^="TLine[piece]"]');
 					
 					if(told_input.length == 0) {
-						console.log($("#line_pieces_" + iteration));
 						$("#line_pieces_" + iteration).append(data);
 					} else {
 					
@@ -218,16 +216,14 @@
 		
 		$(document).ready(function(){
 			
-			$(".auto_price").click(function() {
+			$(".fields_required").on("click",".auto_price", function() {
 				$input = $('input[name="'+$(this).attr('id')+'"]');
 				$input.val($('[name="price_'+$(this).attr('id')+'"]').val());
 				$input.change();
 			});
 			
-			$('input[rel=priceToPaiment]').unbind().change(function() {
-				
+			$(".fields_required").on("change","input[rel=priceToPaiment]", function() {
 				$div = $(this).closest('div.container');
-				console.log($div);
 				$div.find('div[rel=total]').remove();
 				
 				total = 0;
