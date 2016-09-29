@@ -51,6 +51,8 @@ if(GETPOST('compare')) {
 		$TTransactions = $import->TFile;
 		
 		global $bc;
+		
+		$langs->load('bankimport@bankimport');
 		$var = true;
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
