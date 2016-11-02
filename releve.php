@@ -325,7 +325,7 @@ else
 						print '<td class="line_imported_value">'.$val.'</td>';
 					}
 				}
-				
+		
 				printStandardValues($db, $user, $langs, $acct, $objp, $num, $totald, $totalc, $paymentsupplierstatic, $paymentstatic, $paymentvatstatic, $bankstatic, $banklinestatic);
 				
 				print '</tr>';
@@ -656,131 +656,133 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	/*
 	 * Ajout les liens (societe, company...)
 	 */
+
 	$newline=1;
 	$links = $acct->get_url($objp->rowid);
-	foreach($links as $key=>$val)
-	{
-		if (! $newline) print ' - ';
-		else print '<br>';
-		if ($links[$key]['type']=='payment')
+	if(!empty($links)){
+		foreach($links as $key=>$val)
 		{
-			$paymentstatic->id=$links[$key]['url_id'];
-			$paymentstatic->ref=$langs->trans("Payment");
-			
-			print '<br />'.$paymentstatic->getNomUrl(1);
-			
-			$sql = "SELECT pf.fk_facture 
-					FROM ".MAIN_DB_PREFIX."paiement_facture as pf
-						LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
-					WHERE p.rowid = ".$paymentstatic->id;
-			$resql = $db->query($sql);
-			$res = $db->fetch_object($resql);
-			if ($res)
+			if (! $newline) print ' - ';
+			else print '<br>';
+			if ($links[$key]['type']=='payment')
 			{
-				$facture = new Facture($db);
-				$facture->fetch($res->fk_facture);
-				//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
+				$paymentstatic->id=$links[$key]['url_id'];
+				$paymentstatic->ref=$langs->trans("Payment");
+				
+				print '<br />'.$paymentstatic->getNomUrl(1);
+				
+				$sql = "SELECT pf.fk_facture 
+						FROM ".MAIN_DB_PREFIX."paiement_facture as pf
+							LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
+						WHERE p.rowid = ".$paymentstatic->id;
+				$resql = $db->query($sql);
+				$res = $db->fetch_object($resql);
+				if ($res)
+				{
+					$facture = new Facture($db);
+					$facture->fetch($res->fk_facture);
+					//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
+				}
+				
+				$newline=0;
 			}
-			
-			$newline=0;
-		}
-		elseif ($links[$key]['type']=='payment_supplier')
-		{
-			$paymentsupplierstatic->id=$links[$key]['url_id'];
-			$paymentsupplierstatic->ref=$langs->trans("Payment");
-			
-			print '<br />'.$paymentsupplierstatic->getNomUrl(1);
-			
-			$sql = "SELECT pf.fk_facturefourn
-					FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf
-						LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
-					WHERE p.rowid = ".$paymentsupplierstatic->id;
-			$resql = $db->query($sql);
-			$res = $db->fetch_object($resql);
-			if ($res)
+			elseif ($links[$key]['type']=='payment_supplier')
 			{
-				$facture = new FactureFournisseur($db);
-				$facture->fetch($res->fk_facturefourn);
-				//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
+				$paymentsupplierstatic->id=$links[$key]['url_id'];
+				$paymentsupplierstatic->ref=$langs->trans("Payment");
+				
+				print '<br />'.$paymentsupplierstatic->getNomUrl(1);
+				
+				$sql = "SELECT pf.fk_facturefourn
+						FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf
+							LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
+						WHERE p.rowid = ".$paymentsupplierstatic->id;
+				$resql = $db->query($sql);
+				$res = $db->fetch_object($resql);
+				if ($res)
+				{
+					$facture = new FactureFournisseur($db);
+					$facture->fetch($res->fk_facturefourn);
+					//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
+				}
+				
+				$newline=0;
 			}
-			
-			$newline=0;
-		}
-		elseif ($links[$key]['type']=='payment_sc')
-		{
-			print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
-			print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
-			print $langs->trans("SocialContributionPayment");
-			print '</a>';
-			$newline=0;
-		}
-		elseif ($links[$key]['type']=='payment_vat')
-		{
-			$paymentvatstatic->id=$links[$key]['url_id'];
-			$paymentvatstatic->ref=$langs->trans("Payment");
-			print ' '.$paymentvatstatic->getNomUrl(1);
-		}
-		elseif ($links[$key]['type']=='banktransfert') {
-			// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
-			if ($objp->amount > 0)
+			elseif ($links[$key]['type']=='payment_sc')
 			{
-				$banklinestatic->fetch($links[$key]['url_id']);
-				$bankstatic->id=$banklinestatic->fk_account;
-				$bankstatic->label=$banklinestatic->bank_account_label;
-				print ' ('.$langs->trans("from").' ';
-				print $bankstatic->getNomUrl(1,'transactions');
-				print ' '.$langs->trans("toward").' ';
-				$bankstatic->id=$objp->bankid;
-				$bankstatic->label=$objp->bankref;
-				print $bankstatic->getNomUrl(1,'');
-				print ')';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$links[$key]['url_id'].'">';
+				print ' '.img_object($langs->trans('ShowPayment'),'payment').' ';
+				print $langs->trans("SocialContributionPayment");
+				print '</a>';
+				$newline=0;
 			}
-			else
+			elseif ($links[$key]['type']=='payment_vat')
 			{
-				$bankstatic->id=$objp->bankid;
-				$bankstatic->label=$objp->bankref;
-				print ' ('.$langs->trans("from").' ';
-				print $bankstatic->getNomUrl(1,'');
-				print ' '.$langs->trans("toward").' ';
-				$banklinestatic->fetch($links[$key]['url_id']);
-				$bankstatic->id=$banklinestatic->fk_account;
-				$bankstatic->label=$banklinestatic->bank_account_label;
-				print $bankstatic->getNomUrl(1,'transactions');
-				print ')';
+				$paymentvatstatic->id=$links[$key]['url_id'];
+				$paymentvatstatic->ref=$langs->trans("Payment");
+				print ' '.$paymentvatstatic->getNomUrl(1);
+			}
+			elseif ($links[$key]['type']=='banktransfert') {
+				// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
+				if ($objp->amount > 0)
+				{
+					$banklinestatic->fetch($links[$key]['url_id']);
+					$bankstatic->id=$banklinestatic->fk_account;
+					$bankstatic->label=$banklinestatic->bank_account_label;
+					print ' ('.$langs->trans("from").' ';
+					print $bankstatic->getNomUrl(1,'transactions');
+					print ' '.$langs->trans("toward").' ';
+					$bankstatic->id=$objp->bankid;
+					$bankstatic->label=$objp->bankref;
+					print $bankstatic->getNomUrl(1,'');
+					print ')';
+				}
+				else
+				{
+					$bankstatic->id=$objp->bankid;
+					$bankstatic->label=$objp->bankref;
+					print ' ('.$langs->trans("from").' ';
+					print $bankstatic->getNomUrl(1,'');
+					print ' '.$langs->trans("toward").' ';
+					$banklinestatic->fetch($links[$key]['url_id']);
+					$bankstatic->id=$banklinestatic->fk_account;
+					$bankstatic->label=$banklinestatic->bank_account_label;
+					print $bankstatic->getNomUrl(1,'transactions');
+					print ')';
+				}
+			}
+			elseif ($links[$key]['type']=='company') {
+				print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowCustomer'),'company').' ';
+				print dol_trunc($links[$key]['label'],24);
+				print '</a>';
+				$newline=0;
+			}
+			elseif ($links[$key]['type']=='member') {
+				print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowMember'),'user').' ';
+				print $links[$key]['label'];
+				print '</a>';
+				$newline=0;
+			}
+			elseif ($links[$key]['type']=='sc') {
+				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowBill'),'bill').' ';
+				print $langs->trans("SocialContribution");
+				print '</a>';
+				$newline=0;
+			}
+			else {
+				print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+				print $links[$key]['label'];
+				print '</a>';
+				$newline=0;
 			}
 		}
-		elseif ($links[$key]['type']=='company') {
-			print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-			print img_object($langs->trans('ShowCustomer'),'company').' ';
-			print dol_trunc($links[$key]['label'],24);
-			print '</a>';
-			$newline=0;
-		}
-		elseif ($links[$key]['type']=='member') {
-			print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
-			print img_object($langs->trans('ShowMember'),'user').' ';
-			print $links[$key]['label'];
-			print '</a>';
-			$newline=0;
-		}
-		elseif ($links[$key]['type']=='sc') {
-			print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
-			print img_object($langs->trans('ShowBill'),'bill').' ';
-			print $langs->trans("SocialContribution");
-			print '</a>';
-			$newline=0;
-		}
-		else {
-			print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-			print $links[$key]['label'];
-			print '</a>';
-			$newline=0;
-		}
-	}
 	
-	if($links[1]['type']=='payment_supplier') $param = 'fourn';
-	print '<br />'.getListFacture($links[1]['url_id'], $param);
-
+		if($links[1]['type']=='payment_supplier') $param = 'fourn';
+		print '<br />'.getListFacture($links[1]['url_id'], $param);
+	}
 	// Avec la nouvelle version de bankimport, on peut régler des factures de différents tiers avec un même paiement, donc on les affiche toutes
 	
 
@@ -857,7 +859,7 @@ function getListFacture($id_reglement, $fourn='') {
 	$sql.= ' WHERE fk_paiement'.$fourn.' = '.$id_reglement;
 	//echo $sql;exit;
 	$resql = $db->query($sql);
-	
+
 	$Tfact = array();
 	
 	$classname = 'Facture';
