@@ -88,11 +88,18 @@
 							if(!empty($conf->global->BANKIMPORT_ALLOW_FREELINES)) {
 								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
 							}
+							if(!empty($conf->facture->enabled)) {
+								$sel = ($line['amount'] > 0 ? ' selected="selected"' : '');
+								print '<option value="facture"'.$sel.'>'.$langs->trans('Invoices').'</option>';
+							}
+							if(!empty($conf->fournisseur->enabled)) {
+								$sel = ($line['amount'] < 0 ? ' selected="selected"' : '');
+								print '<option value="fournfacture"'.$sel.'>'.$langs->trans('SupplierInvoices').'</option>';
+							}
+							if(!empty($conf->tax->enabled)) {
+								print '<option value="charge">'.$langs->trans('Charges').'</option>';
+							}
 						?>
-						<option value="facture"><?php echo $langs->trans('Invoices') ?></option>
-						<option value="fournfacture"><?php echo $langs->trans('SupplierInvoices') ?></option>
-						<option value="charge"><?php echo $langs->trans('Charges') ?></option>
-						
 					</select>&nbsp;<span class="fieldrequired">*</span>
 					
 					<?php
