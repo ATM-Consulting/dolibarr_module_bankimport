@@ -103,7 +103,6 @@
 					</select>&nbsp;<span class="fieldrequired">*</span>
 					
 					<?php
-					// TODO sur le select du dessus activer les options que si les modules concernés sont activés
 					
 					$comboName = 'TLine[fk_soc]['.$i.']';
 					$line['code_client'] = trim($line['code_client']);
