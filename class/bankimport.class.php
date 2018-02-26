@@ -81,6 +81,8 @@ class BankImport
 				
 				dol_add_file_process($upload_dir,1,1,$filename);
 				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
+				$info = pathinfo($this->file);
+				$this->file = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].'.'.strtolower($info['extension']));
 				
 				if(!is_file($this->file)) {
 					return false;
