@@ -21,6 +21,7 @@ bankImportUncheckAllLines=Décocher toutes les lignes lors de l'affichage des tr
 bankImportAutoCreateDiscount=Convertir automatiquement les acomptes en reduction future si totalement réglés
 bankImportMatchBanklinesByAmountAndLabel=Chercher les lignes d'écritures bancaires par montant ET par libellé
 bankImportAllowFreelines=Autoriser la création d'écritures bancaires libres (non liées à un règlement)
+UseMacCompatibility=Activer la compatibilité Mac
 
 # MENU
 LeftMenuBankImport = Import bancaire
