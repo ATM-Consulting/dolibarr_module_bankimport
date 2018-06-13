@@ -21,6 +21,7 @@ bankImportUncheckAllLines=Décocher toutes les lignes lors de l'affichage des tr
 bankImportAutoCreateDiscount=Convertir automatiquement les acomptes en reduction future si totalement réglés
 bankImportMatchBanklinesByAmountAndLabel=Chercher les lignes d'écritures bancaires par montant ET par libellé
 bankImportAllowFreelines=Autoriser la création d'écritures bancaires libres (non liées à un règlement)
+bankImportAllowCreateFournInvoice=Autoriser la création de facture fournisseur sur les débits inconus
 
 # MENU
 LeftMenuBankImport = Import bancaire
@@ -52,11 +53,12 @@ bankImportCretaFreeLine=Ecriture bancaire libre
 BankTransactionWillBeCreatedAndReconciled = L'écriture sera créée et rapprochée sur le relevé %s
 WillBeReconciledWithStatement = L'écriture sera rapprochée sur le relevé %s
 AlreadyReconciledWithStatement = L'écriture est déjà rapprochée sur le relevé %s
-LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la correspondance déclarée
+LineDoesNotMatchWithMapping = La ligne du fichier ne correspond pas à la correspondance déclarée (le nombre de colonnes ne correspond pas au "Mapping du fichier CSV")
 
 BankImport_FatalError_PaymentType_NotPossible=Erreur : le type de paiement [%s] n'est pas possible
 
 SupplierInvoices=Factures fournisseur
+CreatSupplierInvoice=Créer la facture fournisseur
 
 bankimport_no_customer_selected_click_to_select_one=Aucun tiers associé, cliquez ici pour un choisir un
 bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour choisir un autre tiers)

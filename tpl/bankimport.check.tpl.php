@@ -83,7 +83,7 @@
 				<td><?php echo $line['label'] ?></td>
 				<td align="right"><?php echo price($line['amount']) ?></td>
 				<td class="fields_required" colspan="5">
-					<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
+					<select class="flat TLineType"  name="TLine[type][<?php echo $i ?>]" data-i="<?php echo $i ?>" id="select_line_type_<?php echo $i ?>">
 						<?php
 							if(!empty($conf->global->BANKIMPORT_ALLOW_FREELINES)) {
 								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
@@ -120,9 +120,20 @@
 					
 					$select_company = $form->select_company($fk_soc, $comboName,'',1,0,1);
 					
+
+					if(!empty($conf->fournisseur->enabled) && !empty($conf->global->BANKIMPORT_ALLOW_AUTO_FOURN_INVOICE)){
+					    $display = ($line['amount'] > 0 ? ' style="display:none"' : '');
+					    $fourn_create_invoice_form = '<label id="create_fourn_invoice_label_'.$i.'" class="" '.$display.' ><input  class="create_fourn_invoice_checkbox" id="create_fourn_invoice_'.$i.'"  data-i="'.$i.'" type="checkbox" name="TLine[create_fourn_invoice]['.$i.']" value="1" '.($line['amount'] > 0 ? ' disabled ' : '').' /> '.$langs->trans('CreatSupplierInvoice').'</br></label>';
+					}
+					
 					echo '<br />';
-					echo $line['code_client'].' <span onclick="$(\'#span_for_company_'.$i.'\').show(); $(this).hide();"><b>'.$name.'</b></span><span id="span_for_company_'.$i.'" style="display:none">'.$select_company.'</span>';
-					echo '&nbsp;<span class="fieldrequired">*</span><br />';
+					$requiredStar = '&nbsp;<span class="fieldrequired">*</span><br />';
+					echo $line['code_client'].' <span data-id="'.$i.'" onclick="$(\'#span_for_company_'.$i.'\').show(); $(this).hide();"><b>'.$name.$requiredStar.'</b></span><span id="span_for_company_'.$i.'" style="display:none">'.$select_company.$requiredStar.$fourn_create_invoice_form.'</span>';
+					
+					echo ' <span id="span_for_product_'.$i.'" style="display:none" >';
+					$form->select_produits('','TLine[create_fourn_productid]['.$i.']', '', 20, 0, 1, 2, '', 0, array(),0, 1, 1, '', 1  );
+					echo ' <br/></span>';
+					
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';
 					
@@ -133,6 +144,23 @@
 				</div>
 				
 				<script type="text/javascript">
+
+					// Decoche la création de facture fourn en fonction des besoins
+					$( "#create_fourn_invoice_<?php echo $i ?>" ).change(function() {
+						if( $( "#select_line_type_<?php echo $i ?>").val() != 'fournfacture' )
+    					{
+    						$( "#create_fourn_invoice_<?php echo $i ?>" ).prop( "checked", false );
+    						
+    						$("#span_for_product_<?php echo $i ?>").hide();
+    					}
+						else
+						{
+    						$("#span_for_product_<?php echo $i ?>").show();
+
+						}
+					});
+
+				
 					$("select[name=\"<?php echo $comboName ?>\"], #select_line_type_<?php echo $i ?>").change(function() {
 						var container_td = $(this).parent(); // td
 						
@@ -147,7 +175,29 @@
 								$div.find('div[rel=total]').remove();
 							}
 						
+						<?php } 
+						
+						if(!empty($conf->global->BANKIMPORT_ALLOW_AUTO_FOURN_INVOICE)){ ?>
+							// Decoche la création de facture fourn en fonction des besoins
+        					if( $( "#select_line_type_<?php echo $i ?>").val() != 'fournfacture' ){
+        						$( "#create_fourn_invoice_<?php echo $i ?>" ).prop( "checked", false );
+        						$("#create_fourn_invoice_label_<?php echo $i ?>").hide();
+        						$("#span_for_product_<?php echo $i ?>").hide();
+        					}
+        					else{
+        						$("#create_fourn_invoice_label_<?php echo $i ?>").show();
+        					}
 						<?php } ?>
+						
+						
+
+						$('#create_fourn_invoice_checkbox').change(function() {
+							// It will fire on any checkbox change
+							
+						});
+
+
+						
 						
 						$fk_soc = $("select[name=\"<?php echo $comboName ?>\"]");
 						var fk_soc = $fk_soc.val();
@@ -281,6 +331,15 @@
 						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldPaymentRequired'); ?>");
 						if (TError.length == 1) $(td_required).children('select[name*="TLine[fk_payment]"]').focus();
 					}
+
+
+					<?php if(!empty($conf->global->BANKIMPORT_ALLOW_AUTO_FOURN_INVOICE)){ ?>
+					if ($(td_required).find('select[name*="TLine[create_fourn_productid]"]').val() == 0 && $(td_required).find('input[name*="TLine[create_fourn_invoice]"]').prop( "checked" ) ) 
+					{
+						TError.push("["+($(td_required).parent().children('td.num_line').text())+"] <?php echo $langs->transnoentitiesnoconv('bankImportFieldProductRequired'); ?>");
+					}
+				    <?php } ?>
+				    
 				}
 				
 				if (TError.length > 0)
