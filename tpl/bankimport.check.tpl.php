@@ -123,7 +123,7 @@
 
 					if(!empty($conf->fournisseur->enabled) && !empty($conf->global->BANKIMPORT_ALLOW_AUTO_FOURN_INVOICE)){
 					    $display = ($line['amount'] > 0 ? ' style="display:none"' : '');
-					    $fourn_create_invoice_form = '<label id="create_fourn_invoice_label_'.$i.'" class="" '.$display.' ><input  class="create_fourn_invoice_checkbox" id="create_fourn_invoice_'.$i.'"  data-i="'.$i.'" type="checkbox" name="TLine[create_fourn_invoice]['.$i.']" value="1" '.($line['amount'] > 0 ? ' disabled ' : '').' /> '.$langs->trans('CreatSupplierInvoice').'</br></label>';
+					    $fourn_create_invoice_form = '<label id="create_fourn_invoice_label_'.$i.'" class="create_fourn_invoice_label" '.$display.' ><input  class="create_fourn_invoice_checkbox" id="create_fourn_invoice_'.$i.'"  data-i="'.$i.'" type="checkbox" name="TLine[create_fourn_invoice]['.$i.']" value="1" '.($line['amount'] > 0 ? ' disabled ' : '').' /> '.$form->textwithtooltip( $langs->trans('CreateSupplierInvoice') , $langs->trans('CreateSupplierInvoiceHelp'),2,1,img_help(1,'')).'</br></label>';
 					}
 					
 					echo '<br />';
@@ -357,3 +357,8 @@
 		});
 	});
 </script>
+<style type="text/css">
+.create_fourn_invoice_label{
+    margin: 5px 0;
+}
+</style>

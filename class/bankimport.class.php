@@ -384,7 +384,6 @@ class BankImport
 				
 				$fk_payment = $TLine['fk_payment'][$iFileLine];
 				$date_paye = $this->TFile[$iFileLine]['datev'];
-				
 				foreach($TObject as $typeObject=>$TAmounts) 
 				{
 					if(!empty($TAmounts)) 
@@ -395,7 +394,17 @@ class BankImport
 								$fk_bank = $this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'fournfacture':
-								$fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+							    $create_fourn_invoice = !empty($TLine['create_fourn_invoice'][$iFileLine])?1:0;
+							    $create_fourn_productid = !empty($TLine['create_fourn_productid'][$iFileLine])?$TLine['create_fourn_productid'][$iFileLine]:0;
+							    
+							    if(!empty($create_fourn_invoice) && !empty($create_fourn_productid) ){
+							        // create new invoice + doPaymentForFactureFourn
+							        $fk_bank = $this->createInvoiceForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$this->TFile[$iFileLine]);
+							    }
+							    else {
+							        exit('ici');
+							        $fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+							    }
 								break;
 							case 'charge':
 								$fk_bank = $this->doPaymentForCharge();
@@ -414,9 +423,10 @@ class BankImport
 		}
 		
 		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
-		
-	//	exit;
 	
+	//	var_dump('exit a virer');
+	//exit;
+		
 		if (isset($TLine['new'])) 
 		{
 			if(!empty($TLine['new'])) {
@@ -434,6 +444,10 @@ class BankImport
 		
 		foreach($TLine as $bankLineId => $iFileLine) 
 		{
+		    if(in_array($bankLineId, array('create_fourn_productid', 'create_fourn_invoice'))){
+		        continue;
+		    }
+		    
 			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
 			if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
 			{
@@ -465,9 +479,78 @@ class BankImport
 		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
 	}
 
+	private function createInvoiceForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$fileLine)
+	{
+	    global $conf, $langs,$user,$db;
+	    
+	    dol_include_once('product/class/product.class.php');
+	    
+	    //,$create_fourn_invoice,$create_fourn_productid
+	    //$TLine['fk_payment'][$iFileLine]
+
+	    // Amount have to be for supplier invoice
+	    if($fileLine['amount']>0){
+	        setEventMessage($langs->trans('ErrorNewFournInvoice'),'error');
+	        return 0;
+	    }
+	    
+	    $NewInvoiceAmount = abs($fileLine['amount']); // le montant de la nouvelle facture
+	    
+	    // déduction des montants associés à d'autres factures
+	    foreach ($TLine['piece'][$iFileLine]['fournfacture'] as $key => $dispatchAmount )
+	    {
+	        if(!empty($dispatchAmount) ){
+	            $NewInvoiceAmount -=  price2num($dispatchAmount);
+	        }
+	    }
+	    
+	    $product = new Product($db);
+	    if($NewInvoiceAmount>0 && $product->fetch($create_fourn_productid)>0){
+	        dol_include_once('fourn/class/fournisseur.facture.class.php');
+	        $factureFournisseur = New FactureFournisseur($db);
+	        
+	        $NewInvoiceAmount = $NewInvoiceAmount / ( 1 + $product->tva_tx / 100 );
+	        
+	        $factureFournisseur->ref = '(PROV)';
+	        $factureFournisseur->date = $date_paye;
+	        $factureFournisseur->ref_supplier = $factureFournisseur->date;
+	        $factureFournisseur->socid = $l_societe->id;
+	        $factureFournisseur->type = FactureFournisseur::TYPE_STANDARD;
+	        $factureFournisseur->libelle = dol_print_date($factureFournisseur->date).' : '.$fileLine['label'];
+	        $factureFournisseur->mode_reglement_id = $fk_payment;
+	        
+	        $newInvoiceId = $factureFournisseur->create($user);
+	        
+	        if($newInvoiceId>0)
+	        {
+	            if($factureFournisseur->addline($desc, $NewInvoiceAmount, $product->tva_tx, 0, 0, 1,$product->id) > 0)
+	            {
+	                setEventMessage($langs->trans('NewFournInvoiceCreated'));
+	                
+	                // ajout du paiment à la facture
+	                $TLine['piece'][$iFileLine]['fournfacture'][$newInvoiceId] = $NewInvoiceAmount;
+	                $TAmounts[$newInvoiceId] = $NewInvoiceAmount;
+	                
+	                
+	                return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
+	            }
+	            else {
+	                setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	            }
+	        }
+	        else {
+	            setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	        }
+	    }
+	    else {
+	        setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	    }
+	    
+	}
+	
 	private function doPaymentForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
 	{
-		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
+	    return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
 	}
 	
 	private function doPaymentForCharge(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
