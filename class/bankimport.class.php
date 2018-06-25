@@ -363,46 +363,71 @@ class BankImport
 		
 		$PDOdb = new TPDOdb;
 		
+		dol_include_once('/compta/paiement/class/paiement.class.php');
+		dol_include_once('/fourn/class/paiementfourn.class.php');
+		dol_include_once('/fourn/class/fournisseur.facture.class.php');
+		dol_include_once('/compta/sociales/class/paymentsocialcontribution.class.php');
+		
+		$this->socCache = array();
+		
+		if(!empty($TLine['type'])){
+		    
+		    foreach ($TLine['type'] as $iFileLine => $typeObject){
+		    
+		        if(!empty($TLine['fk_soc'][$iFileLine])) {
+		            $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
+		        }
+		        
+		        $doPaymentForFactureFourn[$iFileLine] = true;
+		        if($typeObject == 'fournfacture' && !empty($l_societe))
+		        {
+		            $create_fourn_invoice = !empty($TLine['create_fourn_invoice'][$iFileLine])?1:0;
+		            $create_fourn_productid = !empty($TLine['create_fourn_productid'][$iFileLine])?$TLine['create_fourn_productid'][$iFileLine]:0;
+		            $fk_payment = $TLine['fk_payment'][$iFileLine];
+		            if(!empty($create_fourn_invoice) && !empty($create_fourn_productid) ){
+		                // create new invoice + doPaymentForFactureFourn
+		                $fk_bank = $this->createInvoiceForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$this->TFile[$iFileLine]);
+		                $doPaymentForFactureFourn[$iFileLine] = false;
+		            }
+		        }
+		    }
+		}
+		
+		
+		
 		if (!empty($TLine['piece'])) 
 		{
-			dol_include_once('/compta/paiement/class/paiement.class.php');
-			dol_include_once('/fourn/class/paiementfourn.class.php');
-			dol_include_once('/fourn/class/fournisseur.facture.class.php');
-			dol_include_once('/compta/sociales/class/paymentsocialcontribution.class.php');
 			
 			/*
 			 * Reglemenent créé manuellement
 			 */
 			  	
 			$db = &$this->db;
+			
+			
 			foreach($TLine['piece'] as $iFileLine=>$TObject) 
 			{
+			    
 				if(!empty($TLine['fk_soc'][$iFileLine])) {
-					$l_societe = new Societe($db);
-					$l_societe->fetch($TLine['fk_soc'][$iFileLine]);
+				    $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
 				}
 				
 				$fk_payment = $TLine['fk_payment'][$iFileLine];
 				$date_paye = $this->TFile[$iFileLine]['datev'];
 				foreach($TObject as $typeObject=>$TAmounts) 
 				{
+				    
+				    
 					if(!empty($TAmounts)) 
 					{
+					    
 						switch ($typeObject) 
 						{
 							case 'facture':
 								$fk_bank = $this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'fournfacture':
-							    $create_fourn_invoice = !empty($TLine['create_fourn_invoice'][$iFileLine])?1:0;
-							    $create_fourn_productid = !empty($TLine['create_fourn_productid'][$iFileLine])?$TLine['create_fourn_productid'][$iFileLine]:0;
-							    
-							    if(!empty($create_fourn_invoice) && !empty($create_fourn_productid) ){
-							        // create new invoice + doPaymentForFactureFourn
-							        $fk_bank = $this->createInvoiceForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$this->TFile[$iFileLine]);
-							    }
-							    else {
-							        exit('ici');
+							    if(!empty($doPaymentForFactureFourn[$iFileLine])){
 							        $fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 							    }
 								break;
@@ -497,10 +522,12 @@ class BankImport
 	    $NewInvoiceAmount = abs($fileLine['amount']); // le montant de la nouvelle facture
 	    
 	    // déduction des montants associés à d'autres factures
-	    foreach ($TLine['piece'][$iFileLine]['fournfacture'] as $key => $dispatchAmount )
-	    {
-	        if(!empty($dispatchAmount) ){
-	            $NewInvoiceAmount -=  price2num($dispatchAmount);
+	    if(!empty($TLine['piece'][$iFileLine]['fournfacture'])){
+	        foreach ($TLine['piece'][$iFileLine]['fournfacture'] as $key => $dispatchAmount )
+	        {
+	            if(!empty($dispatchAmount) ){
+	                $NewInvoiceAmount -=  price2num($dispatchAmount);
+	            }
 	        }
 	    }
 	    
@@ -535,17 +562,17 @@ class BankImport
 	                return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
 	            }
 	            else {
-	                setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	                setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('addline'),'errors');
 	            }
 	        }
 	        else {
-	            setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	            setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Create'),'errors');
 	        }
 	    }
 	    else {
-	        setEventMessage($langs->trans('ErrorNewFournInvoice'),'errors');
+	        setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Product'),'errors');
 	    }
-	    
+	    exit();
 	}
 	
 	private function doPaymentForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
@@ -776,6 +803,27 @@ class BankImport
 	private function extractNegDir(array $matches) {
 		$this->neg_dir = $matches[1];
 		return substr($matches[0], -1);
+	}
+	
+	
+	private function getSoc($id){
+	    global $db;
+	    
+	    if(empty($this->socCache[$id]))
+	    {
+	        $l_societe = new Societe($db);
+	        if($l_societe->fetch($id)>0){
+	            $this->socCache[$id]=$l_societe;
+	        }
+	        else{
+	            return false;
+	        }
+	    }
+	    else {
+	        $l_societe = $this->socCache[$id];
+	    }
+	    
+	    return $l_societe;
 	}
 }
 
