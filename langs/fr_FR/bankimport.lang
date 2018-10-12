@@ -63,3 +63,4 @@ CreateSupplierInvoiceHelp=Vous devrez alors selectionner le produit/service à u
 
 bankimport_no_customer_selected_click_to_select_one=Aucun tiers associé, cliquez ici pour un choisir un
 bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour choisir un autre tiers)
+ImportFile=Importer le fichier

@@ -572,6 +572,7 @@ class BankImport
 	    else {
 	        setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Product'),'errors');
 	    }
+	    var_dump($newInvoiceId,'testing why not work');
 	    exit();
 	}
 	
@@ -844,3 +845,104 @@ class TBankImportHistory extends TObjetStd
 	}
 	
 }
+
+
+
+class BankImportDet extends SeedObject
+{
+    
+    public $table_element = 'bankimportdet';
+    public $element = 'bankimportdet';
+    
+    public $entity;
+    
+    public $fk_bank;
+    public $num_releve;
+    public $label;
+    
+    public $fk_element;
+    public $fk_user_modif;
+    public $fk_user_author;
+    public $fk_type; // CB, VIR ...
+    public $datev;
+    public $dateo;
+    public $amount;
+    
+    
+    public $date_linked; // date du rapprochement
+    public $import_key;
+    
+    /**
+     * status
+     */
+    const STATUS_DRAFT = 0;
+    const STATUS_DRAFT_AUTO = 1;
+    const STATUS_LINKED = 2;
+    
+    
+    
+    
+    public function __construct($db)
+    {
+        global $conf,$langs;
+        
+        $this->db =& $db;
+        
+        $this->fields=array(
+            'entity' =>array('type'=>'int', 'default' => SELF::STATUS_DRAFT)
+            ,'fk_statut' =>array('type'=>'int')
+            ,'label'=>array('type'=>'string', 'length' => 255)
+            ,'fk_bank' =>array('type'=>'int')
+            ,'num_releve'=>array('type'=>'string', 'length' => 50)
+            ,'element'=>array('type'=>'string', 'length' => 50)
+            ,'fk_element'=>array('type'=>'int')
+            ,'fk_user_modif'=>array('type'=>'int')
+            ,'fk_user_author'=>array('type'=>'int')
+            ,'datev'=>array('type'=>'date')
+            ,'dateo'=>array('type'=>'date' )
+            ,'amount'=>array('type'=>'double' )
+            ,'date_linked'=>array('type'=>'date' )
+            ,'import_key'=>array('type'=>'string', 'length' => 50)
+        );
+        
+        $this->init();
+        
+        $this->entity = $conf->entity;
+    }
+    
+   
+    
+    
+    
+    // used for form
+    static function listStatus(){
+        return array(
+            self::STATUS_DRAFT  => self::translateTypeConst(self::STATUS_DRAFT  ),
+            self::STATUS_DRAFT_AUTO  => self::translateTypeConst(self::STATUS_DRAFT_AUTO ),
+            self::STATUS_LINKED => self::translateTypeConst(self::STATUS_LINKED ),
+            
+        );
+    }
+
+    static function translateTypeConst($key){
+        global $langs;
+        switch ($key) {
+            case self::STATUS_DRAFT :
+                return $langs->trans('STATUS_DRAFT');
+                break;
+            case self::STATUS_DRAFT_AUTO :
+                return $langs->trans('STATUS_DRAFT_AUTO');
+                break;
+            case self::STATUS_LINKED :
+                return $langs->trans('STATUS_LINKED');
+                break;
+        }
+    }
+    
+    
+
+    
+    
+}
+
+

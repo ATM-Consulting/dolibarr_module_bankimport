@@ -272,6 +272,8 @@ class modBankImport extends DolibarrModules
 	 */
 	function init($options='')
 	{
+	    global $db;
+	    
 		$sql = array();
 
 		define('INC_FROM_DOLIBARR',true);

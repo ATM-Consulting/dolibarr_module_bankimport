@@ -132,7 +132,10 @@
 					
 					echo ' <span id="span_for_product_'.$i.'" style="display:none" >';
 					$form->select_produits('','TLine[create_fourn_productid]['.$i.']', '', 20, 0, 1, 2, '', 0, array(),0, 1, 1, '', 1  );
-					echo ' <br/></span>';
+					echo ' <br/>';
+					echo '<input type="text" name="TLine[create_fourn_ref]['.$i.']" placeholder="Référence" value="" />';
+					echo ' <br/>';
+					echo '</span>';
 					
 					echo $form->select_types_paiements('', 'TLine[fk_payment]['.$i.']');
 					echo '&nbsp;<span class="fieldrequired">*</span>';

@@ -74,7 +74,10 @@ if(GETPOST('compare')) {
 	}
 }
 
-llxHeader('', $langs->trans('TitleBankImport'));
+
+$arrayofjs='';
+$arrayofcss=array('bankimport/css/style.css');
+llxHeader('', $langs->trans('TitleBankImport'), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 print_fiche_titre($langs->trans("TitleBankImport"));
 

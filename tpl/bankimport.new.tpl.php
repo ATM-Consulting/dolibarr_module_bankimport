@@ -6,11 +6,11 @@
 			<td width="200"><label for="ds"><?php echo $langs->trans("DateStart") ?></label></td>
 			<td><?php echo $form->select_date($import->dateStart, 'ds') ?></td>
 			<td><label class="fieldrequired" for="numreleve"><?php echo $langs->trans("AccountStatement") ?></label></td>
-			<td><input type="text" id="numreleve" name="numreleve" value="<?php echo $import->numReleve ?>" /></td>
+			<td><input type="text" id="numreleve" name="numreleve" value="<?php echo $import->numReleve ?>" required /></td>
 		</tr>
 		<tr>
 			<td width="200"><label class="fieldrequired" for="bankimportfile"><?php echo $langs->trans("BankImportFile") ?></label></td>
-			<td><input type="file" id="bankimportfile" name="bankimportfile" /></td>
+			<td><input type="file" id="bankimportfile" name="bankimportfile" required /></td>
 			<td width="200"><label for="de"><?php echo $langs->trans("DateEnd") ?></label></td>
 			<td><?php echo $form->select_date($import->dateEnd, 'de') ?></td>
 			<td><label for="hasheader"><?php echo $langs->trans("FileHasHeader") ?></label></td>
@@ -42,13 +42,24 @@
 	<br />
 
 	<div class="center">
-		<input type="submit" class="button" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("BankCompareTransactions")) ?>">
+		<input type="submit" class="butAction" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("ImportFile")) ?>">
 	</div>
 </form>
 
 <script type="text/javascript">
+
+
+
 	$(function() {
+
+		checkformvalidity();
+
+		$('#selectaccountid').change(function() {
+			checkInputAccountValidity();
+		});
+		
 		$('form[name=bankimport]').submit(function(event) {
+			
 			var TError = new Array;
 			
 			if ($('#selectaccountid').val() == -1) 	TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankAccountRequired'); ?>");
@@ -68,4 +79,26 @@
 			return true;
 		});
 	});
+
+
+
+
+
+	function checkformvalidity(){
+		checkInputAccountValidity();
+	}
+
+
+
+	function checkInputAccountValidity(){
+		
+		if ($('#selectaccountid').val() == -1){
+			$('#selectaccountid').get(0).setCustomValidity("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankAccountRequired'); ?>");
+			return true;
+		}
+		else{
+			$('#selectaccountid').get(0).setCustomValidity('');
+			return false;
+		}
+	}	
 </script>

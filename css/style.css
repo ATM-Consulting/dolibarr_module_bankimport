@@ -1,0 +1,4 @@
+input:invalid, select:invalid {
+  /*outline: 1px solid #ea1212;*/
+  border-color: #ea1212;
+}
