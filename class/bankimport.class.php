@@ -9,841 +9,839 @@ require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.ph
 
 class BankImport
 {
-	/** @var string Negative direction token */
-	private $neg_dir;
-
-	protected $db;
-
-	/** @var Account */
-	public $account;
-	public $file;
-	
-	public $dateStart;
-	public $dateEnd;
-	public $numReleve;
-	public $hasHeader;
-	public $lineHeader; // Si on historise, on concerve le header d'origine pour avoir le bon intitulé dans nos future tableaux
-	public $TOriginLine=array(); // Contient les lignes d'origin du fichier, pour l'historisation 
-	
-	public $TBank = array(); // Will contain all account lines of the period
-	public $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
-	public $TFile = array(); // Will contain all file lines
-	
-	public $nbCreated = 0;
-	public $nbReconciled = 0;
-	
-	function __construct($db) {
-		$this->db = &$db;
-		$this->dateStart = strtotime('first day of last month');
-		$this->dateEnd = strtotime('last day of last month');
-	}
-	
-	/**
-	 * Set vars we will work with
-	 */
-	function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve, $hasHeader) {
-		global $conf, $langs;
-		
-		// Bank account selected
-		if($accountId <= 0) {
-			setEventMessage($langs->trans('ErrorAccountIdNotSelected'), 'errors');
-			return false;
-		} else {
-			$this->account = new Account($this->db);
-			$this->account->fetch($accountId);
-		}
-		
-		// Start and end date regarding bank statement
-		$this->dateStart = $dateStart;
-		$this->dateEnd = $dateEnd;
-		
-		// Statement number
-		$this->numReleve = $numReleve;
-		$this->hasHeader = $hasHeader;
-		
-		// Bank statement file (csv or filename if csv already uploaded)
-		if(is_file($filename)) {
-			$this->file = $filename;
-		} else if(!empty($_FILES[$filename])) {
-			
-			if($_FILES[$filename]['error'] != 0) {
-				setEventMessage($langs->trans('ErrorFile' . $_FILES[$filename]['error']), 'errors');
-				return false;
-			}/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] != 'application/octet-stream') {
-				setEventMessage($langs->trans('ErrorFileIsNotCSV') . ' ' . $_FILES[$filename]['type'], 'errors');
-				return false;
-			}*/ 
-			else {
-				
-				dol_include_once('/core/lib/files.lib.php');
-				dol_include_once('/core/lib/images.lib.php');
-				$upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
-				
-				dol_add_file_process($upload_dir,1,1,$filename);
-				$this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
-				
-				if(!is_file($this->file)) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
-	}
-	
-	function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
-		$this->load_bank_transactions();
-		$this->load_check_receipt();
-		$this->load_file_transactions($delimiter, $dateFormat, $mapping_string, $enclosure);
-	}
-	
-	// Load bank lines
-	function load_bank_transactions() {
-		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank WHERE fk_account = " . $this->account->id . " ";
-		$sql.= "AND dateo BETWEEN '" . date('Y-m-d', $this->dateStart) . "' AND '" . date('Y-m-d', $this->dateEnd) . "' ";
-		$sql.= "ORDER BY datev DESC";
-		
-		$resql = $this->db->query($sql);
-		$TBankLineId = array();
-		while($obj = $this->db->fetch_object($resql)) {
-			$TBankLineId[] = $obj->rowid;
-		}
-		
-		foreach($TBankLineId as $bankid) {
-			$bankLine = new AccountLine($this->db);
-			$bankLine->fetch($bankid);
-			$this->TBank[$bankid] = $bankLine;
-		}
-	}
-	
-	// Load check receipt regarding bank lines
-	function load_check_receipt() {
-		foreach($this->TBank as $bankLine) {
-			if($bankLine->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankLine->fk_bordereau])) {
-				$bord = new RemiseCheque($this->db);
-				$bord->fetch($bankLine->fk_bordereau);
-				
-				$this->TCheckReceipt[$bankLine->fk_bordereau] = $bord;
-			}
-		}
-	}
-
-	// Load file lines
-	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
-		global $conf, $langs;
-
-		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
-		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
-		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
-		$mapping_string = preg_replace_callback('|=(.*)' . $delimiter . '|', 'BankImport::extractNegDir', $mapping_string);
-		
-		if($delimiter == '\t')$delimiter="\t";
-		
-		if(strpos($mapping_string,$delimiter) === false) $mapping = explode(";", $mapping_string); // pour le \t
-		else $mapping = explode($delimiter, $mapping_string); // pour le \t
-
-		$f1 = fopen($this->file, 'r');
-		if($this->hasHeader) $this->lineHeader = fgets($f1, 4096);
-		
-		while(!feof($f1)) {
-
-			if(!empty($conf->global->BANKIMPORT_MAC_COMPATIBILITY)) {
-				$ligne = fgets($f1, 4096);
-				if (empty($ligne)) continue;
-//				print '<hr>'.$ligne.'<br />';
-				$dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
-
-			}
-			else {
-				$dataline = fgetcsv($f1, 4096, $delimiter, $enclosure);
-				if (empty($dataline)) continue;
-			}
-//		  var_dump($dataline, $delimiter, $enclosure);
-
-			$mapping_en_colonne = (strpos($mapping_string, ':') !== false) ? true : false;
-
-			if((count($dataline) == count($mapping)) || $mapping_en_colonne) {
-				$this->TOriginLine[] = $dataline;
-				
-				if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
-				else $data = array_combine($mapping, $dataline);
-				
-				// Gestion du montant débit / crédit
-				if (empty($data['debit']) && empty($data['credit'])) {
-					$amount = (float)price2num($data['amount']);
-
-					// Direction support
-					if (!empty($data['direction'])) {
-						if ($data['direction'] == $this->neg_dir) {
-							$amount *= -1;
-						}
-					}
-
-					if ($amount >= 0) {
-						$data['credit'] = $amount;
-					} elseif ($amount < 0) {
-						$data['debit'] = $amount;
-					}
-				} else {
-					$data['debit'] = (float)price2num($data['debit']);
-					 
-					if ($data['debit'] > 0) {
-						$data['debit'] *= -1;
-					}
-					$data['credit'] = (float)price2num($data['credit']);
-				}
-				
-				$data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
-				
-				//$time = date_parse_from_format($dateFormat, $data['date']);
-				//$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
-
-				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
-				$datetime = DateTime::createFromFormat($dateFormat, $data['date']);
-				
-				$data['datev'] = ($datetime === false) ? 0 : $datetime->getTimestamp();
-				
-				$data['error'] = '';
-			} else {
-				$data = array();
-				$data['error'] = $langs->trans('LineDoesNotMatchWithMapping');
-			}
-			
-			$this->TFile[] = $data;
-		}
-		
-		fclose($f1);
-	}
-
-	function construct_data_tab_column_file(&$mapping, $data) {
-		
-		$TDataFinal = array();
-		$pos = 0;
-		foreach($mapping as $m) {
-			
-			$TTemp = explode(':', $m);
-			
-			$label_colonne = $TTemp[0];
-			$nb_car = $TTemp[1];
-			$res = substr($data, $pos, $nb_car);
-			$res = trim($res);
-			$TDataFinal[$label_colonne] = $res;
-			$pos += $nb_car;
-		}
-		
-		return $TDataFinal;
-		
-	}
-	
-	function compare_transactions() {
-		
-		// For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
-		foreach($this->TFile as &$fileLine) {
-			$amount = price2num($fileLine['amount']); // Transform to numeric string
-			if(is_numeric($amount)) {
-				$transac = $this->search_dolibarr_transaction_by_amount($amount, $fileLine['label']);
-				if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
-				$fileLine['bankline'] = $transac;
-			}
-		}
-	}
-	
-	private function search_dolibarr_transaction_by_amount($amount, $label) {
-		global $conf, $langs;
-		$langs->load("banks");
-		
-		$amount = floatval($amount); // Transform to float
-		foreach($this->TBank as $i => $bankLine) {
-			$test = ($amount == $bankLine->amount);
-			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
-			if(!empty($test)) {
-				unset($this->TBank[$i]);
-				
-				return array($this->get_bankline_data($bankLine));
-			}
-		}
-		
-		return false;
-	}
-
-	private function search_dolibarr_transaction_by_receipt($amount) {
-		global $langs;
-		$langs->load("banks");
-		
-		$amount = floatval($amount); // Transform to float
-		foreach($this->TCheckReceipt as $bordereau) {
-			if($amount == $bordereau->amount) {
-				$TBankLine = array();
-				foreach($this->TBank as $i => $bankLine) {
-					if($bankLine->fk_bordereau == $bordereau->id) {
-						unset($this->TBank[$i]);
-						
-						$TBankLine[] = $this->get_bankline_data($bankLine);
-					}
-				}
-				
-				return $TBankLine;
-			}
-		}
-		
-		return false;
-	}
-
-	private function get_bankline_data($bankLine) {
-		global $langs, $db;
-		
-		if(!empty($bankLine->num_releve)) {
-			$link = '<a href="' . dol_buildpath(
-				'/compta/bank/releve.php'
-					. '?num=' . $bankLine->num_releve
-					. '&account=' . $bankLine->fk_account, 2
-				) . '">'
-				. $bankLine->num_releve
-				. '</a>';
-			$result = $langs->trans('AlreadyReconciledWithStatement', $link);
-			$autoaction = false;
-		} else {
-			$result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
-			$autoaction = true;
-		}
-		
-		$societestatic = new Societe($db);
-		$userstatic = new User($db);
-		$chargestatic = new ChargeSociales($db);
-		$memberstatic = new Adherent($db);
-		
-		$links = $this->account->get_url($bankLine->id);
-		$relatedItem = '';
-		foreach($links as $key=>$val) {
-			if ($links[$key]['type'] == 'company') {
-				$societestatic->id = $links[$key]['url_id'];
-				$societestatic->name = $links[$key]['label'];
-				$relatedItem = $societestatic->getNomUrl(1,'',16);
-			} else if ($links[$key]['type'] == 'user') {
-				$userstatic->id = $links[$key]['url_id'];
-				$userstatic->lastname = $links[$key]['label'];
-				$relatedItem = $userstatic->getNomUrl(1,'');
-			} else if ($links[$key]['type'] == 'sc') {
-				// sc=old value
-				$chargestatic->id = $links[$key]['url_id'];
-				if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg)) {
-					if ($reg[1] == 'socialcontribution') $reg[1] = 'SocialContribution';
-					$chargestatic->lib = $langs->trans($reg[1]);
-				} else {
-					$chargestatic->lib = $links[$key]['label'];
-				}
-				$chargestatic->ref = $chargestatic->lib;
-				$relatedItem = $chargestatic->getNomUrl(1,16);
-			} else if ($links[$key]['type'] == 'member') {
-				$memberstatic->id = $links[$key]['url_id'];
-				$memberstatic->ref = $links[$key]['label'];
-				$relatedItem = $memberstatic->getNomUrl(1,16,'card');
-			}
-		}
-		
-		return array(
-			'id' => $bankLine->id
-			,'url' => $bankLine->getNomUrl(1)
-			,'date' => dol_print_date($bankLine->datev,"day")
-			,'label' => (preg_match('/^\((.*)\)$/i',$bankLine->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankLine->label,60))
-			,'amount' => price($bankLine->amount)
-			,'result' => $result
-			,'autoaction' => $autoaction
-			,'relateditem' => $relatedItem
-			,'time' => $bankLine->datev
-		);
-	}
-	
-	/**
-	 * Actions made after file check by user
-	 */
-	public function import_data($TLine) 
-	{
-		global $conf;
-		
-		$PDOdb = new TPDOdb;
-		
-		dol_include_once('/compta/paiement/class/paiement.class.php');
-		dol_include_once('/fourn/class/paiementfourn.class.php');
-		dol_include_once('/fourn/class/fournisseur.facture.class.php');
-		dol_include_once('/compta/sociales/class/paymentsocialcontribution.class.php');
-		
-		$this->socCache = array();
-		
-		if(!empty($TLine['type'])){
-		    
-		    foreach ($TLine['type'] as $iFileLine => $typeObject){
-		    
-		        if(!empty($TLine['fk_soc'][$iFileLine])) {
-		            $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
-		        }
-		        
-		        $doPaymentForFactureFourn[$iFileLine] = true;
-		        if($typeObject == 'fournfacture' && !empty($l_societe))
-		        {
-		            $create_fourn_invoice = !empty($TLine['create_fourn_invoice'][$iFileLine])?1:0;
-		            $create_fourn_productid = !empty($TLine['create_fourn_productid'][$iFileLine])?$TLine['create_fourn_productid'][$iFileLine]:0;
-		            $fk_payment = $TLine['fk_payment'][$iFileLine];
-		            if(!empty($create_fourn_invoice) && !empty($create_fourn_productid) ){
-		                // create new invoice + doPaymentForFactureFourn
-		                $fk_bank = $this->createInvoiceForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$this->TFile[$iFileLine]);
-		                $doPaymentForFactureFourn[$iFileLine] = false;
-		            }
-		        }
-		    }
-		}
-		
-		
-		
-		if (!empty($TLine['piece'])) 
-		{
-			
-			/*
-			 * Reglemenent créé manuellement
-			 */
-			  	
-			$db = &$this->db;
-			
-			
-			foreach($TLine['piece'] as $iFileLine=>$TObject) 
-			{
-			    
-				if(!empty($TLine['fk_soc'][$iFileLine])) {
-				    $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
-				}
-				
-				$fk_payment = $TLine['fk_payment'][$iFileLine];
-				$date_paye = $this->TFile[$iFileLine]['datev'];
-				foreach($TObject as $typeObject=>$TAmounts) 
-				{
-				    
-				    
-					if(!empty($TAmounts)) 
-					{
-					    
-						switch ($typeObject) 
-						{
-							case 'facture':
-								$fk_bank = $this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
-								break;
-							case 'fournfacture':
-							    if(!empty($doPaymentForFactureFourn[$iFileLine])){
-							        $fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
-							    }
-								break;
-							case 'charge':
-								$fk_bank = $this->doPaymentForCharge();
-								break;
-							default:
-								continue;
-								break;
-						}
-						
-					}
-				}
-				
-			}
-			
-			unset($TLine['piece']);
-		}
-		
-		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
-	
-	//	var_dump('exit a virer');
-	//exit;
-		
-		if (isset($TLine['new'])) 
-		{
-			if(!empty($TLine['new'])) {
-				foreach($TLine['new'] as $iFileLine) {
-					$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
-					if($bankLineId > 0) {
-						$bankLine = new AccountLine($this->db);
-						$bankLine->fetch($bankLineId);
-						$this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
-					}
-				}
-			}
-			unset($TLine['new']);
-		}
-		
-		foreach($TLine as $bankLineId => $iFileLine) 
-		{
-		    if(in_array($bankLineId, array('create_fourn_productid', 'create_fourn_invoice'))){
-		        continue;
-		    }
-		    
-			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
-			if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
-			{
-				$this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
-			}
-		}
-	}
-
-	private function validateInvoices(&$TAmounts, $type) {
-		
-		global $db, $user;
-		
-		dol_include_once('/compta/facture/class/facture.class.php');
-		dol_include_once('/fourn/class/fournisseur.facture.class.php');
-		
-		$TTypeElement = array('payment'=>'Facture', 'payment_supplier'=>'FactureFournisseur');
-		
-		if(!empty($TAmounts) && in_array($type, array_keys($TTypeElement))) {
-			foreach($TAmounts as $facid=>$amount) {
-				$f = new $TTypeElement[$type]($db);
-				if($f->fetch($facid) > 0 && $f->statut == 0 && $amount > 0) $f->validate($user);
-			}
-		}
-		
-	}
-
-	private function doPaymentForFacture(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
-	{
-		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
-	}
-
-	private function createInvoiceForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$fileLine)
-	{
-	    global $conf, $langs,$user,$db;
-	    
-	    dol_include_once('product/class/product.class.php');
-	    
-	    //,$create_fourn_invoice,$create_fourn_productid
-	    //$TLine['fk_payment'][$iFileLine]
-
-	    // Amount have to be for supplier invoice
-	    if($fileLine['amount']>0){
-	        setEventMessage($langs->trans('ErrorNewFournInvoice'),'error');
-	        return 0;
-	    }
-	    
-	    $NewInvoiceAmount = abs($fileLine['amount']); // le montant de la nouvelle facture
-	    
-	    // déduction des montants associés à d'autres factures
-	    if(!empty($TLine['piece'][$iFileLine]['fournfacture'])){
-	        foreach ($TLine['piece'][$iFileLine]['fournfacture'] as $key => $dispatchAmount )
-	        {
-	            if(!empty($dispatchAmount) ){
-	                $NewInvoiceAmount -=  price2num($dispatchAmount);
-	            }
-	        }
-	    }
-	    
-	    $product = new Product($db);
-	    if($NewInvoiceAmount>0 && $product->fetch($create_fourn_productid)>0){
-	        dol_include_once('fourn/class/fournisseur.facture.class.php');
-	        $factureFournisseur = New FactureFournisseur($db);
-	        
-	        $NewInvoiceAmount = $NewInvoiceAmount / ( 1 + $product->tva_tx / 100 );
-	        
-	        $factureFournisseur->ref = '(PROV)';
-	        $factureFournisseur->date = $date_paye;
-	        $factureFournisseur->ref_supplier = $factureFournisseur->date;
-	        $factureFournisseur->socid = $l_societe->id;
-	        $factureFournisseur->type = FactureFournisseur::TYPE_STANDARD;
-	        $factureFournisseur->libelle = dol_print_date($factureFournisseur->date).' : '.$fileLine['label'];
-	        $factureFournisseur->mode_reglement_id = $fk_payment;
-	        
-	        $newInvoiceId = $factureFournisseur->create($user);
-	        
-	        if($newInvoiceId>0)
-	        {
-	            if($factureFournisseur->addline($desc, $NewInvoiceAmount, $product->tva_tx, 0, 0, 1,$product->id) > 0)
-	            {
-	                setEventMessage($langs->trans('NewFournInvoiceCreated'));
-	                
-	                // ajout du paiment à la facture
-	                $TLine['piece'][$iFileLine]['fournfacture'][$newInvoiceId] = $NewInvoiceAmount;
-	                $TAmounts[$newInvoiceId] = $NewInvoiceAmount;
-	                
-	                
-	                return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
-	            }
-	            else {
-	                setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('addline'),'errors');
-	            }
-	        }
-	        else {
-	            setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Create'),'errors');
-	        }
-	    }
-	    else {
-	        setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Product'),'errors');
-	    }
-	    var_dump($newInvoiceId,'testing why not work');
-	    exit();
-	}
-	
-	private function doPaymentForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
-	{
-	    return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
-	}
-	
-	private function doPaymentForCharge(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
-	{
-		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_sc');
-	}
-
-	private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment')
-	{
-		global $conf, $langs,$user;
-		
-		$note = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
-		
-		if ($type == 'payment') $paiement = new Paiement($this->db);
-		elseif ($type == 'payment_supplier') $paiement = new PaiementFourn($this->db);
-		elseif ($type == 'payment_supplier') $paiement = new PaymentSocialContribution($this->db);
-		else exit($langs->trans('BankImport_FatalError_PaymentType_NotPossible', $type));
-		
-		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $this->validateInvoices($TAmounts, $type);
-		
-	    $paiement->datepaye     = $date_paye;
-	    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = $fk_payment;
-	    $paiement->num_paiement = '';
-	    $paiement->note         = $note;
-		
-		$paiement_id = $paiement->create($user, 1);
-
-		if ($paiement_id > 0) 
-		{
-			$bankLineId = $paiement->addPaymentToBank($user, $type, !empty($this->TFile[$iFileLine]['label']) ? $this->TFile[$iFileLine]['label'] : $note, $this->account->id, $l_societe->name, '');
-			$TLine[$bankLineId] = $iFileLine;
-			
-			$bankLine = new AccountLine($this->db);
-			$bankLine->fetch($bankLineId);
-			$this->TBank[$bankLineId] = $bankLine;
-			
-			// On supprime le new saisi
-			foreach($TLine['new'] as $k=>$iFileLineNew) 
-			{
-				if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
-			}
-			
-			// Uniquement pour les factures client (les acomptes fournisseur n'existent pas)
-			if($conf->global->BANKIMPORT_AUTO_CREATE_DISCOUNT && $type === 'payment') $this->createDiscount($TAmounts);
-			
-			return $bankLineId;
-		}
-		
-		return 0; // Payment fail, can't return bankLineId
-	}
-
-	private function createDiscount(&$TAmounts) {
-		
-		global $db, $user;
-		
-		dol_include_once('/core/class/discount.class.php');
-		
-		foreach($TAmounts as $id_fac => $amount) {
-			
-			$object = new Facture($db);
-			$object->fetch($id_fac);
-			if($object->type != 3) continue; // Uniquement les acomptes
-			
-			$object->fetch_thirdparty();
-			
-			// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
-			$discountcheck=new DiscountAbsolute($db);
-			$result=$discountcheck->fetch(0,$object->id);
-			
-			$canconvert=0;
-			if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
-			if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
-			if ($canconvert)
-			{
-				$db->begin();
-			
-				// Boucle sur chaque taux de tva
-				$i = 0;
-				foreach ($object->lines as $line) {
-					$amount_ht [$line->tva_tx] += $line->total_ht;
-					$amount_tva [$line->tva_tx] += $line->total_tva;
-					$amount_ttc [$line->tva_tx] += $line->total_ttc;
-					$i ++;
-				}
-			
-				// Insert one discount by VAT rate category
-				$discount = new DiscountAbsolute($db);
-				if ($object->type == Facture::TYPE_CREDIT_NOTE)
-					$discount->description = '(CREDIT_NOTE)';
-				elseif ($object->type == Facture::TYPE_DEPOSIT)
-					$discount->description = '(DEPOSIT)';
-				else {
-					setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
-				}
-				$discount->tva_tx = abs($object->total_ttc);
-				$discount->fk_soc = $object->socid;
-				$discount->fk_facture_source = $object->id;
-			
-				$error = 0;
-				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs($amount_ht [$tva_tx]);
-					$discount->amount_tva = abs($amount_tva [$tva_tx]);
-					$discount->amount_ttc = abs($amount_ttc [$tva_tx]);
-					$discount->tva_tx = abs($tva_tx);
-			
-					$result = $discount->create($user);
-					if ($result < 0)
-					{
-						$error++;
-						break;
-					}
-				}
-			
-				if (empty($error))
-				{
-					// Classe facture
-					$result = $object->set_paid($user);
-					if ($result >= 0)
-					{
-						//$mesgs[]='OK'.$discount->id;
-						$db->commit();
-					}
-					else
-					{
-						setEventMessage($object->error,'errors');
-						$db->rollback();
-					}
-				}
-				else
-				{
-					setEventMessage($discount->error,'errors');
-					$db->rollback();
-				}
-			}
-
-		}
-
-	}
-
-	private function insertHistoryLine(&$PDOdb, $iFileLine, $fk_bank)
-	{
-		if (!empty($this->hasHeader) && !empty($this->TOriginLine[$iFileLine]))
-		{
-			$header = $this->parseHeader($this->lineHeader);
-			$line = $this->parseLine($this->TOriginLine[$iFileLine]);
-			
-			$historyLine = new TBankImportHistory;
-			
-			$historyLine->num_releve = $this->numReleve;
-			$historyLine->fk_bank = $fk_bank;
-			$historyLine->line_imported_title = $header;
-			$historyLine->line_imported_value = $line;
-			
-			$historyLine->save($PDOdb);
-		}
-	}
-	
-	public function parseHeader($headerToParse)
-	{
-		global $conf;
-		
-		$header = explode($conf->global->BANKIMPORT_SEPARATOR, $headerToParse);
-		$header = array_map(array('BankImport', 'cleanString'), $header);
-		
-		return $header;
-	}
-	
-	public static function cleanString($strToClean)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-		$strToClean = trim($strToClean);
-		$strToClean = preg_replace('/\s{2,}/', '', $strToClean);
-		$strToClean = dol_strtolower(dol_string_unaccent($strToClean));
-		
-		return ucfirst($strToClean);
-	}
-	
-	public function parseLine($lineArrayToParse)
-	{
-		$line = array_map(array('BankImport', 'cleanStringForLine'), $lineArrayToParse);
-		
-		return $line;
-	}
-	
-	public static function cleanStringForLine($strToClean)
-	{
-		$strToClean = trim($strToClean);
-		$strToClean = preg_replace('/\s{2,}/', '', $strToClean);
-		
-		return $strToClean;
-	}
-	
-	private function create_bank_transaction($fileLine) {
-		global $user;
-		
-		$bankLineId = $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
-		$this->nbCreated++;
-		
-		return $bankLineId;
-	}
-	
-	private function reconcile_bank_transaction($bankLine, $fileLine) {
-		global $user,$conf;
-		
-		// Set conciliation
-		$bankLine->num_releve = $this->numReleve;
-		$bankLine->update_conciliation($user, 0);
-		
-		// Update value date
-		$dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
-		$bankLine->datev_change($bankLine->id, $dateDiff);
-		
-		$this->nbReconciled++;
-	}
-
-	/**
-	 * Extract negative direction token from direction key
-	 *
-	 * @param array $matches Regex matches
-	 * @return string Last separator (Effectively removing the extracted negative direction)
-	 */
-	private function extractNegDir(array $matches) {
-		$this->neg_dir = $matches[1];
-		return substr($matches[0], -1);
-	}
-	
-	
-	private function getSoc($id){
-	    global $db;
-	    
-	    if(empty($this->socCache[$id]))
-	    {
-	        $l_societe = new Societe($db);
-	        if($l_societe->fetch($id)>0){
-	            $this->socCache[$id]=$l_societe;
-	        }
-	        else{
-	            return false;
-	        }
-	    }
-	    else {
-	        $l_societe = $this->socCache[$id];
-	    }
-	    
-	    return $l_societe;
-	}
+    /** @var string Negative direction token */
+    private $neg_dir;
+    
+    protected $db;
+    
+    /** @var Account */
+    public $account;
+    public $file;
+    
+    public $dateStart;
+    public $dateEnd;
+    public $numReleve;
+    public $hasHeader;
+    public $lineHeader; // Si on historise, on concerve le header d'origine pour avoir le bon intitulé dans nos future tableaux
+    public $TOriginLine=array(); // Contient les lignes d'origin du fichier, pour l'historisation
+    
+    public $TBank = array(); // Will contain all account lines of the period
+    public $TCheckReceipt = array(); // Will contain check receipt made for account lines of the period
+    public $TFile = array(); // Will contain all file lines
+    
+    public $nbCreated = 0;
+    public $nbReconciled = 0;
+    
+    function __construct($db) {
+        $this->db = &$db;
+        $this->dateStart = strtotime('first day of last month');
+        $this->dateEnd = strtotime('last day of last month');
+    }
+    
+    /**
+     * Set vars we will work with
+     */
+    function analyse($accountId, $filename, $dateStart, $dateEnd, $numReleve, $hasHeader) {
+        global $conf, $langs;
+        
+        // Bank account selected
+        if($accountId <= 0) {
+            setEventMessage($langs->trans('ErrorAccountIdNotSelected'), 'errors');
+            return false;
+        } else {
+            $this->account = new Account($this->db);
+            $this->account->fetch($accountId);
+        }
+        
+        // Start and end date regarding bank statement
+        $this->dateStart = $dateStart;
+        $this->dateEnd = $dateEnd;
+        
+        // Statement number
+        $this->numReleve = $numReleve;
+        $this->hasHeader = $hasHeader;
+        
+        // Bank statement file (csv or filename if csv already uploaded)
+        if(is_file($filename)) {
+            $this->file = $filename;
+        } else if(!empty($_FILES[$filename])) {
+            
+            if($_FILES[$filename]['error'] != 0) {
+                setEventMessage($langs->trans('ErrorFile' . $_FILES[$filename]['error']), 'errors');
+                return false;
+            }/* else if($_FILES[$filename]['type'] != 'text/csv' && $_FILES[$filename]['type'] != 'text/plain' &&  && $_FILES[$filename]['type'] != 'application/octet-stream') {
+            setEventMessage($langs->trans('ErrorFileIsNotCSV') . ' ' . $_FILES[$filename]['type'], 'errors');
+            return false;
+            }*/
+            else {
+                
+                dol_include_once('/core/lib/files.lib.php');
+                dol_include_once('/core/lib/images.lib.php');
+                $upload_dir = $conf->bankimport->dir_output . '/' . dol_sanitizeFileName($this->account->ref);
+                
+                dol_add_file_process($upload_dir,1,1,$filename);
+                $this->file = $upload_dir . '/' . $_FILES[$filename]['name'];
+                
+                if(!is_file($this->file)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
+        $this->load_bank_transactions();
+        $this->load_check_receipt();
+        $this->load_file_transactions($delimiter, $dateFormat, $mapping_string, $enclosure);
+    }
+    
+    // Load bank lines
+    function load_bank_transactions() {
+        $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank WHERE fk_account = " . $this->account->id . " ";
+        $sql.= "AND dateo BETWEEN '" . date('Y-m-d', $this->dateStart) . "' AND '" . date('Y-m-d', $this->dateEnd) . "' ";
+        $sql.= "ORDER BY datev DESC";
+        
+        $resql = $this->db->query($sql);
+        $TBankLineId = array();
+        while($obj = $this->db->fetch_object($resql)) {
+            $TBankLineId[] = $obj->rowid;
+        }
+        
+        foreach($TBankLineId as $bankid) {
+            $bankLine = new AccountLine($this->db);
+            $bankLine->fetch($bankid);
+            $this->TBank[$bankid] = $bankLine;
+        }
+    }
+    
+    // Load check receipt regarding bank lines
+    function load_check_receipt() {
+        foreach($this->TBank as $bankLine) {
+            if($bankLine->fk_bordereau > 0 && empty($this->TCheckReceipt[$bankLine->fk_bordereau])) {
+                $bord = new RemiseCheque($this->db);
+                $bord->fetch($bankLine->fk_bordereau);
+                
+                $this->TCheckReceipt[$bankLine->fk_bordereau] = $bord;
+            }
+        }
+    }
+    
+    // Load file lines
+    function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
+        global $conf, $langs;
+        
+        if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
+        if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
+        if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
+        $mapping_string = preg_replace_callback('|=(.*)' . $delimiter . '|', 'BankImport::extractNegDir', $mapping_string);
+        
+        if($delimiter == '\t')$delimiter="\t";
+        
+        if(strpos($mapping_string,$delimiter) === false) $mapping = explode(";", $mapping_string); // pour le \t
+        else $mapping = explode($delimiter, $mapping_string); // pour le \t
+        
+        $f1 = fopen($this->file, 'r');
+        if($this->hasHeader) $this->lineHeader = fgets($f1, 4096);
+        
+        while(!feof($f1)) {
+            
+            if(!empty($conf->global->BANKIMPORT_MAC_COMPATIBILITY)) {
+                $ligne = fgets($f1, 4096);
+                if (empty($ligne)) continue;
+                //				print '<hr>'.$ligne.'<br />';
+                $dataline = str_getcsv(trim($ligne), $delimiter, $enclosure);
+                
+            }
+            else {
+                $dataline = fgetcsv($f1, 4096, $delimiter, $enclosure);
+                if (empty($dataline)) continue;
+            }
+            //		  var_dump($dataline, $delimiter, $enclosure);
+            
+            $mapping_en_colonne = (strpos($mapping_string, ':') !== false) ? true : false;
+            
+            if((count($dataline) == count($mapping)) || $mapping_en_colonne) {
+                $this->TOriginLine[] = $dataline;
+                
+                if($mapping_en_colonne) $data = $this->construct_data_tab_column_file($mapping, $dataline[0]);
+                else $data = array_combine($mapping, $dataline);
+                
+                // Gestion du montant débit / crédit
+                if (empty($data['debit']) && empty($data['credit'])) {
+                    $amount = (float)price2num($data['amount']);
+                    
+                    // Direction support
+                    if (!empty($data['direction'])) {
+                        if ($data['direction'] == $this->neg_dir) {
+                            $amount *= -1;
+                        }
+                    }
+                    
+                    if ($amount >= 0) {
+                        $data['credit'] = $amount;
+                    } elseif ($amount < 0) {
+                        $data['debit'] = $amount;
+                    }
+                } else {
+                    $data['debit'] = (float)price2num($data['debit']);
+                    
+                    if ($data['debit'] > 0) {
+                        $data['debit'] *= -1;
+                    }
+                    $data['credit'] = (float)price2num($data['credit']);
+                }
+                
+                $data['amount'] = (!empty($data['debit']) ? $data['debit'] : $data['credit']);
+                
+                //$time = date_parse_from_format($dateFormat, $data['date']);
+                //$data['datev'] = mktime(0, 0, 0, $time['month'], $time['day'], $time['year']+2000);
+                
+                // TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
+                $datetime = DateTime::createFromFormat($dateFormat, $data['date']);
+                
+                $data['datev'] = ($datetime === false) ? 0 : $datetime->getTimestamp();
+                
+                $data['error'] = '';
+            } else {
+                $data = array();
+                $data['error'] = $langs->trans('LineDoesNotMatchWithMapping');
+            }
+            
+            $this->TFile[] = $data;
+        }
+        
+        fclose($f1);
+    }
+    
+    function construct_data_tab_column_file(&$mapping, $data) {
+        
+        $TDataFinal = array();
+        $pos = 0;
+        foreach($mapping as $m) {
+            
+            $TTemp = explode(':', $m);
+            
+            $label_colonne = $TTemp[0];
+            $nb_car = $TTemp[1];
+            $res = substr($data, $pos, $nb_car);
+            $res = trim($res);
+            $TDataFinal[$label_colonne] = $res;
+            $pos += $nb_car;
+        }
+        
+        return $TDataFinal;
+        
+    }
+    
+    function compare_transactions() {
+        
+        // For each file transaction, we search in Dolibarr bank transaction if there is a match by amount
+        foreach($this->TFile as &$fileLine) {
+            $amount = price2num($fileLine['amount']); // Transform to numeric string
+            if(is_numeric($amount)) {
+                $transac = $this->search_dolibarr_transaction_by_amount($amount, $fileLine['label']);
+                if($transac === false) $transac = $this->search_dolibarr_transaction_by_receipt($amount);
+                $fileLine['bankline'] = $transac;
+            }
+        }
+    }
+    
+    private function search_dolibarr_transaction_by_amount($amount, $label) {
+        global $conf, $langs;
+        $langs->load("banks");
+        
+        $amount = floatval($amount); // Transform to float
+        foreach($this->TBank as $i => $bankLine) {
+            $test = ($amount == $bankLine->amount);
+            if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
+            if(!empty($test)) {
+                unset($this->TBank[$i]);
+                
+                return array($this->get_bankline_data($bankLine));
+            }
+        }
+        
+        return false;
+    }
+    
+    private function search_dolibarr_transaction_by_receipt($amount) {
+        global $langs;
+        $langs->load("banks");
+        
+        $amount = floatval($amount); // Transform to float
+        foreach($this->TCheckReceipt as $bordereau) {
+            if($amount == $bordereau->amount) {
+                $TBankLine = array();
+                foreach($this->TBank as $i => $bankLine) {
+                    if($bankLine->fk_bordereau == $bordereau->id) {
+                        unset($this->TBank[$i]);
+                        
+                        $TBankLine[] = $this->get_bankline_data($bankLine);
+                    }
+                }
+                
+                return $TBankLine;
+            }
+        }
+        
+        return false;
+    }
+    
+    private function get_bankline_data($bankLine) {
+        global $langs, $db;
+        
+        if(!empty($bankLine->num_releve)) {
+            $link = '<a href="' . dol_buildpath(
+                '/compta/bank/releve.php'
+                . '?num=' . $bankLine->num_releve
+                . '&account=' . $bankLine->fk_account, 2
+                ) . '">'
+                    . $bankLine->num_releve
+                    . '</a>';
+                    $result = $langs->trans('AlreadyReconciledWithStatement', $link);
+                    $autoaction = false;
+        } else {
+            $result = $langs->trans('WillBeReconciledWithStatement', $this->numReleve);
+            $autoaction = true;
+        }
+        
+        $societestatic = new Societe($db);
+        $userstatic = new User($db);
+        $chargestatic = new ChargeSociales($db);
+        $memberstatic = new Adherent($db);
+        
+        $links = $this->account->get_url($bankLine->id);
+        $relatedItem = '';
+        foreach($links as $key=>$val) {
+            if ($links[$key]['type'] == 'company') {
+                $societestatic->id = $links[$key]['url_id'];
+                $societestatic->name = $links[$key]['label'];
+                $relatedItem = $societestatic->getNomUrl(1,'',16);
+            } else if ($links[$key]['type'] == 'user') {
+                $userstatic->id = $links[$key]['url_id'];
+                $userstatic->lastname = $links[$key]['label'];
+                $relatedItem = $userstatic->getNomUrl(1,'');
+            } else if ($links[$key]['type'] == 'sc') {
+                // sc=old value
+                $chargestatic->id = $links[$key]['url_id'];
+                if (preg_match('/^\((.*)\)$/i',$links[$key]['label'],$reg)) {
+                    if ($reg[1] == 'socialcontribution') $reg[1] = 'SocialContribution';
+                    $chargestatic->lib = $langs->trans($reg[1]);
+                } else {
+                    $chargestatic->lib = $links[$key]['label'];
+                }
+                $chargestatic->ref = $chargestatic->lib;
+                $relatedItem = $chargestatic->getNomUrl(1,16);
+            } else if ($links[$key]['type'] == 'member') {
+                $memberstatic->id = $links[$key]['url_id'];
+                $memberstatic->ref = $links[$key]['label'];
+                $relatedItem = $memberstatic->getNomUrl(1,16,'card');
+            }
+        }
+        
+        return array(
+            'id' => $bankLine->id
+            ,'url' => $bankLine->getNomUrl(1)
+            ,'date' => dol_print_date($bankLine->datev,"day")
+            ,'label' => (preg_match('/^\((.*)\)$/i',$bankLine->label,$reg) ? $langs->trans($reg[1]) : dol_trunc($bankLine->label,60))
+            ,'amount' => price($bankLine->amount)
+            ,'result' => $result
+            ,'autoaction' => $autoaction
+            ,'relateditem' => $relatedItem
+            ,'time' => $bankLine->datev
+        );
+    }
+    
+    /**
+     * Actions made after file check by user
+     */
+    public function import_data($TLine)
+    {
+        global $conf;
+        
+        $PDOdb = new TPDOdb;
+        
+        dol_include_once('/compta/paiement/class/paiement.class.php');
+        dol_include_once('/fourn/class/paiementfourn.class.php');
+        dol_include_once('/fourn/class/fournisseur.facture.class.php');
+        dol_include_once('/compta/sociales/class/paymentsocialcontribution.class.php');
+        
+        $this->socCache = array();
+        
+        if(!empty($TLine['type'])){
+            
+            foreach ($TLine['type'] as $iFileLine => $typeObject){
+                
+                if(!empty($TLine['fk_soc'][$iFileLine])) {
+                    $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
+                }
+                
+                $doPaymentForFactureFourn[$iFileLine] = true;
+                if($typeObject == 'fournfacture' && !empty($l_societe))
+                {
+                    $create_fourn_invoice = !empty($TLine['create_fourn_invoice'][$iFileLine])?1:0;
+                    $create_fourn_productid = !empty($TLine['create_fourn_productid'][$iFileLine])?$TLine['create_fourn_productid'][$iFileLine]:0;
+                    $fk_payment = $TLine['fk_payment'][$iFileLine];
+                    if(!empty($create_fourn_invoice) && !empty($create_fourn_productid) ){
+                        // create new invoice + doPaymentForFactureFourn
+                        $fk_bank = $this->createInvoiceForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$this->TFile[$iFileLine]);
+                        $doPaymentForFactureFourn[$iFileLine] = false;
+                    }
+                }
+            }
+        }
+        
+        
+        
+        if (!empty($TLine['piece']))
+        {
+            
+            /*
+             * Reglemenent créé manuellement
+             */
+            
+            $db = &$this->db;
+            
+            
+            foreach($TLine['piece'] as $iFileLine=>$TObject)
+            {
+                
+                if(!empty($TLine['fk_soc'][$iFileLine])) {
+                    $l_societe = $this->getSoc($TLine['fk_soc'][$iFileLine]);
+                }
+                
+                $fk_payment = $TLine['fk_payment'][$iFileLine];
+                $date_paye = $this->TFile[$iFileLine]['datev'];
+                foreach($TObject as $typeObject=>$TAmounts)
+                {
+                    
+                    
+                    if(!empty($TAmounts))
+                    {
+                        
+                        switch ($typeObject)
+                        {
+                            case 'facture':
+                                $fk_bank = $this->doPaymentForFacture($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+                                break;
+                            case 'fournfacture':
+                                if(!empty($doPaymentForFactureFourn[$iFileLine])){
+                                    $fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+                                }
+                                break;
+                            case 'charge':
+                                $fk_bank = $this->doPaymentForCharge();
+                                break;
+                            default:
+                                continue;
+                                break;
+                        }
+                        
+                    }
+                }
+                
+            }
+            
+            unset($TLine['piece']);
+        }
+        
+        unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
+        
+        //	var_dump('exit a virer');
+        //exit;
+        
+        if (isset($TLine['new']))
+        {
+            if(!empty($TLine['new'])) {
+                foreach($TLine['new'] as $iFileLine) {
+                    $bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
+                    if($bankLineId > 0) {
+                        $bankLine = new AccountLine($this->db);
+                        $bankLine->fetch($bankLineId);
+                        $this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
+                    }
+                }
+            }
+            unset($TLine['new']);
+        }
+        
+        foreach($TLine as $bankLineId => $iFileLine)
+        {
+            if(in_array($bankLineId, array('create_fourn_productid', 'create_fourn_invoice'))){
+                continue;
+            }
+            
+            $this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
+            if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
+            {
+                $this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
+            }
+        }
+    }
+    
+    private function validateInvoices(&$TAmounts, $type) {
+        
+        global $db, $user;
+        
+        dol_include_once('/compta/facture/class/facture.class.php');
+        dol_include_once('/fourn/class/fournisseur.facture.class.php');
+        
+        $TTypeElement = array('payment'=>'Facture', 'payment_supplier'=>'FactureFournisseur');
+        
+        if(!empty($TAmounts) && in_array($type, array_keys($TTypeElement))) {
+            foreach($TAmounts as $facid=>$amount) {
+                $f = new $TTypeElement[$type]($db);
+                if($f->fetch($facid) > 0 && $f->statut == 0 && $amount > 0) $f->validate($user);
+            }
+        }
+        
+    }
+    
+    private function doPaymentForFacture(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
+    {
+        return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment');
+    }
+    
+    private function createInvoiceForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye,$create_fourn_invoice,$create_fourn_productid,$fileLine)
+    {
+        global $conf, $langs,$user,$db;
+        
+        dol_include_once('product/class/product.class.php');
+        
+        //,$create_fourn_invoice,$create_fourn_productid
+        //$TLine['fk_payment'][$iFileLine]
+        
+        // Amount have to be for supplier invoice
+        if($fileLine['amount']>0){
+            setEventMessage($langs->trans('ErrorNewFournInvoice'),'error');
+            return 0;
+        }
+        
+        $NewInvoiceAmount = abs($fileLine['amount']); // le montant de la nouvelle facture
+        
+        // déduction des montants associés à d'autres factures
+        if(!empty($TLine['piece'][$iFileLine]['fournfacture'])){
+            foreach ($TLine['piece'][$iFileLine]['fournfacture'] as $key => $dispatchAmount )
+            {
+                if(!empty($dispatchAmount) ){
+                    $NewInvoiceAmount -=  price2num($dispatchAmount);
+                }
+            }
+        }
+        
+        $product = new Product($db);
+        if($NewInvoiceAmount>0 && $product->fetch($create_fourn_productid)>0){
+            dol_include_once('fourn/class/fournisseur.facture.class.php');
+            $factureFournisseur = New FactureFournisseur($db);
+            
+            $NewInvoiceAmount = $NewInvoiceAmount / ( 1 + $product->tva_tx / 100 );
+            
+            $factureFournisseur->ref = '(PROV)';
+            $factureFournisseur->date = $date_paye;
+            $factureFournisseur->ref_supplier = $factureFournisseur->date;
+            $factureFournisseur->socid = $l_societe->id;
+            $factureFournisseur->type = FactureFournisseur::TYPE_STANDARD;
+            $factureFournisseur->libelle = dol_print_date($factureFournisseur->date).' : '.$fileLine['label'];
+            $factureFournisseur->mode_reglement_id = $fk_payment;
+            
+            $newInvoiceId = $factureFournisseur->create($user);
+            
+            if($newInvoiceId>0)
+            {
+                if($factureFournisseur->addline($desc, $NewInvoiceAmount, $product->tva_tx, 0, 0, 1,$product->id) > 0)
+                {
+                    setEventMessage($langs->trans('NewFournInvoiceCreated'));
+                    
+                    // ajout du paiment à la facture
+                    $TLine['piece'][$iFileLine]['fournfacture'][$newInvoiceId] = $NewInvoiceAmount;
+                    $TAmounts[$newInvoiceId] = $NewInvoiceAmount;
+                    
+                    
+                    return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
+                }
+                else {
+                    setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('addline'),'errors');
+                }
+            }
+            else {
+                setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Create'),'errors');
+            }
+        }
+        else {
+            setEventMessage($langs->trans('ErrorNewFournInvoice').' : '.$langs->trans('Product'),'errors');
+        }
+    }
+    
+    private function doPaymentForFactureFourn(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
+    {
+        return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_supplier');
+    }
+    
+    private function doPaymentForCharge(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye)
+    {
+        return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_sc');
+    }
+    
+    private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment')
+    {
+        global $conf, $langs,$user;
+        
+        $note = $langs->trans('TitleBankImport') .' - '.$this->numReleve;
+        
+        if ($type == 'payment') $paiement = new Paiement($this->db);
+        elseif ($type == 'payment_supplier') $paiement = new PaiementFourn($this->db);
+        elseif ($type == 'payment_supplier') $paiement = new PaymentSocialContribution($this->db);
+        else exit($langs->trans('BankImport_FatalError_PaymentType_NotPossible', $type));
+        
+        if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $this->validateInvoices($TAmounts, $type);
+        
+        $paiement->datepaye     = $date_paye;
+        $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
+        $paiement->paiementid   = $fk_payment;
+        $paiement->num_paiement = '';
+        $paiement->note         = $note;
+        
+        $paiement_id = $paiement->create($user, 1);
+        
+        if ($paiement_id > 0)
+        {
+            $bankLineId = $paiement->addPaymentToBank($user, $type, !empty($this->TFile[$iFileLine]['label']) ? $this->TFile[$iFileLine]['label'] : $note, $this->account->id, $l_societe->name, '');
+            $TLine[$bankLineId] = $iFileLine;
+            
+            $bankLine = new AccountLine($this->db);
+            $bankLine->fetch($bankLineId);
+            $this->TBank[$bankLineId] = $bankLine;
+            
+            // On supprime le new saisi
+            foreach($TLine['new'] as $k=>$iFileLineNew)
+            {
+                if($iFileLineNew == $iFileLine) unset($TLine['new'][$k]);
+            }
+            
+            // Uniquement pour les factures client (les acomptes fournisseur n'existent pas)
+            if($conf->global->BANKIMPORT_AUTO_CREATE_DISCOUNT && $type === 'payment') $this->createDiscount($TAmounts);
+            
+            return $bankLineId;
+        }
+        
+        return 0; // Payment fail, can't return bankLineId
+    }
+    
+    private function createDiscount(&$TAmounts) {
+        
+        global $db, $user;
+        
+        dol_include_once('/core/class/discount.class.php');
+        
+        foreach($TAmounts as $id_fac => $amount) {
+            
+            $object = new Facture($db);
+            $object->fetch($id_fac);
+            if($object->type != 3) continue; // Uniquement les acomptes
+            
+            $object->fetch_thirdparty();
+            
+            // Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+            $discountcheck=new DiscountAbsolute($db);
+            $result=$discountcheck->fetch(0,$object->id);
+            
+            $canconvert=0;
+            if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+            if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+            if ($canconvert)
+            {
+                $db->begin();
+                
+                // Boucle sur chaque taux de tva
+                $i = 0;
+                foreach ($object->lines as $line) {
+                    $amount_ht [$line->tva_tx] += $line->total_ht;
+                    $amount_tva [$line->tva_tx] += $line->total_tva;
+                    $amount_ttc [$line->tva_tx] += $line->total_ttc;
+                    $i ++;
+                }
+                
+                // Insert one discount by VAT rate category
+                $discount = new DiscountAbsolute($db);
+                if ($object->type == Facture::TYPE_CREDIT_NOTE)
+                    $discount->description = '(CREDIT_NOTE)';
+                    elseif ($object->type == Facture::TYPE_DEPOSIT)
+                    $discount->description = '(DEPOSIT)';
+                    else {
+                        setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
+                    }
+                    $discount->tva_tx = abs($object->total_ttc);
+                    $discount->fk_soc = $object->socid;
+                    $discount->fk_facture_source = $object->id;
+                    
+                    $error = 0;
+                    foreach ($amount_ht as $tva_tx => $xxx) {
+                        $discount->amount_ht = abs($amount_ht [$tva_tx]);
+                        $discount->amount_tva = abs($amount_tva [$tva_tx]);
+                        $discount->amount_ttc = abs($amount_ttc [$tva_tx]);
+                        $discount->tva_tx = abs($tva_tx);
+                        
+                        $result = $discount->create($user);
+                        if ($result < 0)
+                        {
+                            $error++;
+                            break;
+                        }
+                    }
+                    
+                    if (empty($error))
+                    {
+                        // Classe facture
+                        $result = $object->set_paid($user);
+                        if ($result >= 0)
+                        {
+                            //$mesgs[]='OK'.$discount->id;
+                            $db->commit();
+                        }
+                        else
+                        {
+                            setEventMessage($object->error,'errors');
+                            $db->rollback();
+                        }
+                    }
+                    else
+                    {
+                        setEventMessage($discount->error,'errors');
+                        $db->rollback();
+                    }
+            }
+            
+        }
+        
+    }
+    
+    private function insertHistoryLine(&$PDOdb, $iFileLine, $fk_bank)
+    {
+        if (!empty($this->hasHeader) && !empty($this->TOriginLine[$iFileLine]))
+        {
+            $header = $this->parseHeader($this->lineHeader);
+            $line = $this->parseLine($this->TOriginLine[$iFileLine]);
+            
+            $historyLine = new TBankImportHistory;
+            
+            $historyLine->num_releve = $this->numReleve;
+            $historyLine->fk_bank = $fk_bank;
+            $historyLine->line_imported_title = $header;
+            $historyLine->line_imported_value = $line;
+            
+            $historyLine->save($PDOdb);
+        }
+    }
+    
+    public function parseHeader($headerToParse)
+    {
+        global $conf;
+        
+        $header = explode($conf->global->BANKIMPORT_SEPARATOR, $headerToParse);
+        $header = array_map(array('BankImport', 'cleanString'), $header);
+        
+        return $header;
+    }
+    
+    public static function cleanString($strToClean)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+        $strToClean = trim($strToClean);
+        $strToClean = preg_replace('/\s{2,}/', '', $strToClean);
+        $strToClean = dol_strtolower(dol_string_unaccent($strToClean));
+        
+        return ucfirst($strToClean);
+    }
+    
+    public function parseLine($lineArrayToParse)
+    {
+        $line = array_map(array('BankImport', 'cleanStringForLine'), $lineArrayToParse);
+        
+        return $line;
+    }
+    
+    public static function cleanStringForLine($strToClean)
+    {
+        $strToClean = trim($strToClean);
+        $strToClean = preg_replace('/\s{2,}/', '', $strToClean);
+        
+        return $strToClean;
+    }
+    
+    private function create_bank_transaction($fileLine) {
+        global $user;
+        
+        $bankLineId = $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
+        $this->nbCreated++;
+        
+        return $bankLineId;
+    }
+    
+    private function reconcile_bank_transaction($bankLine, $fileLine) {
+        global $user,$conf;
+        
+        // Set conciliation
+        $bankLine->num_releve = $this->numReleve;
+        $bankLine->update_conciliation($user, 0);
+        
+        // Update value date
+        $dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
+        $bankLine->datev_change($bankLine->id, $dateDiff);
+        
+        $this->nbReconciled++;
+    }
+    
+    /**
+     * Extract negative direction token from direction key
+     *
+     * @param array $matches Regex matches
+     * @return string Last separator (Effectively removing the extracted negative direction)
+     */
+    private function extractNegDir(array $matches) {
+        $this->neg_dir = $matches[1];
+        return substr($matches[0], -1);
+    }
+    
+    
+    private function getSoc($id){
+        global $db;
+        
+        if(empty($this->socCache[$id]))
+        {
+            $l_societe = new Societe($db);
+            if($l_societe->fetch($id)>0){
+                $this->socCache[$id]=$l_societe;
+            }
+            else{
+                return false;
+            }
+        }
+        else {
+            $l_societe = $this->socCache[$id];
+        }
+        
+        return $l_societe;
+    }
 }
 
 
 class TBankImportHistory extends TObjetStd
 {
-	function __construct() 
-	{
-		$this->set_table( MAIN_DB_PREFIX.'bankimport_history' );
-    	 
-		$this->add_champs('num_releve',array('type'=>'varchar','length'=>50,'index'=>true));
-		$this->add_champs('fk_bank',array('type'=>'integer','index'=>true));
+    function __construct()
+    {
+        $this->set_table( MAIN_DB_PREFIX.'bankimport_history' );
+        
+        $this->add_champs('num_releve',array('type'=>'varchar','length'=>50,'index'=>true));
+        $this->add_champs('fk_bank',array('type'=>'integer','index'=>true));
         $this->add_champs('line_imported_title,line_imported_value', array('type'=>'array'));
         
         $this->_init_vars();
         
-	    $this->start();
-	}
-	
+        $this->start();
+    }
+    
 }
 
 
@@ -855,7 +853,7 @@ class BankImportDet extends SeedObject
     public $element = 'bankimportdet';
     
     public $entity;
-    
+    public $fk_bank_account;
     public $fk_bank;
     public $num_releve;
     public $label;
@@ -867,6 +865,7 @@ class BankImportDet extends SeedObject
     public $datev;
     public $dateo;
     public $amount;
+    public $note;
     
     
     public $date_linked; // date du rapprochement
@@ -875,6 +874,7 @@ class BankImportDet extends SeedObject
     /**
      * status
      */
+    const STATUS_DISABLE = -2; // -1 est utilisé par le filtre....
     const STATUS_DRAFT = 0;
     const STATUS_DRAFT_AUTO = 1;
     const STATUS_LINKED = 2;
@@ -889,9 +889,10 @@ class BankImportDet extends SeedObject
         $this->db =& $db;
         
         $this->fields=array(
-            'entity' =>array('type'=>'int', 'default' => SELF::STATUS_DRAFT)
-            ,'fk_statut' =>array('type'=>'int')
+            'entity' =>array('type'=>'int')
+            ,'fk_statut' =>array('type'=>'int', 'default' => SELF::STATUS_DRAFT)
             ,'label'=>array('type'=>'string', 'length' => 255)
+            ,'fk_bank_account' =>array('type'=>'int')
             ,'fk_bank' =>array('type'=>'int')
             ,'num_releve'=>array('type'=>'string', 'length' => 50)
             ,'element'=>array('type'=>'string', 'length' => 50)
@@ -903,6 +904,8 @@ class BankImportDet extends SeedObject
             ,'amount'=>array('type'=>'double' )
             ,'date_linked'=>array('type'=>'date' )
             ,'import_key'=>array('type'=>'string', 'length' => 50)
+            ,'note'=>array('type'=>'string', 'length' => 255)
+            
         );
         
         $this->init();
@@ -910,7 +913,7 @@ class BankImportDet extends SeedObject
         $this->entity = $conf->entity;
     }
     
-   
+    
     
     
     
@@ -920,10 +923,10 @@ class BankImportDet extends SeedObject
             self::STATUS_DRAFT  => self::translateTypeConst(self::STATUS_DRAFT  ),
             self::STATUS_DRAFT_AUTO  => self::translateTypeConst(self::STATUS_DRAFT_AUTO ),
             self::STATUS_LINKED => self::translateTypeConst(self::STATUS_LINKED ),
-            
+            self::STATUS_DISABLE => self::translateTypeConst(self::STATUS_DISABLE ),
         );
     }
-
+    
     static function translateTypeConst($key){
         global $langs;
         switch ($key) {
@@ -936,12 +939,189 @@ class BankImportDet extends SeedObject
             case self::STATUS_LINKED :
                 return $langs->trans('STATUS_LINKED');
                 break;
+            case self::STATUS_DISABLE :
+                return $langs->trans('STATUS_DISABLE');
+                break;
         }
     }
     
-    
+    static function importFromTTransaction($TTransactions, $importKey, $numreleve, $accountid, $user, $entity = false, &$errors = array(), $checkExist = true)
+    {
+        global $db, $conf, $langs;
+        
+        if(!empty($TTransactions))
+        {
+            foreach ($TTransactions as $Transaction)
+            {
+                if(empty($Transaction['error']))
+                {
+                    $importDet = new self($db);
+                    
+                    // One day we will need it, like in a kind of cron task job , and I feel in chest... no in my heart
+                    if(!empty($entity)){
+                        $importDet->entity = intval($entity);
+                    }
+                    
+                    $importDet->fk_bank_account = intval($accountid);
+                    $importDet->import_key = $importKey;
+                    $importDet->num_releve = $numreleve;
+                    $importDet->fk_user_modif = $user->id;
+                    $importDet->fk_user_author= $user->id;
+                    
+                    $importDet->label = $Transaction['label'];
+                    $importDet->amount = $Transaction['amount'];
+                    
+                    if($Transaction['datev']>0){
+                        $importDet->datev = $Transaction['datev'];
+                        $importDet->dateo = $Transaction['dateo'];
+                    }
+                    else {
+                        $errors['datev'] = $langs->trans('InvalidDate');
+                    }
+                    
+                    
+                    $importDet->bank = $Transaction['bankline'];
 
+                    if($checkExist && $importDet->searchDuplicate())
+                    {
+                        $importDet->fk_statut = self::STATUS_DISABLE;
+                        $importDet->note = $langs->trans('DuplicateLineFound');
+                    }
+                    
+                    $return =  $importDet->create($user);
+                    
+                    
+                }
+                else
+                {
+                    // Display error
+                    // $Transaction['error']
+                }
+            }
+        }
+        else
+        {
+            return 0;
+        }
+        
+    }
     
+    public function searchDuplicate()
+    {
+        $TSearch = array(
+            'fk_bank_account' => $this->fk_bank_account,
+            'label' => $this->label,
+            'amount' => $this->amount,
+            'datev' => $this->datev,
+            'dateo' => $this->dateo
+        );
+        
+        return $this->searchByCritera($TSearch, 'count');
+    }
+    
+    
+    /**
+     *	search by critera
+     *
+     *	@param      array		$TSearch       	array of field and value to search
+     *	@param      bool		$count       	array of field and value to search
+     *	@return     array         				>array if OK, <0 if KO, 0 if not found
+     */
+    public function searchByCritera($TSearch, $return = 'array')
+    {
+        global $db;
+        if(empty($TSearch)) return false;
+        
+        $search = array();
+        foreach ($TSearch as $field => $value)
+        {
+            if( !empty($this->fields[$field]['type']))
+            {
+                if( $this->fields[$field]['type'] == 'int' || $this->fields[$field]['type'] == 'double'){
+                    $sqlPart = '`'.$field.'` = '. floatval($value); // be sure to have a number
+                }
+                elseif( $this->fields[$field]['type'] == 'date'){
+                    $sqlPart = ' CAST(`'.$field.'` AS DATE) = \''.date('Y-m-d',$value).'\' ';
+                }
+                else{
+                    $sqlPart = '`'.$field.'` = \''.$db->escape($value).'\'';
+                }
+                
+                $search[] = $sqlPart ;
+            }
+        }
+        
+        $select = 'rowid as value';
+        if($return == 'count')
+        {
+            $select = 'COUNT(rowid) as value ';
+        }
+        
+        $sql = 'SELECT '.$select.' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.implode(' AND ', $search);
+        $resql = $this->db->query($sql);
+
+        if($resql) {
+            if($return == 'count')
+            {
+                $objp = $this->db->fetch_object($resql);
+                $search = intval($objp->value);
+            }
+            else
+            {
+                while ( $objp = $this->db->fetch_object($resql) )
+                {
+                    $object = new self($this->db);
+                    $res = $object->fetchCommon($objp->value);
+                    if($res>0) {
+                        $search[] = $object;
+                    }
+                    
+                }
+            }
+        }
+        else
+        {
+            return -1;
+        }
+        return $search;
+    }
+    
+    public function getDocument()
+    {
+        return self::staticGetDocument($this->db, $this->fk_document, $this->element);
+    }
+    
+    static function staticGetDocument($db, $fk_document, $element)
+    {
+        global $langs;
+        
+        if(empty($element) || empty($fk_document)){
+            return '';
+        }
+
+        if($element == 'facture' ){
+            $className = 'Facture';
+            dol_include_once('compta/facture/class/facture.class.php');
+        }
+        elseif($element == 'invoice_supplier' ){
+            $className = 'FactureFournisseur';
+            dol_include_once('fourn/class/fournisseur.facture.class.php');
+        }
+        else{
+            return $langs->trans('ElementUnknown');
+        }
+        
+        $object = new $className($db);
+        if($object->fetch($fk_document)>0)
+        {
+            return $object->getNomUrl(1);
+        }
+        else
+        {
+            return $langs->trans('ElementErrorLoad');
+        }
+        
+    }
     
 }
 

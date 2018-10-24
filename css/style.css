@@ -2,3 +2,42 @@ input:invalid, select:invalid {
   /*outline: 1px solid #ea1212;*/
   border-color: #ea1212;
 }
+
+.price-negative{
+	color: #ce0000;
+}
+
+.price-positive{
+	color: #638e00;
+}
+span.label {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+.label-danger{
+    background-color: #dd4b39 !important;
+}
+.label-info {
+    background-color: #00c0ef !important;
+}
+.label-default {
+    background-color: #d2d6de;
+    color: #444;
+}
+.label-primary{
+    background-color: #3c8dbc !important;
+}
+.label-success {
+    background-color: #5cb85c;
+}
+.label-warning{
+    background-color: #f39c12 !important;
+}

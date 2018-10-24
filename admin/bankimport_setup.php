@@ -180,13 +180,6 @@ print '<td align="center" width="300">';
 print ajax_constantonoff('BANKIMPORT_MAC_COMPATIBILITY');
 print '</td></tr>';	
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("bankImportUseHistory").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="center" width="300">';
-print ajax_constantonoff('BANKIMPORT_HISTORY_IMPORT');
-print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';

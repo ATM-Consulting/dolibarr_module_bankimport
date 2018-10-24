@@ -41,7 +41,7 @@ if(GETPOST('compare')) {
 	$dateend = dol_mktime(0, 0, 0, GETPOST('demonth'), GETPOST('deday'), GETPOST('deyear'));
 	$numreleve = GETPOST('numreleve');
 	$hasHeader = GETPOST('hasheader');
-	
+	$accountid = GETPOST('accountid','int');
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
 			
 		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
@@ -49,11 +49,22 @@ if(GETPOST('compare')) {
 		
 		$TTransactions = $import->TFile;
 		
+		$errors = array();
+		$importKey = 'csv'.time();
+		$checkExist = 1;
+		BankImportDet::importFromTTransaction($TTransactions, $importKey, $numreleve, $accountid, $user, false, $errors, $checkExist);
+		
 		global $bc;
 		
 		$langs->load('bankimport@bankimport');
 		$var = true;
-		$tpl = 'tpl/bankimport.check.tpl.php';
+		//$tpl = 'tpl/bankimport.check.tpl.php';
+		
+		
+		header("Location: ".dol_buildpath('bankimport/list.php',1).'?Listview_bankimportdet_search_import_key='.$importKey);
+		exit;
+		
+		
 	}
 } else if(GETPOST('import')) {
 	

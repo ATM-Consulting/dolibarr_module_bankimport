@@ -1,3 +1,5 @@
+
+<div class="tabBar" >
 <form method="post" enctype="multipart/form-data" name="bankimport">
 	<table class="border" width="100%">
 		<tr>
@@ -42,10 +44,10 @@
 	<br />
 
 	<div class="center">
-		<input type="submit" class="butAction" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("ImportFile")) ?>">
+		<input type="submit" class="butAction" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("ImportAndAnalyseFile")) ?>">
 	</div>
 </form>
-
+</div>
 <script type="text/javascript">
 
 

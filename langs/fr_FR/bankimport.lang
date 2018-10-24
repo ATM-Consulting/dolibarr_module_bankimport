@@ -25,6 +25,9 @@ bankImportAllowCreateFournInvoice=Autoriser la création de facture fournisseur 
 
 # MENU
 LeftMenuBankImport = Import bancaire
+LeftMenuBankImport_import = Importer
+LeftMenuBankImport_list = Liste
+
 
 # PAGE
 TitleBankImport = Import bancaire
@@ -64,3 +67,26 @@ CreateSupplierInvoiceHelp=Vous devrez alors selectionner le produit/service à u
 bankimport_no_customer_selected_click_to_select_one=Aucun tiers associé, cliquez ici pour un choisir un
 bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour choisir un autre tiers)
 ImportFile=Importer le fichier
+ImportAndAnalyseFile=Importer et analyser le fichier
+DuplicateLineFound=Cette ligne semble dupliquée
+
+STATUS_DRAFT=Brouillion
+STATUS_DRAFT_AUTO=Brouillion (auto)
+STATUS_LINKED=Associée
+STATUS_DISABLE=Désactivée
+
+# LIST
+Debit=Débit
+Credit=Crédit
+Datev=Date valeur
+Dateo=Date opération
+NumReleve=Relevé
+Linked=Associé
+ImportKey=Clef d'import
+LinkedDate=Date de la liaison
+EditBy=Modifié par
+BankimportdetList=Liste des relevés bancaires importés
+BankInDeleted=%s ligne(s) supprimée(s)
+NoBankimportdet=Aucune lignes correspondant à la recherche
+ElementUnknown=Type de document non géré
+ElementErrorLoad=Erreur

@@ -242,8 +242,34 @@ class modBankImport extends DolibarrModules
 									'target'=>'',
 									'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
-
-
+		
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=bank,fk_leftmenu=bankimport',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		    'type'=>'left',			                // This is a Left menu entry
+		    'titre'=>'LeftMenuBankImport_list',
+		    'mainmenu'=>'bank',
+		    'leftmenu'=>'bankimport_list',
+		    'url'=>'/bankimport/list.php',
+		    'langs'=>'bankimport@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+		    'position'=>100,
+		    'enabled'=>'$conf->bankimport->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+		    'perms'=>'$user->rights->bankimport->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+		    'target'=>'',
+		    'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=bank,fk_leftmenu=bankimport',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		    'type'=>'left',			                // This is a Left menu entry
+		    'titre'=>'LeftMenuBankImport_import',
+		    'mainmenu'=>'bank',
+		    'leftmenu'=>'bankimport_import',
+		    'url'=>'/bankimport/import.php',
+		    'langs'=>'bankimport@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+		    'position'=>101,
+		    'enabled'=>'$conf->bankimport->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+		    'perms'=>'$user->rights->bankimport->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+		    'target'=>'',
+		    'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r++;
 		// Exports
 		$r=1;
 
