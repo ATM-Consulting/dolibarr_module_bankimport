@@ -400,7 +400,10 @@ class BankImport
 								$fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'charge':
-								$fk_bank = $this->doPaymentForCharge();
+								foreach($TAmounts as $id_charge=>$amount) {
+									$amounts = array($id_charge=>$amount);
+									$fk_bank = $this->doPaymentForCharge($TLine, $amounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
+								}
 								break;
 							default:
 								continue;
@@ -485,16 +488,22 @@ class BankImport
 		
 		if ($type == 'payment') $paiement = new Paiement($this->db);
 		elseif ($type == 'payment_supplier') $paiement = new PaiementFourn($this->db);
-		elseif ($type == 'payment_supplier') $paiement = new PaymentSocialContribution($this->db);
+		elseif ($type == 'payment_sc') $paiement = new PaymentSocialContribution($this->db);
 		else exit($langs->trans('BankImport_FatalError_PaymentType_NotPossible', $type));
 		
 		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $this->validateInvoices($TAmounts, $type);
 		
 	    $paiement->datepaye     = $date_paye;
 	    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = $fk_payment;
+	    $paiement->paiementid   = $paiement->paiementtype = $fk_payment;
 	    $paiement->num_paiement = '';
 	    $paiement->note         = $note;
+
+		if($type=='payment_sc') {
+			$Ttemp = array_keys($TAmounts);
+			$paiement->chid = $Ttemp[0];
+			$paiement->amount = $TAmounts[$paiement->chid];
+		}
 		
 		$paiement_id = $paiement->create($user, 1);
 
