@@ -255,7 +255,10 @@ class BankImport
 		$amount = floatval($amount); // Transform to float
 		foreach($this->TBank as $i => $bankLine) {
 			$test = ($amount == $bankLine->amount);
-			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
+			preg_match('/\((.+)\)/i', $bankLine->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
+            $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", "salaries", "loan", "donations", "trips", "members", "compta", "accountancy"));
+            $reg=$langs->trans($reg[1]);
+			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $reg);
 			if(!empty($test)) {
 				unset($this->TBank[$i]);
 				
@@ -413,7 +416,7 @@ class BankImport
 			unset($TLine['piece']);
 		}
 		
-		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
+//		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
 		
 	//	exit;
 	
@@ -432,14 +435,14 @@ class BankImport
 			unset($TLine['new']);
 		}
 		
-		foreach($TLine as $bankLineId => $iFileLine) 
-		{
-			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
-			if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
-			{
-				$this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
-			}
-		}
+		if (!empty($TLine)) {
+            foreach ($TLine as $bankLineId => $iFileLine) {
+                $this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
+                if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0) {
+                    $this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
+                }
+            }
+        }
 	}
 
 	private function validateInvoices(&$TAmounts, $type) {
