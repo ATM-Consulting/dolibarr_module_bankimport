@@ -134,8 +134,8 @@ class BankImport
 
 		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
-		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;
-		$mapping_string = preg_replace_callback('|=(.*)' . $delimiter . '|', 'BankImport::extractNegDir', $mapping_string);
+		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;		
+		$mapping_string = preg_replace_callback('|=([^' . $delimiter . ']*)|', 'BankImport::extractNegDir', $mapping_string);
 		
 		if($delimiter == '\t')$delimiter="\t";
 		
