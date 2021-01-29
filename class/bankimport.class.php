@@ -400,6 +400,10 @@ class BankImport
 								$fk_bank = $this->doPaymentForFactureFourn($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
 								break;
 							case 'charge':
+							    var_dump('charge',$TObject,$this->num_releve);
+
+
+
 								foreach($TAmounts as $id_charge=>$amount) {
 									$amounts = array($id_charge=>$amount);
 									$fk_bank = $this->doPaymentForCharge($TLine, $amounts, $l_societe, $iFileLine, $fk_payment, $date_paye);
@@ -421,13 +425,14 @@ class BankImport
 		unset($TLine['fk_payment'], $TLine['fk_soc'], $TLine['type']);
 		
 	//	exit;
-	
+	    var_dump(!empty($TLine['new']),$this->num_releve,$TLine);exit();
 		if (isset($TLine['new'])) 
 		{
 			if(!empty($TLine['new'])) {
 				foreach($TLine['new'] as $iFileLine) {
 					$bankLineId = $this->create_bank_transaction($this->TFile[$iFileLine]);
 					if($bankLineId > 0) {
+					    //var_dump($bankLineId);
 						$bankLine = new AccountLine($this->db);
 						$bankLine->fetch($bankLineId);
 						$this->reconcile_bank_transaction($bankLine, $this->TFile[$iFileLine]);
@@ -480,7 +485,7 @@ class BankImport
 		return $this->doPayment($TLine, $TAmounts, $l_societe, $iFileLine, $fk_payment, $date_paye, 'payment_sc');
 	}
 
-	private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment')
+	private function doPayment(&$TLine, &$TAmounts, &$l_societe, $iFileLine, $fk_payment, $date_paye, $type='payment' , $num_releve = null)
 	{
 		global $conf, $langs,$user;
 		
@@ -676,15 +681,17 @@ class BankImport
 		global $user;
 		
 		$bankLineId = $this->account->addline($fileLine['datev'], 'PRE', $fileLine['label'], $fileLine['amount'], '', '', $user);
+		var_dump($bankLineId);exit();
 		$this->nbCreated++;
 		
 		return $bankLineId;
 	}
 	
-	private function reconcile_bank_transaction($bankLine, $fileLine) {
+	private function reconcile_bank_transaction(AccountLine $bankLine, $fileLine) {
 		global $user,$conf;
 		
 		// Set conciliation
+        var_dump($bankLine,$this);
 		$bankLine->num_releve = $this->numReleve;
 		$bankLine->update_conciliation($user, 0);
 		

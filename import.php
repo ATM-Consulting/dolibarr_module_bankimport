@@ -67,6 +67,7 @@ if(GETPOST('compare')) {
 			GETPOST('hasheader')
 		)
 	) {
+	    //var_dump($_POST);exit();
 		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
 		
 		$import->import_data(GETPOST('TLine'));
