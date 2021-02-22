@@ -402,9 +402,6 @@ class BankImport
 							case 'charge':
 								$fk_bank = $this->doPaymentForCharge();
 								break;
-							default:
-								continue;
-								break;
 						}
 						
 					}
