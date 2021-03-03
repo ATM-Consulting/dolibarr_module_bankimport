@@ -491,7 +491,8 @@ class BankImport
 	    $paiement->datepaye     = $date_paye;
 	    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
 	    $paiement->paiementid   = $fk_payment;
-	    $paiement->num_payment = '';
+	    if (floatval(DOL_VERSION) >= 13.0) $paiement->num_payment = '';
+        else $paiement->num_paiement = '';
 	    $paiement->note         = $note;
 		
 		$paiement_id = $paiement->create($user, 1);
