@@ -5,3 +5,7 @@ First release including :
 Automatic bank statement reconciliation
 Automatic bank transaction creation when missing
 Date format, file separator and file mapping can be defined in setup
+
+## 2.2.1 - 03/03/2021
+
+- FIX : V13 Compatibility after num_paiement property changed to num_payment
