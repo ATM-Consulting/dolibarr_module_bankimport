@@ -52,7 +52,7 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
+	if (dolibarr_set_const($db, $code, GETPOST($code,"alphanohtml"), 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -62,7 +62,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 		dol_print_error($db);
 	}
 }
-	
+
 if (preg_match('/del_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
@@ -163,14 +163,14 @@ print '<input type="text" id="BANKIMPORT_DATE_FORMAT" name="BANKIMPORT_DATE_FORM
 print '&nbsp;<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
 print '</form>';
 print '</td></tr>';
-			
+
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("FileHasHeader").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="300">';
 print ajax_constantonoff('BANKIMPORT_HEADER');
-print '</td></tr>';	
+print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -178,7 +178,7 @@ print '<td>'.$langs->trans("UseMacCompatibility").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="300">';
 print ajax_constantonoff('BANKIMPORT_MAC_COMPATIBILITY');
-print '</td></tr>';	
+print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
