@@ -43,10 +43,10 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('account');
-$ref=GETPOST('ref');
-$dvid=GETPOST('dvid');
-$num=GETPOST('num');
+$id=GETPOST('account','int');
+$ref=GETPOST('ref','alpha');
+$dvid=GETPOST('dvid','int');
+$num=GETPOST('num','alpha');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);

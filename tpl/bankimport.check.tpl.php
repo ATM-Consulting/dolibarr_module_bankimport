@@ -26,9 +26,11 @@
 	<input type="hidden" name="numreleve" value="<?php echo $import->numReleve ?>" />
 	<input type="hidden" name="hasheader" value="<?php echo $import->hasHeader ?>" />
 
-    <input type="hidden" name="bankimportseparator" value="<?php echo GETPOST('bankimportseparator') ?>" />
-    <input type="hidden" name="bankimportdateformat" value="<?php echo GETPOST('bankimportdateformat') ?>" />
-    <input type="hidden" name="bankimportmapping" value="<?php echo GETPOST('bankimportmapping') ?>" />
+
+    <input type="hidden" name="bankimportseparator" value="<?php echo GETPOST('bankimportseparator','alphanohtml') ?>" />
+    <input type="hidden" name="bankimportdateformat" value="<?php echo GETPOST('bankimportdateformat','alphanohtml') ?>" />
+    <input type="hidden" name="bankimportmapping" value="<?php echo GETPOST('bankimportmapping','alphanohtml') ?>" />
+
 
 	<table id="bankimport_line_to_import" class="border" width="100%">
 		<tr class="liste_titre">
@@ -214,6 +216,7 @@
 								$div.find('div[rel=total]').remove();
 
 								var total = 0;
+
 								$div.find('input[rel=priceToPaiment]').each(function(i,item) {
 									//$(item).val($(item).val().replace(',', '.')); // Si le nombre est rentré avec des virgules
 									$item = $(item);
