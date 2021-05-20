@@ -780,8 +780,10 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			}
 		}
 
-		if($links[1]['type']=='payment_supplier') $param = 'fourn';
-		print '<br />'.getListFacture($links[1]['url_id'], $param);
+	
+		if($links[key($links)]['type']=='payment_supplier') $param = 'fourn';
+		print '<br />'.getListFacture($links[key($links)]['url_id'], $param);
+
 	}
 	// Avec la nouvelle version de bankimport, on peut régler des factures de différents tiers avec un même paiement, donc on les affiche toutes
 

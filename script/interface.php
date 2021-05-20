@@ -1,4 +1,5 @@
 <?php
+	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
 
 	require '../config.php';
 	dol_include_once('/compta/facture/class/facture.class.php');
@@ -6,12 +7,15 @@
 	dol_include_once('/fourn/class/fournisseur.facture.class.php');
 	dol_include_once('/compta/sociales/class/chargesociales.class.php');
 
+
 	$get=GETPOST('get','alpha');
+
 
 	switch ($get) {
 		case 'pieceList':
 
 			print _pieceList(GETPOST('i','int'),GETPOST('fk_soc','int'),GETPOST('type','alpha'));
+
 
 			break;
 
