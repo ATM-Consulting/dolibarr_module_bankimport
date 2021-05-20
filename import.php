@@ -35,41 +35,41 @@ $tpl = 'tpl/bankimport.new.tpl.php';
 
 $import = new BankImport($db);
 
-if(GETPOST('compare')) {
-	
-	$datestart = dol_mktime(0, 0, 0, GETPOST('dsmonth'), GETPOST('dsday'), GETPOST('dsyear'));
-	$dateend = dol_mktime(0, 0, 0, GETPOST('demonth'), GETPOST('deday'), GETPOST('deyear'));
-	$numreleve = GETPOST('numreleve');
-	$hasHeader = GETPOST('hasheader');
-	
+if(GETPOST('compare','alphanohtml')) {
+
+	$datestart = dol_mktime(0, 0, 0, GETPOST('dsmonth','int'), GETPOST('dsday','int'), GETPOST('dsyear','int'));
+	$dateend = dol_mktime(0, 0, 0, GETPOST('demonth','int'), GETPOST('deday','int'), GETPOST('deyear','int'));
+	$numreleve = GETPOST('numreleve','alphanohtml');
+	$hasHeader = GETPOST('hasheader','alphanohtml');
+
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
-			
-		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
+
+		$import->load_transactions(GETPOST('bankimportseparator','alphanohtml'), GETPOST('bankimportdateformat','alphanohtml'), GETPOST('bankimportmapping','alphanohtml'));
 		$import->compare_transactions();
-		
+
 		$TTransactions = $import->TFile;
-		
+
 		global $bc;
-		
+
 		$langs->load('bankimport@bankimport');
 		$var = true;
 		$tpl = 'tpl/bankimport.check.tpl.php';
 	}
-} else if(GETPOST('import')) {
-	
+} else if(GETPOST('import','alphanohtml')) {
+
 	if(
 		$import->analyse(
 			GETPOST('accountid','int'),
 			GETPOST('filename','alpha'),
 			GETPOST('datestart','int'),
 			GETPOST('dateend','int'),
-			GETPOST('numreleve'),
-			GETPOST('hasheader')
+			GETPOST('numreleve','alphanohtml'),
+			GETPOST('hasheader','alphanohtml')
 		)
 	) {
-		$import->load_transactions(GETPOST('bankimportseparator'), GETPOST('bankimportdateformat'), GETPOST('bankimportmapping'));
-		
-		$import->import_data(GETPOST('TLine'));
+		$import->load_transactions(GETPOST('bankimportseparator','alpha'), GETPOST('bankimportdateformat','alphanohtml'), GETPOST('bankimportmapping','alphanohtml'));
+
+		$import->import_data(GETPOST('TLine','array'));
 		$tpl = 'tpl/bankimport.end.tpl.php';
 	}
 }

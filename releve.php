@@ -43,10 +43,10 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('account');
-$ref=GETPOST('ref');
-$dvid=GETPOST('dvid');
-$num=GETPOST('num');
+$id=GETPOST('account','int');
+$ref=GETPOST('ref','alpha');
+$dvid=GETPOST('dvid','int');
+$num=GETPOST('num','alpha');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
@@ -242,12 +242,12 @@ else
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
-	
-	
+
+
 	$PDOdb = new TPDOdb;
 
 /*
-	
+
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
 	print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
@@ -274,7 +274,7 @@ else
 
 
 	$TEcriture = array();
-	
+
 	// Recherche les ecritures pour le releve
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
@@ -297,24 +297,24 @@ else
 		}
 	}
 	$db->free($result);
-	
+
 	if (!empty($TEcriture))
 	{
 		$var=true;
-		
+
 		$solde_initial = $total;
 		foreach ($TEcriture as $title_serialize => $TObjp)
 		{
 			printTableHeader($title_serialize, $solde_initial, $acct->id);
 			$totald = $totalc = 0;
-			
+
 			foreach ($TObjp as $objp)
 			{
 				$var=!$var;
 				$total = $total + $objp->amount;
-				
+
 				print "<tr ".$bc[$var].">";
-	
+
 				// History
 				$bankImportHistory = new TBankImportHistory;
 				$bankImportHistory->load($PDOdb, $objp->historyId);
@@ -325,12 +325,12 @@ else
 						print '<td class="line_imported_value">'.$val.'</td>';
 					}
 				}
-		
+
 				printStandardValues($db, $user, $langs, $acct, $objp, $num, $totald, $totalc, $paymentsupplierstatic, $paymentstatic, $paymentvatstatic, $bankstatic, $banklinestatic);
-				
+
 				print '</tr>';
 			}
-			
+
 			$solde_initial = $total;
 			printTableFooter($title_serialize, $totald, $totalc, $total);
 		}
@@ -340,7 +340,7 @@ else
 		print '<div class="warning">'.$langs->trans('bankImportNoReccordFound').'</div>';
 	}
 
-	
+
 	/*dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
@@ -357,8 +357,8 @@ else
 		{
 			$objp = $db->fetch_object($result);
 			$total = $total + $objp->amount;
-			
-			
+
+
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 
@@ -392,7 +392,7 @@ else
 
 			/*
 			 * Ajout les liens (societe, company...)
-			 
+
 			$newline=1;
 			$links = $acct->get_url($objp->rowid);
 			foreach($links as $key=>$val)
@@ -540,7 +540,7 @@ else
 				print "<td align=\"center\">&nbsp;</td>";
 			}
 			print "</tr>";
-			
+
 			$i++;
 		}
 		$db->free($result);
@@ -553,7 +553,7 @@ else
 	// Line Balance
 	print "\n<tr><td align=\"right\" colspan=\"4\">&nbsp;</td><td align=\"right\" colspan=\"2\"><b>".$langs->trans("EndBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 	print "</table></form>\n";*/
-	
+
 }
 
 $db->close();
@@ -563,16 +563,16 @@ llxFooter();
 function printTableHeader($title_serialize, $total, $acct_id)
 {
 	global $langs;
-	
+
 	print '<table class="border" width="100%">';
 	print '<tr class="liste_titre">';
-	
-	if (!empty($title_serialize)) 
+
+	if (!empty($title_serialize))
 	{
 		$TTitle = unserialize($title_serialize);
 		foreach ($TTitle as $title) print '<td>'.$title.'</td>';
 	}
-	
+
 	print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
 	print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
@@ -582,7 +582,7 @@ function printTableHeader($title_serialize, $total, $acct_id)
 	print '<td align="right">'.$langs->trans("Balance").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
-	
+
 	// Ligne Solde debut releve
 	print '	<tr>';
 	if (!empty($TTitle)) print '<td colspan="'.count($TTitle).'"></td>';
@@ -594,15 +594,15 @@ function printTableHeader($title_serialize, $total, $acct_id)
 function printTableFooter($title_serialize, $totald, $totalc, $total)
 {
 	global $langs;
-	
+
 	print '	<tr class="liste_total">';
-	
+
 	if (!empty($title_serialize))
 	{
 		$TTitle = unserialize($title_serialize);
 		if (count($TTitle) > 0) print '<td colspan="'.count($TTitle).'"></td>';
 	}
-	
+
 	// Line Total
 	print '	<td align="right" colspan="4">'.$langs->trans("Total").' :</td>
 			<td align="right" class="nowrap">'.price($totald).'</td>
@@ -619,7 +619,7 @@ function printTableFooter($title_serialize, $totald, $totalc, $total)
 			<td align="right" class="nowrap" ><b>'.price($total).'</b></td>
 			<td>&nbsp;</td>';
 	print '</tr>';
-			
+
 	print '</table></form>';
 }
 
@@ -668,10 +668,10 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			{
 				$paymentstatic->id=$links[$key]['url_id'];
 				$paymentstatic->ref=$langs->trans("Payment");
-				
+
 				print '<br />'.$paymentstatic->getNomUrl(1);
-				
-				$sql = "SELECT pf.fk_facture 
+
+				$sql = "SELECT pf.fk_facture
 						FROM ".MAIN_DB_PREFIX."paiement_facture as pf
 							LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
 						WHERE p.rowid = ".$paymentstatic->id;
@@ -683,16 +683,16 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 					$facture->fetch($res->fk_facture);
 					//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
 				}
-				
+
 				$newline=0;
 			}
 			elseif ($links[$key]['type']=='payment_supplier')
 			{
 				$paymentsupplierstatic->id=$links[$key]['url_id'];
 				$paymentsupplierstatic->ref=$langs->trans("Payment");
-				
+
 				print '<br />'.$paymentsupplierstatic->getNomUrl(1);
-				
+
 				$sql = "SELECT pf.fk_facturefourn
 						FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf
 							LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
@@ -705,7 +705,7 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 					$facture->fetch($res->fk_facturefourn);
 					//if ($facture->id > 0) print '<br />'.$facture->getNomUrl(1); La facture sera maintenant affichée par la fonction getListFacture() en dessous
 				}
-				
+
 				$newline=0;
 			}
 			elseif ($links[$key]['type']=='payment_sc')
@@ -779,12 +779,14 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 				$newline=0;
 			}
 		}
+
 	
 		if($links[key($links)]['type']=='payment_supplier') $param = 'fourn';
 		print '<br />'.getListFacture($links[key($links)]['url_id'], $param);
+
 	}
 	// Avec la nouvelle version de bankimport, on peut régler des factures de différents tiers avec un même paiement, donc on les affiche toutes
-	
+
 
 	// Categories
 	if ($ve)
@@ -848,9 +850,9 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
  * la table s'appelle llx_paiementfourn_facturefourn
  */
 function getListFacture($id_reglement, $fourn='') {
-	
+
 	global $db;
-	
+
 	$sql = 'SELECT pf.fk_facture'.$fourn;
 	// empty($fourn) = Spécificité pour les factures clients
 	if(empty($fourn)) $sql.= ', rem.fk_facture  as fac_finale';
@@ -861,15 +863,15 @@ function getListFacture($id_reglement, $fourn='') {
 	$resql = $db->query($sql);
 
 	$Tfact = array();
-	
+
 	$classname = 'Facture';
 	if (!empty($fourn)) $classname = 'FactureFournisseur';
-	
+
 	while($res = $db->fetch_object($resql)) {
-		
+
 		$f = new $classname($db);
 		if($f->fetch($res->{'fk_facture'.$fourn}) > 0) {
-			
+
 			// On affiche la facture finale s'il s'agit d'un acompte
 			$suite = '';
 			if(empty($fourn) && !empty($res->fac_finale)) {
@@ -877,11 +879,11 @@ function getListFacture($id_reglement, $fourn='') {
 				$fac_finale->fetch($res->fac_finale);
 				$suite = ' / '.$fac_finale->getNomUrl(1);
 			}
-			
+
 			$Tfact[] = $f->getNomURL(1).$suite;
 		}
 	}
-	
+
 	return implode('<br />', $Tfact);
-	
+
 }
