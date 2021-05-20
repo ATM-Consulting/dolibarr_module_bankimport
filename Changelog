@@ -3,10 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-- FIX : V13 Compatibility No Token Renewal *10/05/2021* - 2.2.2
 
 ## Version 2.2
 
+- FIX : V13 Compatibility No Token Renewal *10/05/2021* - 2.2.2
 - FIX : V13 Compatibility after num_paiement property changed to num_payment *03/03/2021* - 2.2.1
 
 ## Version 1.0
