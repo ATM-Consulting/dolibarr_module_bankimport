@@ -51,7 +51,13 @@ $num=GETPOST('num','alpha');
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+
+$socidVersion = "socid";
+if (DOL_VERSION < 13){
+	$socidVersion = "societe_id";
+}
+if ($user->{$socidVersion}) $socid=$user->{$socidVersion};
+
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
