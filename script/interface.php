@@ -1,5 +1,5 @@
 <?php
-	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
 
 	require '../config.php';
 	dol_include_once('/compta/facture/class/facture.class.php');
