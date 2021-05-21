@@ -12,4 +12,4 @@ Date format, file separator and file mapping can be defined in setup
 
 ## 2.2.2 - 19/05/2021
 
-- FIX : Compatibility V13 - newToken() replaces $_SESSION['newtoken'] and add token renewal
+- FIX : Compatibility V13 - $newToken replaces $_SESSION['newtoken'] and add token renewal

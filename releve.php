@@ -53,6 +53,7 @@ $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
+$newToken = function_exists('newToken')?newToken():$_SESSION['newtoken'];
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
 {
@@ -239,7 +240,7 @@ else
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="token" value= "'.$newToken.'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 
