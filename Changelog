@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
-
+- FIX : Uniformize module descriptor's editor, editor_url and family fields * 08/06/2021* - 2.2.4
 
 
 ## Version 2.2
