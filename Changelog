@@ -1,12 +1,15 @@
-+--------------------------+
-| 2013.09.16 - Version 1.0 |
-+--------------------------+
-First release including :
-Automatic bank statement reconciliation
-Automatic bank transaction creation when missing
-Date format, file separator and file mapping can be defined in setup
+# Change Log
+All notable changes to this project will be documented in this file.
 
-## 2.2.1 - 03/03/2021
+## Unreleased
+
+<<<<<<<<< Temporary merge branch 1
+- FIX : V13 Compatibility after num_paiement property changed to num_payment
+
+## 2.2.2 - 19/05/2021
+
+- FIX : Compatibility V13 - newToken() replaces $_SESSION['newtoken'] and add token renewal
+=========
 
 ## Version 2.2
 
@@ -18,5 +21,4 @@ Date format, file separator and file mapping can be defined in setup
 - NEW : Automatic bank statement reconciliation *16/09/2013* - 1.0
 - NEW : Automatic bank transaction creation when missing *16/09/2013* - 1.0
 - NEW : Date format, file separator and file mapping can be defined in setup *16/09/2013* - 1.0
-
-
+>>>>>>>>> Temporary merge branch 2

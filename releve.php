@@ -43,10 +43,10 @@ $langs->load("companies");
 $langs->load("bills");
 
 $action=GETPOST('action', 'alpha');
-$id=GETPOST('account');
-$ref=GETPOST('ref');
-$dvid=GETPOST('dvid');
-$num=GETPOST('num');
+$id=GETPOST('account','int');
+$ref=GETPOST('ref','alpha');
+$dvid=GETPOST('dvid','int');
+$num=GETPOST('num','alpha');
 
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
@@ -240,7 +240,7 @@ else
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$newToken.'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 
@@ -781,8 +781,15 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			}
 		}
 
+<<<<<<<<< Temporary merge branch 1
 		if($links[1]['type']=='payment_supplier') $param = 'fourn';
 		print '<br />'.getListFacture($links[1]['url_id'], $param);
+=========
+
+		if($links[key($links)]['type']=='payment_supplier') $param = 'fourn';
+		print '<br />'.getListFacture($links[key($links)]['url_id'], $param);
+
+>>>>>>>>> Temporary merge branch 2
 	}
 	// Avec la nouvelle version de bankimport, on peut régler des factures de différents tiers avec un même paiement, donc on les affiche toutes
 

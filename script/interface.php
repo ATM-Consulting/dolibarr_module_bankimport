@@ -1,5 +1,9 @@
 <?php
+<<<<<<<<< Temporary merge branch 1
+	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+=========
 	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
+>>>>>>>>> Temporary merge branch 2
 
 	require '../config.php';
 	dol_include_once('/compta/facture/class/facture.class.php');
@@ -7,12 +11,23 @@
 	dol_include_once('/fourn/class/fournisseur.facture.class.php');
 	dol_include_once('/compta/sociales/class/chargesociales.class.php');
 
+<<<<<<<<< Temporary merge branch 1
 	$get=GETPOST('get');
+=========
+
+	$get=GETPOST('get','alpha');
+
+>>>>>>>>> Temporary merge branch 2
 
 	switch ($get) {
 		case 'pieceList':
 
+<<<<<<<<< Temporary merge branch 1
 			print _pieceList(GETPOST('i'),GETPOST('fk_soc'),GETPOST('type'));
+=========
+			print _pieceList(GETPOST('i','int'),GETPOST('fk_soc','int'),GETPOST('type','alpha'));
+
+>>>>>>>>> Temporary merge branch 2
 
 			break;
 
