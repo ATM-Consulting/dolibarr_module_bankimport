@@ -245,7 +245,7 @@ else
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 
@@ -786,7 +786,7 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 			}
 		}
 
-	
+
 		if($links[key($links)]['type']=='payment_supplier') $param = 'fourn';
 		print '<br />'.getListFacture($links[key($links)]['url_id'], $param);
 
