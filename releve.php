@@ -51,7 +51,7 @@ $num=GETPOST('num','alpha');
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
-
+$newToken = function_exists('newToken')?newToken():$_SESSION['newtoken'];
 $socidVersion = "socid";
 if (DOL_VERSION < 13){
 	$socidVersion = "societe_id";
@@ -245,7 +245,7 @@ else
 	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$newToken.'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 
