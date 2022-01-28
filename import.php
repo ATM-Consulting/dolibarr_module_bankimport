@@ -68,7 +68,6 @@ if(GETPOST('compare','alphanohtml')) {
 		)
 	) {
 		$import->load_transactions(GETPOST('bankimportseparator','alpha'), GETPOST('bankimportdateformat','alphanohtml'), GETPOST('bankimportmapping','alphanohtml'));
-
 		$import->import_data(GETPOST('TLine','array'));
 		$tpl = 'tpl/bankimport.end.tpl.php';
 	}
