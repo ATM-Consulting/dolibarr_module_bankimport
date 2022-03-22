@@ -1,0 +1,63 @@
+Module104020Name = Importació de moviments bancaris
+Module104020Desc = Permet importar moviments bancaris mitjançant fitxers CSV per a conciliació automàtica amb pagaments de factures de client i proveïdor
+
+ATMAbout = Aquest mòdul ha estat desenvolupat per <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Podeu trobar documentació en aquest portal wiki <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Per a preguntes o valoracions, contacteu-nos a <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Per a preguntes comercials, contacteu-nos a <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> o al +33 9 77 19 50 70<br><br>Conegueu els nostres altres mòduls a <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>.
+
+BankImportSetup = Configuració del mòdul d'importació de moviments bancaris
+BankImportAbout = Quant al mòdul d'importació de moviments bancaris
+
+# ADMIN
+BankImportSeparator = Separador de dades al fitxer CSV
+BankImportMapping = Mapeig de columnes del fitxer CSV
+BankImportDateFormat = Format de les dates al fitxer CSV
+BankImportSeparatorHelp = Caràcter usat com a separador de columnes al fitxer CSV. (Habitualment "," o ";". Un sol caràcter)
+BankImportMappingHelp = Correspondència de cada columna al vostre fitxer CSV amb un "concepte bancari clau a Dolibarr" (emprant les següents paraules clau).<br><br>Els codis "date", "label", "debit" and "credit" han d'existir en aquest mapeig de columnes.<br><br>Si el vostre fitxer conté una única columna per a l'import, utilitzeu “amount” i possiblement "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") en lloc de "debit" i "credit".<br><br>Si el vostre fitxer conté altres columnes, anomeneu-es “null” en aquest mapeig.
+BankImportDateFormatHelp = Format de les dates usat al seu fitxer CSV ("d" és el dia en dos caràcters, "m" mes en dos caràcters, "Y" any en quatre caràcters, "y" any en dos caràcters, etc... són formats per dates habituals de PHP).<br><br>Per exemple, la data 07/25/2013 es correspon amb el format de data "m/d/Y".
+
+bankImportUseHistory = Activar el registre d'importacions amb el contingut del fitxer (<b>Advertiment: una línia de capçalera ha de ser present al vostre fitxer</b>)
+bankImportAllowInvoiceFromSeveralThird = Autoritzar la liquidació/conciliació de factures pertanyents a diferents tercers
+bankImportAllowDraftInvoice = Autorizar la conciliación de facturas en estado de borrador (validación de la factura y creación del pago)
+bankImportUncheckAllLines = Desmarcar totes les línies en previsualitzar els moviments del fitxer (les línies no marcades no són importades)
+bankImportAutoCreateDiscount = Convertir automàticament les quotes (pagaments parcials) en una reducció futura si es paga del tot
+bankImportMatchBanklinesByAmountAndLabel = Buscar coincidències amb línies ja importades per suma **i** per descripció
+bankImportAllowFreelines = Autoritzar la creació d'entrades bancàries orfes (no vinculades a un pagament existent a Dolibarr)
+UseMacCompatibility = Activar la compatibilitat amb Mac
+
+# MENU
+LeftMenuBankImport = Importar mov. bancaris
+
+# PAGE
+TitleBankImport = Importació de moviments bancaris
+BankImportFile = Fitxer CSV a importar
+BankCompareTransactions = Previsualitzar i comparar els moviments
+BankImport = Importar els **moviments marcats** i gravar les conciliacions indicades
+FileTransactions = Moviments bancaris del fitxer CSV
+DolibarrTransactions = Moviments bancaris ja a Dolibarr
+RelatedItem = Element relacionat
+PlannedAction = Acció prevista
+DoAction = Validar
+StatementCreatedAndDataImported = Extracte %s importat amb: %s moviments conciliats, incloent %s creats
+FileHasHeader = El fitxer té una línia de capçalera
+bankImport_selectCompanyPls = Seleccioneu un tercer
+bankImport_selectPaymentTypePls = Seleccioneu un pagament/factura
+bankImportNoReccordFound = No s'ha trobat informació
+
+bankImportFieldBankAccountRequired = El compte bancari és obligatori
+bankImportFieldNumReleveRequired = El número d'extracte és obligatori
+bankImportFieldBankImportFileRequired = El fitxer és obligatori
+bankImportFieldCompanyRequired = El tercer és obligatori
+bankImportFieldPaymentRequired = El tipus de pagament és obligatori
+bankImportCretaFreeLine = Moviment orfe
+
+# DATA
+BankTransactionWillBeCreatedAndReconciled = El moviment serà importat i conciliat
+WillBeReconciledWithStatement = El moviment serà conciliat a l'extracte %s
+AlreadyReconciledWithStatement = El moviment ja va ser conciliat a l'extracte %s
+LineDoesNotMatchWithMapping = Línia de fitxer no compleix amb el mapeig de columnes
+
+BankImport_FatalError_PaymentType_NotPossible = Error: el tipus de pagament [%s] no és possible
+
+SupplierInvoices = Factura de proveïdor
+
+bankimport_no_customer_selected_click_to_select_one = No hi ha tercers associats, premeu aquí per triar un
+bankimport_customer_selected_click_to_select_another_one = %s (premeu aquí per triar un altre tercer)
