@@ -1,37 +1,63 @@
 Module104020Name = Importación de movimientos bancarios
-Module104020Desc = Permite importar movimientos bancarios de archivos CSV para reconciliación automática
+Module104020Desc = Permite importar movimientos bancarios mediante archivos CSV para conciliación automática con los pagos de facturas de cliente y proveedor
 
-ATMAbout = Este módulo ha sido desarrollado por <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Puedes encontrar documentación en nuestro <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Para preguntas o valoraciones, contáctenos en <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Para preguntas comerciales, contáctenos en  <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> or at +33 9 77 19 50 70<br><br>Find our other modules on <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>
+ATMAbout = Este módulo ha sido desarrollado por <a href="http://www.atm-consulting.fr" target="_blank">ATM Consulting</a><br>Puede encontrar documentación en este portal wiki <a href="http://wiki.atm-consulting.fr/index.php/Accueil" target="_blank">wiki</a><br><br>Para preguntas o valoraciones, contáctenos en <a href="mailto:support@atm-consulting.fr">support@atm-consulting.fr</a><br><br>Para preguntas comerciales, contáctenos en  <a href="mailto:contact@atm-consulting.fr">contact@atm-consulting.fr</a> or en +33 9 77 19 50 70<br><br>Conozca nuestros otros módulos en <a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=atm&submit_search=Rechercher" target="_blank">Dolistore</a>.
 
-BankImportSetup = Configuración del módulo de importación para Bancos
-BankImportAbout = Acerca del módulo de importación para bancos
+BankImportSetup = Configuración del módulo de importación de movimientos bancarios
+BankImportAbout = Acerca del módulo de importación de movimientos bancarios
 
 # ADMIN
 BankImportSeparator = Separador de datos en el archivo CSV
-BankImportMapping = Mapeo del archivo CSV
+BankImportMapping = Mapeo de columnas del archivo CSV
 BankImportDateFormat = Formato de fecha del archivo CSV
-BankImportSeparatorHelp = Carácter usado como separador de columnas en el archivo CSV (Habitualmente "," o ";". Un sólo carácter)
-BankImportMappingHelp = Correspondencia de columnas en su archivo CSV. Los códigos "date", "label", "debit" and "credit" deben existir en este mapeo de datos.<br>Si su archivo contiene una única columna para el importe, utilice “amount” y posiblemente "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") en lugar de "debit" y "credit".<br>Si su archivo contiene otras columnas, establezca “full” en la correspondencia. 
-BankImportDateFormatHelp = Formato de fecha usado en su archivo CSV (%%d es el día en dos caracteres, %%m mes en dos caracteres y %%Y año en cuatro carácteres). Por ejemplo, la fecha 07/25/2013 se corresponde con el formato de fecha %%m/%%d/%%Y.
+BankImportSeparatorHelp = Carácter usado como separador de columnas en el archivo CSV. (Habitualmente "," o ";". Un sólo carácter)
+BankImportMappingHelp = Correspondencia de cada columna en su archivo CSV con un "concepto bancario clave en Dolibarr" (usando las siguientes palabras clave).<br><br>Los códigos "date", "label", "debit" and "credit" deben existir en este mapeo de datos.<br><br>Si su archivo contiene una única columna para el importe, utilice “amount” y posiblemente "direction=Debit token" (eg. "direction=DEBIT" or "direction=-") en lugar de "debit" y "credit".<br><br>Si su archivo contiene otras columnas, nombrelas “null” en este mapeo. 
+BankImportDateFormatHelp = Formato de fecha usado en su archivo CSV ("d" es el día en dos caracteres, "m" mes en dos caracteres, "Y" año en cuatro carácteres, "y" año en dos carácteres, etc... son formatos de fecha habituales de PHP).<br><br>Por ejemplo, la fecha 07/25/2013 se corresponde con el formato de fecha "m/d/Y".
+
+bankImportUseHistory = Activar el registro de importaciones con el contenido del archivo (<b>Advertencia: una línea de encabezado debe estar presente en su archivo</b>)
+bankImportAllowInvoiceFromSeveralThird = Autorizar la liquidación/conciliación de facturas pertenecientes a diferentes terceros
+bankImportAllowDraftInvoice = Autorizar la conciliación de facturas en estado de borrador (validación de la factura y creación del pago)
+bankImportUncheckAllLines = Desmarcar todas las líneas al previsualizar los movimientos del archivo (las líneas no marcadas no son importadas)
+bankImportAutoCreateDiscount = Convertir automáticamente las cuotas (pagos parciales) en una reducción futura si se paga por completo
+bankImportMatchBanklinesByAmountAndLabel = Buscar coincidencias con líneas ya importadas por monto **y** por descripción
+bankImportAllowFreelines = Autorizar la creación de entradas bancarias huérfanos (no vinculadas a un pago existente en Dolibarr)
+UseMacCompatibility = Activar la compatibilidad con Mac
 
 # MENU
-LeftMenuBankImport = Importar movimientos banco
+LeftMenuBankImport = Importar mov. bancarios
 
 # PAGE
 TitleBankImport = Importación de movimientos bancarios
-BankImportFile = Archivo a importar
-BankCompareTransactions = Comparar movimientos
-BankImport = Realizar reconciliaciones automáticas y creación de transacciones
+BankImportFile = Archivo CSV a importar
+BankCompareTransactions = Previsualizar y comparar los movimientos
+BankImport = Importar los **movimientos marcados** y grabar las conciliaciones indicadas
 FileTransactions = Movimientos bancarios del fichero CSV
-DolibarrTransactions = Movimientos bancarios de Dolibarr
+DolibarrTransactions = Movimientos bancarios ya en Dolibarr
 RelatedItem = Elemento relacionado
-Action = Acción prevista
+PlannedAction = Acción prevista
 DoAction = Validar
-StatementCreatedAndDataImported = Movimiento %s creado con %s transacciones reconciliadas, incluyendo %s creado
-FileHasHeader = Archivo tiene linea de cabecera
+StatementCreatedAndDataImported = Extracto %s importado con: %s movimientos conciliados, incluyendo %s creados
+FileHasHeader = El archivo tiene una línea de cabecera
+bankImport_selectCompanyPls = Seleccine un tercero
+bankImport_selectPaymentTypePls = Seleccione un pago/factura
+bankImportNoReccordFound = No se ha encontrado información
+
+bankImportFieldBankAccountRequired = La cuenta bancaria es obligatoria
+bankImportFieldNumReleveRequired = El número de extracto es obligatorio
+bankImportFieldBankImportFileRequired = El archivo es obligatorio
+bankImportFieldCompanyRequired = El tercero es obligatorio
+bankImportFieldPaymentRequired = El tipo de pago es obligatorio
+bankImportCretaFreeLine = Movimiento huérfano
 
 # DATA
-BankTransactionWillBeCreatedAndReconciled = La transacciones va a ser creada y reconciliada
-WillBeReconciledWithStatement = La transacción va a ser reconciliada con el movimiento %s
-AlreadyReconciledWithStatement = Transacción ya reconciliada con el movimiento %s
-LineDoesNotMatchWithMapping = Linea de archivo no cumple el mapa de correspondencia
+BankTransactionWillBeCreatedAndReconciled = El movimiento va a ser importado y conciliado
+WillBeReconciledWithStatement = El movimiento va a ser conciliado en el extracto %s
+AlreadyReconciledWithStatement = El movimiento ya fue conciliado en el extracto %s
+LineDoesNotMatchWithMapping = Línea de archivo no cumple con el mapeo de columnas
+
+BankImport_FatalError_PaymentType_NotPossible = Error: el tipo de pago [%s] no es posible
+
+SupplierInvoices = Factura de proveedor
+
+bankimport_no_customer_selected_click_to_select_one = No hay terceros asociados, pulse aquí para elegir uno
+bankimport_customer_selected_click_to_select_another_one = %s (pulse aquí para elegir otro tercero)
