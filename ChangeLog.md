@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
-
-
+- FIX (contrib by mkdgs): regex for parsing CSV format options - *29/07/2022* - 2.3.1
+- NEW (contrib by caos30): Spanish translation - *29/07/2022* - 2.3.0
 
 ## Version 2.2
 
