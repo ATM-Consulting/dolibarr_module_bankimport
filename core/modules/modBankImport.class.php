@@ -47,18 +47,22 @@ class modBankImport extends DolibarrModules
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 104020; // 104000 to 104999 for ATM CONSULTING
+		$this->editor_name = 'ATM Consulting';
+		$this->editor_url = 'https://www.atm-consulting.fr';
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'bankimport';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-		$this->family = "financial";
+		$this->family = 'ATM Consulting';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Allow to import csv files to reconcile bank accounts";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '2.2';
+
+		$this->version = '2.2.8';
+
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -275,7 +279,7 @@ class modBankImport extends DolibarrModules
 		$sql = array();
 
 		define('INC_FROM_DOLIBARR',true);
-		
+
 		dol_include_once('/bankimport/config.php');
 		dol_include_once('/bankimport/script/create-maj-base.php');
 

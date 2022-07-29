@@ -17,6 +17,7 @@ UseMacCompatibility=
 bankImportUseHistory=Enable the import history with the file content (<b>Carreful: a header line must be exists in you file</b>)
 bankImportAllowInvoiceFromSeveralThird=Allow to pay / reconcile payments from different third parties
 bankImportAllowDraftInvoice=Allow to reconcile draft invoice payments (invoices will be validated and payments created)
+UseMacCompatibility=Enable Mac compatibility
 
 # MENU
 LeftMenuBankImport = Bank import
