@@ -1,4 +1,5 @@
 <form method="post" enctype="multipart/form-data" name="bankimport">
+	<input type="hidden" name="token" value=" <?php echo newToken() ?> ">
 	<table class="border" width="100%">
 		<tr>
 			<td width="200"><label class="fieldrequired" for="selectaccountid"><?php echo $langs->trans("BankAccount") ?></label></td>
@@ -50,21 +51,21 @@
 	$(function() {
 		$('form[name=bankimport]').submit(function(event) {
 			var TError = new Array;
-			
+
 			if ($('#selectaccountid').val() == -1) 	TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankAccountRequired'); ?>");
 			if (!$('#numreleve').val().trim()) 		TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldNumReleveRequired'); ?>");
 			if ($('#bankimportfile').val() == '') 	TError.push("<?php echo $langs->transnoentitiesnoconv('bankImportFieldBankImportFileRequired'); ?>");
-			
+
 			if (TError.length > 0)
 			{
 				for (var i = 0; i < TError.length; i++)
 				{
 					$.jnotify(TError[i], 'error', true);
 				}
-				
+
 				return false;
 			}
-			
+
 			return true;
 		});
 	});
