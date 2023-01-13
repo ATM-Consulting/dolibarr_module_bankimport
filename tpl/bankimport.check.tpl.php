@@ -25,9 +25,10 @@
 	<input type="hidden" name="dateend" value="<?php echo $import->dateEnd ?>" />
 	<input type="hidden" name="numreleve" value="<?php echo $import->numReleve ?>" />
 	<input type="hidden" name="hasheader" value="<?php echo $import->hasHeader ?>" />
+	<input type="hidden" name="token" value=" <?php echo function_exists('newToken') ? newToken() : $_SESSION['newtoken']; ?> ">
 
 
-    <input type="hidden" name="bankimportseparator" value="<?php echo GETPOST('bankimportseparator','alphanohtml') ?>" />
+	<input type="hidden" name="bankimportseparator" value="<?php echo GETPOST('bankimportseparator','alphanohtml') ?>" />
     <input type="hidden" name="bankimportdateformat" value="<?php echo GETPOST('bankimportdateformat','alphanohtml') ?>" />
     <input type="hidden" name="bankimportmapping" value="<?php echo GETPOST('bankimportmapping','alphanohtml') ?>" />
 
