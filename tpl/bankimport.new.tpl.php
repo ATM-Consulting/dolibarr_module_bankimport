@@ -1,5 +1,5 @@
 <form method="post" enctype="multipart/form-data" name="bankimport">
-	<input type="hidden" name="token" value=" <?php echo newToken() ?> ">
+	<input type="hidden" name="token" value=" <?php echo function_exists('newToken') ? newToken() : $_SESSION['newtoken'];?> ">
 	<table class="border" width="100%">
 		<tr>
 			<td width="200"><label class="fieldrequired" for="selectaccountid"><?php echo $langs->trans("BankAccount") ?></label></td>
