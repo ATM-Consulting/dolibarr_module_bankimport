@@ -6,12 +6,13 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 
 class BankImport
 {
 	/** @var string Negative direction token */
 	private $neg_dir;
-
+	
 	protected $db;
 
 	/** @var Account */
@@ -94,6 +95,22 @@ class BankImport
 	}
 
 	function load_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
+		global $hookmanager;
+
+		//gestion possible par un hook
+		if (is_object($hookmanager)) {
+			$parameters = array("moduleName" => "bankimport");
+			$action = "load_transactions";
+			$reshook = $hookmanager->executeHooks('doActions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				print $hookmanager->resPrint;
+				return;
+			} else {
+                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            }
+
+		}
+
 		$this->load_bank_transactions();
 		$this->load_check_receipt();
 		$this->load_file_transactions($delimiter, $dateFormat, $mapping_string, $enclosure);
@@ -132,8 +149,20 @@ class BankImport
 
 	// Load file lines
 	function load_file_transactions($delimiter='', $dateFormat='', $mapping_string='', $enclosure='"') {
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
+		//gestion possible par un hook
+		if (is_object($hookmanager)) {
+			$parameters = array("moduleName" => "bankimport");
+			$action = "load_file_transactions";
+			$reshook = $hookmanager->executeHooks('doActions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				print $hookmanager->resPrint;
+				return;
+			} else {
+                setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+            }
+		}
 		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
 		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
 
