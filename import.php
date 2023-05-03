@@ -19,6 +19,7 @@
 // Permet de gérer les fichier ayant une fin de ligne MAC (suite retour client) (http://stackoverflow.com/questions/4541749/fgetcsv-fails-to-read-line-ending-in-mac-formatted-csv-file-any-better-solution)
 
 require 'config.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 dol_include_once('/bankimport/class/bankimport.class.php');
 dol_include_once('/compta/facture/class/facture.class.php');
@@ -26,6 +27,8 @@ dol_include_once('/compta/facture/class/facture.class.php');
 global $db, $langs;
 
 $langs->load('bills');
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks('bankimport');
 
 ini_set("auto_detect_line_endings", true);
 
@@ -36,6 +39,10 @@ $tpl = 'tpl/bankimport.new.tpl.php';
 $import = new BankImport($db);
 
 if(GETPOST('compare','alphanohtml')) {
+	$action = "compare";
+	$parameters = array("moduleName" => "bankimport");
+	$reshook = $hookmanager->executeHooks('doActions', $parameters, $import, $action);
+	if($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	$datestart = dol_mktime(0, 0, 0, GETPOST('dsmonth','int'), GETPOST('dsday','int'), GETPOST('dsyear','int'));
 	$dateend = dol_mktime(0, 0, 0, GETPOST('demonth','int'), GETPOST('deday','int'), GETPOST('deyear','int'));
@@ -43,7 +50,6 @@ if(GETPOST('compare','alphanohtml')) {
 	$hasHeader = GETPOST('hasheader','alphanohtml');
 
 	if($import->analyse(GETPOST('accountid','int'), 'bankimportfile', $datestart, $dateend, $numreleve, $hasHeader)) {
-
 		$import->load_transactions(GETPOST('bankimportseparator','alphanohtml'), GETPOST('bankimportdateformat','alphanohtml'), GETPOST('bankimportmapping','alphanohtml'));
 		$import->compare_transactions();
 
@@ -78,6 +84,11 @@ llxHeader('', $langs->trans('TitleBankImport'));
 print_fiche_titre($langs->trans("TitleBankImport"));
 
 include($tpl);
+
+$action = "index";
+$parameters = array("moduleName" => "bankimport", "tpl" => $tpl);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $import, $action);
+if($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 llxFooter();
 $db->close();
