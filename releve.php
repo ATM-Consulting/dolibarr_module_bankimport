@@ -76,11 +76,12 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page == -1) { $page = 0; }
+if ($page == -1 || empty($page)) { $page = 0; }
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$offset = $conf->liste_limit * $page;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$offset = ((int) $limit * $page);
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
