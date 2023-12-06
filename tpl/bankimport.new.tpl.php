@@ -15,7 +15,7 @@
 			<td width="200"><label for="de"><?php echo $langs->trans("DateEnd") ?></label></td>
 			<td><?php echo $form->select_date($import->dateEnd, 'de') ?></td>
 			<td><label for="hasheader"><?php echo $langs->trans("FileHasHeader") ?></label></td>
-			<td><input type="checkbox" id="hasheader" name="hasheader" value="1" <?php echo $conf->global->BANKIMPORT_HEADER ? ' checked="checked"' : '' ?> /></td>
+			<td><input type="checkbox" id="hasheader" name="hasheader" value="1" <?php echo  getDolGlobalInt('BANKIMPORT_HEADER') ? ' checked="checked"' : '' ?> /></td>
 		</tr>
 
 		<tr>
@@ -24,19 +24,19 @@
 				$langs->trans("BankImportMappingHelp")
 			); ?>
 			</td>
-			<td><input type="text" id="bankimportmapping" name="bankimportmapping" value="<?php echo $conf->global->BANKIMPORT_MAPPING; ?>" /></td>
+			<td><input type="text" id="bankimportmapping" name="bankimportmapping" value="<?php echo getDolGlobalString('BANKIMPORT_MAPPING'); ?>" /></td>
 			<td><?php echo $form->textwithpicto(
 				'<label for="bankimportdateformat" >' . $langs->trans("BankImportDateFormat") . '</label>',
 				$langs->trans("BankImportDateFormatHelp")
 			); ?>
 			</td>
-			<td><input type="text" id="bankimportdateformat" name="bankimportdateformat" value="<?php echo $conf->global->BANKIMPORT_DATE_FORMAT; ?>" size="12" /></td>
+			<td><input type="text" id="bankimportdateformat" name="bankimportdateformat" value="<?php echo getDolGlobalString('BANKIMPORT_DATE_FORMAT'); ?>" size="12" /></td>
 			<td><?php echo $form->textwithpicto(
 				'<label for="bankimportseparator">' . $langs->trans("BankImportSeparator") . '</label>',
 				$langs->trans("BankImportSeparatorHelp")
 			); ?>
 			</td>
-			<td><input type="text" id="bankimportseparator" name="bankimportseparator" value="<?php echo $conf->global->BANKIMPORT_SEPARATOR; ?>" size="3" /></td>
+			<td><input type="text" id="bankimportseparator" name="bankimportseparator" value="<?php echo getDolGlobalString('BANKIMPORT_SEPARATOR'); ?>" size="3" /></td>
 
 		</tr>
 	</table>

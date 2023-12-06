@@ -12,7 +12,7 @@ class BankImport
 {
 	/** @var string Negative direction token */
 	private $neg_dir;
-	
+
 	protected $db;
 
 	/** @var Account */
@@ -163,10 +163,10 @@ class BankImport
                 setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
             }
 		}
-		if(empty($delimiter)) $delimiter = $conf->global->BANKIMPORT_SEPARATOR;
-		if(empty($dateFormat)) $dateFormat = strtr($conf->global->BANKIMPORT_DATE_FORMAT, array('%'=>''));
+		if(empty($delimiter)) $delimiter = getDolGlobalString('BANKIMPORT_SEPARATOR');
+		if(empty($dateFormat)) $dateFormat = strtr(getDolGlobalString('BANKIMPORT_DATE_FORMAT'), array('%'=>''));
 
-		if(empty($mapping_string)) $mapping_string = $conf->global->BANKIMPORT_MAPPING;		
+		if(empty($mapping_string)) $mapping_string = getDolGlobalString('BANKIMPORT_MAPPING');
 		$mapping_string = preg_replace_callback('|=([^' . $delimiter . ']*)|', 'BankImport::extractNegDir', $mapping_string);
 
 		if($delimiter == '\t')$delimiter="\t";
@@ -179,7 +179,7 @@ class BankImport
 
 		while(!feof($f1)) {
 
-			if(!empty($conf->global->BANKIMPORT_MAC_COMPATIBILITY)) {
+			if(getDolGlobalString('BANKIMPORT_MAC_COMPATIBILITY')) {
 				$ligne = fgets($f1, 4096);
 				if (empty($ligne)) continue;
 //				print '<hr>'.$ligne.'<br />';
@@ -287,7 +287,7 @@ class BankImport
 		$amount = floatval($amount); // Transform to float
 		foreach($this->TBank as $i => $bankLine) {
 			$test = ($amount == $bankLine->amount);
-			if($conf->global->BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
+			if(getDolGlobalString('BANKIMPORT_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL')) $test = ($amount == $bankLine->amount && $label == $bankLine->label);
 			if(!empty($test)) {
 				unset($this->TBank[$i]);
 
@@ -475,7 +475,7 @@ class BankImport
 		foreach($TLine as $bankLineId => $iFileLine)
 		{
 			$this->reconcile_bank_transaction($this->TBank[$bankLineId], $this->TFile[$iFileLine]);
-			if (!empty($conf->global->BANKIMPORT_HISTORY_IMPORT) && $bankLineId > 0)
+			if (getDolGlobalString('BANKIMPORT_HISTORY_IMPORT') && $bankLineId > 0)
 			{
 				$this->insertHistoryLine($PDOdb, $iFileLine, $bankLineId);
 			}
@@ -526,7 +526,7 @@ class BankImport
 		elseif ($type == 'payment_supplier') $paiement = new PaymentSocialContribution($this->db);
 		else exit($langs->trans('BankImport_FatalError_PaymentType_NotPossible', $type));
 
-		if(!empty($conf->global->BANKIMPORT_ALLOW_DRAFT_INVOICE)) $this->validateInvoices($TAmounts, $type);
+		if(getDolGlobalString('BANKIMPORT_ALLOW_DRAFT_INVOICE')) $this->validateInvoices($TAmounts, $type);
 
 	    $paiement->datepaye     = $date_paye;
 	    $paiement->amounts      = $TAmounts;   // Array with all payments dispatching
@@ -553,7 +553,7 @@ class BankImport
 			}
 
 			// Uniquement pour les factures client (les acomptes fournisseur n'existent pas)
-			if($conf->global->BANKIMPORT_AUTO_CREATE_DISCOUNT && $type === 'payment') $this->createDiscount($TAmounts);
+			if(getDolGlobalInt('BANKIMPORT_AUTO_CREATE_DISCOUNT') && $type === 'payment') $this->createDiscount($TAmounts);
 
 			return $bankLineId;
 		}
@@ -671,7 +671,7 @@ class BankImport
 	{
 		global $conf;
 
-		$header = explode($conf->global->BANKIMPORT_SEPARATOR, $headerToParse);
+		$header = explode(getDolGlobalString('BANKIMPORT_SEPARATOR'), $headerToParse);
 		$header = array_map(array('BankImport', 'cleanString'), $header);
 
 		return $header;
