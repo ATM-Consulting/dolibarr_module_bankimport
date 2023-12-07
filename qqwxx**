@@ -1,0 +1,1373 @@
+[33mcommit 2c7339bfe2a2addfacf7d3c1e436e6a2524fe711[m[33m ([m[1;36mHEAD -> [m[1;32mnew_compatv19[m[33m)[m
+Author: jpb <jean-pascal.boudet@atm-consulting>
+Date:   Wed Dec 6 14:39:38 2023 +0100
+
+    compatv19
+
+[33mcommit 70a135749c1bfb2645d60560d630d7c3fa2bec49[m[33m ([m[1;31matm/main[m[33m, [m[1;32mmain[m[33m)[m
+Merge: bdf4958 d61cf51
+Author: atm-adrien <67913809+atm-adrien@users.noreply.github.com>
+Date:   Wed Jun 28 11:17:41 2023 +0200
+
+    Merge pull request #56 from ATM-Consulting/Fix_2.4_php8_list_transtypage
+    
+    PULLUP main : Fix 2.4 php8 list transtypage
+
+[33mcommit d61cf519eabc56d98489cde44e417fad7490412a[m
+Author: root <root@vps-2da113fc.vps.ovh.net>
+Date:   Wed Jun 28 11:00:20 2023 +0200
+
+    version 2.4.1
+
+[33mcommit bf10a36807c1fba4ec5b78cd4a8d21b2ed5cc0b4[m
+Author: root <root@vps-2da113fc.vps.ovh.net>
+Date:   Wed Jun 28 10:58:58 2023 +0200
+
+    fix transtypage
+
+[33mcommit 747f125a91cacbac0ef700be23b6a8271c39782d[m
+Merge: bdf4958 fed5aba
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Fri Jun 2 12:22:21 2023 +0200
+
+    Merge branch '2.2' of github.com:ATM-Consulting/dolibarr_module_bankimport into main
+
+[33mcommit bdf4958425db981ae6abcf644bd2b3ce7bd465be[m
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Wed May 17 14:31:50 2023 +0200
+
+    release 2.4
+
+[33mcommit 01250dba284939c302e11b18125703e3b41e06e0[m
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Wed May 3 09:25:00 2023 +0200
+
+    new hook
+
+[33mcommit a5422cc194b670ebc77cfed548bc859330914b9a[m
+Merge: bb651e3 fd50896
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Wed May 3 09:23:32 2023 +0200
+
+    Merge pull request #53 from rycks/add_hooks
+    
+    PR: Add hooks for others addons
+
+[33mcommit fd5089697940d77d48dec8f5dac7ba42722c0cce[m
+Author: Eric Seigne <eric.seigne@cap-rel.fr>
+Date:   Fri Apr 28 16:02:34 2023 +0200
+
+    add hooks for CAP-REL/ScanBank addon
+
+[33mcommit 3ce8040f252e26b10c685b44e5125cb85497593d[m
+Author: Eric Seigne <eric.seigne@cap-rel.fr>
+Date:   Fri Apr 28 16:01:38 2023 +0200
+
+    fix display bad messages -> transnoentitiesnoconv
+
+[33mcommit bb651e32d305d7174b4dad06d0df2764884e2666[m
+Merge: 874cdae 16d54f8
+Author: atm-gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri Jan 13 10:07:03 2023 +0100
+
+    Merge pull request #52 from ATM-Consulting/main_pullup_FIX_Compatibility17
+    
+    Main pullup fix compatibility17
+
+[33mcommit fed5aba950393e2649f97d873895feca2848ecc6[m
+Merge: 74ef9c3 0af03ff
+Author: atm-gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri Jan 13 10:06:45 2023 +0100
+
+    Merge pull request #51 from ATM-Consulting/2.2_FIX_Compatibility17
+    
+    FIX: CompatibilityV17
+
+[33mcommit 16d54f888025650656d0fa7989ecc6c8d9b0463f[m
+Merge: e03bd4d 0af03ff
+Author: atm-lena <lena.papazian@atm-consulting.fr>
+Date:   Fri Jan 13 10:06:05 2023 +0100
+
+    Merge branch '2.2_FIX_Compatibility17' of github.com:ATM-Consulting/dolibarr_module_bankimport into main_pullup_FIX_Compatibility17
+
+[33mcommit 0af03ff57824d7f208e2dc411a99d49f194c3b5b[m
+Author: atm-lena <lena.papazian@atm-consulting.fr>
+Date:   Fri Jan 13 10:05:41 2023 +0100
+
+    Ret PR
+
+[33mcommit e03bd4d559d23775773de2247db965c9f5757966[m
+Merge: 874cdae ae643be
+Author: atm-lena <lena.papazian@atm-consulting.fr>
+Date:   Thu Jan 12 14:51:38 2023 +0100
+
+    Merge branch '2.2_FIX_Compatibility17' of github.com:ATM-Consulting/dolibarr_module_bankimport into main_pullup_FIX_Compatibility17
+
+[33mcommit ae643bea4ef0fc0bf35ae15ddd38236c39245187[m
+Author: atm-lena <lena.papazian@atm-consulting.fr>
+Date:   Thu Jan 12 14:49:37 2023 +0100
+
+    FIX: CompatibilityV17
+
+[33mcommit 874cdaeb4cb12223c9ba49ba2e7e8a578b053e1d[m
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Fri Jul 29 12:37:08 2022 +0200
+
+    Document external contributions in ChangeLog + module version 2.3.1
+
+[33mcommit a6f9491d2557be5ee83aede6d2f2e32dc7740e93[m
+Merge: d331812 42d2026
+Author: Florian Mortgat <50440633+atm-florianm@users.noreply.github.com>
+Date:   Fri Jul 29 12:23:33 2022 +0200
+
+    Merge pull request #30 from mkdgs/patch-1
+    
+    Fix regex erreur sur la colonne direction=x
+
+[33mcommit 42d2026f928faad6cf68cba496442351334b3825[m
+Merge: 27bf3de d331812
+Author: Florian Mortgat <50440633+atm-florianm@users.noreply.github.com>
+Date:   Fri Jul 29 12:23:12 2022 +0200
+
+    Merge branch 'main' into patch-1
+
+[33mcommit d3318122f84d34af5b15723c460097adae77f8c4[m
+Merge: a373819 27991d4
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Fri Jul 29 12:14:18 2022 +0200
+
+    Merge pull request #48 from ATM-Consulting/PULLUP_FIX_Compatv16
+    
+    PULLUP - FIX : Compatibilty V16 - Family
+
+[33mcommit 74ef9c3b0a21794b69012196afe41af7b1a55f35[m
+Merge: 504ea82 561bbd3
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Fri Jul 29 12:14:03 2022 +0200
+
+    Merge pull request #47 from ATM-Consulting/FIX_Compatv16
+    
+    FIX : Compatibilty V16 - Family
+
+[33mcommit 27991d4ba2f0a7c56a3a9c22a27f7fb62debf238[m
+Merge: a373819 561bbd3
+Author: Atm-Gregr <greg.rastklan@atm-consulting.fr>
+Date:   Thu Jun 30 14:40:13 2022 +0200
+
+    Merge branch 'FIX_Compatv16' into PULLUP_FIX_Compatv16
+
+[33mcommit 561bbd338c6f52ea3204ab81cbf7f06ab45a74b9[m
+Author: Atm-Gregr <greg.rastklan@atm-consulting.fr>
+Date:   Thu Jun 30 14:39:29 2022 +0200
+
+    family
+
+[33mcommit a3738192699d9ec409c83b67b2bf8b4c03eaae87[m
+Merge: 4cc17bd de26dbb
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu Apr 7 17:16:03 2022 +0200
+
+    Merge pull request #46 from caos30/main
+    
+    Updated spanish translation & added catalan translation.
+
+[33mcommit de26dbbaaf27019d631812652f027de0e8caed17[m
+Author: sergi <proyectos@iamsdeweb.com>
+Date:   Tue Mar 22 00:17:17 2022 -0700
+
+    Updated spanish translation & added catalan translation.
+
+[33mcommit 4cc17bd24dcf54fa655edc103046fd8d35689311[m
+Merge: ff10366 50b2c0d
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Fri Jan 28 15:00:50 2022 +0100
+
+    Merge branch 'main' of github.com:ATM-Consulting/dolibarr_module_bankimport into main
+
+[33mcommit ff10366504de2ed3d60d5bffa9b6f91260be4380[m
+Merge: d998178 504ea82
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Fri Jan 28 15:00:35 2022 +0100
+
+    Merge branch '2.2' of github.com:ATM-Consulting/dolibarr_module_bankimport into main
+
+[33mcommit 504ea8217dbce7798a057dd85d1e97fecad51d00[m
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Fri Jan 28 14:59:17 2022 +0100
+
+    change family
+
+[33mcommit 50b2c0da145fdd02ce6089887d9053d7fb276bc7[m
+Merge: d998178 96212c4
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Mon Jan 24 15:30:05 2022 +0100
+
+    Merge pull request #45 from ATM-Consulting/2.2.4_fix_paiement_save
+    
+    PULLUP : 2.2.4 fix paiement save
+
+[33mcommit 633cb241744c97aab53c92793cc6b8bb6d8d691f[m
+Merge: c1e3eb1 96212c4
+Author: Florian Mortgat <50440633+atm-florianm@users.noreply.github.com>
+Date:   Mon Jan 24 15:29:38 2022 +0100
+
+    Merge pull request #44 from ATM-Consulting/2.2.4_fix_paiement_save
+    
+    2.2.4 fix paiement save
+
+[33mcommit 96212c42984accbc28424eee8a9e180621a2d3b3[m
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Mon Jan 24 15:15:19 2022 +0100
+
+    Fix new token
+
+[33mcommit 9ac9dbd57562db275716b8797cd520a1890eeb7c[m
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Mon Jan 24 15:08:01 2022 +0100
+
+    Num version 2.2.7
+
+[33mcommit a50d18ea0afb24b702a3db7a478a53ea5a8776c1[m
+Merge: d5726fa c1e3eb1
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Mon Jan 24 15:07:36 2022 +0100
+
+    Merge branch '2.2' of github.com:ATM-Consulting/dolibarr_module_bankimport into 2.2.4_fix_paiement_save
+
+[33mcommit d5726face3fc835ec6c584a9be5953cef3f17e15[m
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Mon Jan 24 15:05:51 2022 +0100
+
+    - FIX : Import keep saving PRE on new paiement but user doesn't selected this paiement   *24/01/2022* 2.2.5
+    - FIX : V12 Compatibility card url for paiement *24/01/2022* 2.2.4
+
+[33mcommit d9981789a48c998bfe8b90328013d5b0d5976969[m
+Merge: 11e9125 c1e3eb1
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Fri Dec 17 16:13:37 2021 +0100
+
+    Merge branch '2.2' of github.com:ATM-Consulting/dolibarr_module_bankimport into main
+
+[33mcommit c1e3eb1683d888f11b938ccba50b6afcbb5f4835[m
+Merge: 912cdb1 23f7707
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Fri Dec 17 16:12:20 2021 +0100
+
+    Merge pull request #40 from ATM-Consulting/FIX_CompatV13
+    
+    FIX : Compat v13
+
+[33mcommit 11e91259fd4847951f992bf0cf87990473604359[m
+Merge: 8e20e00 f96bc36
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Fri Dec 17 16:06:12 2021 +0100
+
+    Merge pull request #41 from ATM-Consulting/PULLUP_FIX_CompatV13
+    
+    PULLUP : Fix compat v13
+
+[33mcommit f96bc36e1171d2806e24779f2f0e44018f3b04b1[m
+Merge: 765a8e5 23f7707
+Author: atm-gregr <greg.rastklan@atm-consulting.fr>
+Date:   Fri Dec 17 15:46:57 2021 +0100
+
+    Merge branch 'FIX_CompatV13' into PULLUP_FIX_CompatV13
+
+[33mcommit 23f7707f74d553968766eb49758a490bdea3e036[m
+Author: atm-gregr <greg.rastklan@atm-consulting.fr>
+Date:   Fri Dec 17 15:46:09 2021 +0100
+
+    maj
+
+[33mcommit 765a8e5957a63787683eb0d074ac46fdacc51c3b[m
+Merge: 8e20e00 a868ba4
+Author: atm-gregr <greg.rastklan@atm-consulting.fr>
+Date:   Fri Dec 17 15:43:56 2021 +0100
+
+    Merge branch 'FIX_CompatV13' into PULLUP_FIX_CompatV13
+
+[33mcommit a868ba48d26e0d5948bc7d0a90de36b5106cb903[m
+Author: atm-gregr <greg.rastklan@atm-consulting.fr>
+Date:   Fri Dec 17 15:42:57 2021 +0100
+
+    newToken
+
+[33mcommit 8e20e007f42df56e39f9d098e7142503600bfbb6[m
+Merge: d3b6034 912cdb1
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Wed Sep 29 15:15:03 2021 +0200
+
+    Merge branch '2.2' into main
+
+[33mcommit 912cdb1cbd2baeb554442558f7a0381fa3667f76[m
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Wed Sep 29 15:14:28 2021 +0200
+
+    FIX: rename Changelog into ChangeLog.md + move FIX line to 2.2 released section
+
+[33mcommit d284693d8b46f0759e46f7445ac4300887db50fd[m
+Merge: a08fa5e fc9aa0b
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Wed Sep 8 15:09:49 2021 +0200
+
+    Merge branch 'FIX_2.2_compat_v14' into 2.2
+
+[33mcommit fc9aa0be6e07d607a541d93567b2aaa344bbd367[m
+Author: atm-florian <florian.mortgat@atm-consulting.fr>
+Date:   Wed Sep 8 15:09:25 2021 +0200
+
+    NOCSRFCHECK
+
+[33mcommit d3b60347d7a380000e3ca0db50c5f5d68c3a6897[m
+Merge: 6ef22b7 13c967f
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Tue Jun 8 12:59:51 2021 +0200
+
+    Merge pull request #39 from ATM-Consulting/FIX_2.2_compat_v14
+    
+    PULLUP - Fix 2.2 compat v14
+
+[33mcommit a08fa5e61b769ba95fa09592ee40e03e5a2cf1ed[m
+Merge: e0c02d4 13c967f
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Tue Jun 8 12:59:32 2021 +0200
+
+    Merge pull request #38 from ATM-Consulting/FIX_2.2_compat_v14
+    
+    FIX 2.2.4 - Uniformize module descriptor's
+
+[33mcommit 13c967fafb8dc4c7043deef4cb87e5c9eb5f748d[m
+Author: Florian Mortgat <florian.mortgat@atm-consulting.fr>
+Date:   Tue Jun 8 11:21:54 2021 +0200
+
+    FIX 2.2.4 - Uniformize module descriptor's editor, editor_url and family fields
+
+[33mcommit e0c02d4c73fa016483cf943cb27f4d2001269abb[m
+Merge: 6ef22b7 22f3c0d
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:49:52 2021 +0200
+
+    Merge branch '2.2' of github.com:ATM-Consulting/dolibarr_module_bankimport into 2.2
+
+[33mcommit 6ef22b7bca0902800329ec5abd12ec1f8d5aff4b[m
+Merge: abb088c 31c70e9
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:48:11 2021 +0200
+
+    Merge pull request #34 from atm-jpb/RD_V13_GETPOST
+    
+    fix getpost type v 13.0
+
+[33mcommit 31c70e90d2737fe61ea3b875ce6e9a9dd7b0c8c7[m[33m ([m[1;31morigin/RD_V13_GETPOST[m[33m)[m
+Merge: 89b0357 abb088c
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:47:59 2021 +0200
+
+    Merge branch 'master' into RD_V13_GETPOST
+
+[33mcommit 22f3c0d4558ffce7c2cdc0c86328f09f0cd0177e[m
+Merge: abb088c 88e74ca
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:27:48 2021 +0200
+
+    Merge pull request #36 from atm-jpb/fix_rd_user_societe_id
+    
+    add compatibility societe_id
+
+[33mcommit 88e74cad6c709e7a1d6f75cc2c6aa3399b8074a8[m[33m ([m[1;31morigin/fix_rd_user_societe_id[m[33m)[m
+Merge: 2db9b93 abb088c
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:10:27 2021 +0200
+
+    Merge branch '2.2' into fix_rd_user_societe_id
+
+[33mcommit abb088ca4c9fd11786a5c61dd1a1c1e76b3c19bd[m
+Merge: ce2f87a dc7f2b1
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:06:14 2021 +0200
+
+    Merge branch '2.0' of github.com:ATM-Consulting/dolibarr_module_bankimport
+
+[33mcommit ce2f87a8802ed7ee446944c071f417103fdbb366[m
+Author: ATM john <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:04:52 2021 +0200
+
+    Changelog
+
+[33mcommit b847619090ee56db0496efa03f36d0f01cfa7483[m
+Merge: 54f6805 787581c
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Thu May 20 12:03:40 2021 +0200
+
+    Merge pull request #35 from ATM-Consulting/FIX_V13_no_token
+    
+    FIX : V13 No Token Renewal
+
+[33mcommit 2db9b9305945b657afe9fa8b3947d7fd81699e07[m
+Author: jpb <jean-pascal.boudet@atm-consulting>
+Date:   Mon May 10 12:23:44 2021 +0200
+
+    add compatibility societe_id
+
+[33mcommit 0b7c04273c0555c4536089fb3f1d562c05db2c2b[m
+Author: jpb <jean-pascal.boudet@atm-consulting>
+Date:   Mon May 10 12:18:14 2021 +0200
+
+    add compatibility societe_id
+
+[33mcommit 787581cd388c088737fa0ee4e5e64289e83fd7aa[m
+Author: kevin <kevin.giuga@atm-consulting.fr>
+Date:   Mon May 10 12:12:52 2021 +0200
+
+    Modify ChangeLog and Version number
+
+[33mcommit 6522d080be5c36be05c47fec6c905f5f46b6fc05[m
+Author: kevin <kevin.giuga@atm-consulting.fr>
+Date:   Mon May 10 11:52:05 2021 +0200
+
+    FIX V13 No token renewal
+
+[33mcommit 89b0357d5f13f008c6597fd43e6187bcef037c26[m
+Author: jpb <jean-pascal.boudet@atm-consulting>
+Date:   Fri Apr 30 15:53:03 2021 +0200
+
+    fix getpost type
+
+[33mcommit 54f6805a35d69feec724f585d27c22598085da56[m
+Merge: 209aef2 cc11c26
+Author: John BOTELLA <john.botella@atm-consulting.fr>
+Date:   Wed Mar 3 15:00:27 2021 +0100
+
+    Merge pull request #33 from atm-kevin/Fix/Compatibility_v13_num_payment
+    
+    Fix/compatibility v13 num payment
+
+[33mcommit cc11c26fca0daca62634105175eecbff797ec73c[m
+Author: kevin <kevin.giuga@atm-consulting.fr>
+Date:   Wed Mar 3 13:56:06 2021 +0100
+
+    DOL VERSION condition
+
+[33mcommit e25ab4de9404ffcbe883c8e5dbd1a00cec7f4dbc[m
+Author: kevin <kevin.giuga@atm-consulting.fr>
+Date:   Wed Mar 3 10:23:07 2021 +0100
+
+    Modify ChangeLog & version number
+
+[33mcommit f4741bd70d29120e956c637b89431d87dda49cee[m
+Author: kevin <kevin.giuga@atm-consulting.fr>
+Date:   Wed Mar 3 10:15:38 2021 +0100
+
+    V13 compatibility after num_payment property change
+
+[33mcommit dc7f2b1864d53fcb522c0994648215251197d0f6[m
+Merge: 51f5b4b bdc9d10
+Author: VIAL-GOUTEYRON Quentin <quentin.vial-gouteyron@atm-consulting.fr>
+Date:   Wed Feb 24 17:28:58 2021 +0100
+
+    Merge pull request #32 from ATM-Consulting/FIX/tk_12604_useless_continue_and_break
+    
+    FIX : tk12604 : un continue suivi d'un break, c'est chelou, vraiment...
+
+[33mcommit bdc9d10125fd8359adbdec1489d77631fc29710a[m
+Author: Gauthier PC portable 024 <gauthier.verdol@atm-consulting.fr>
+Date:   Mon Feb 22 17:38:17 2021 +0100
+
+    FIX : tk12604 : un continue suivi d'un break, c'est chelou, vraiment...
+
+[33mcommit 27bf3de6fd1ff4fda55d5b4dfb8e7209f3d2a0fb[m
+Author: Mickael Desgranges <md-github@mkdgs.fr>
+Date:   Mon Nov 30 15:05:31 2020 +0100
+
+    Fix regex erreur sur la colonne direction=x
+    
+    Fix, Ce qui suit la colonne direction=xxx est effacée si elle n'est pas la dernière
+    Correction de la regex
+
+[33mcommit 51f5b4bb4283caae39b75093b3eaaac6801b35d7[m[33m ([m[1;31morigin/2.0[m[33m)[m
+Author: Got2be <gauthier.verdol@atm-consulting.fr>
+Date:   Thu Nov 12 15:21:01 2020 +0100
+
+    FIX : tk12231 : indice tableau
+
+[33mcommit 06925fddae267c91a40b626c33c2c524c48956cd[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed Aug 29 10:32:54 2018 +0200
+
+    FIX : info en conf
+
+[33mcommit cf190191143f2e4f95eadd0d416987c6ddb4b1aa[m
+Author: atm-ph <phf@atm-consulting.Fr>
+Date:   Wed Mar 21 09:29:17 2018 +0100
+
+    Fix translate missing
+
+[33mcommit 30ecb351bf552cf1e1ebf7fbab20eb817396be66[m
+Author: atm-greg <gregory.blemand@atm-consulting.fr>
+Date:   Mon Feb 26 10:34:48 2018 +0100
+
+    Fix file not found - sanitize filename
+
+[33mcommit 49a77091cf90010a6d4f0979e44e8c37605e2315[m
+Author: atm-ph <phf@atm-consulting.Fr>
+Date:   Fri Nov 17 11:26:40 2017 +0100
+
+    Update ignore
+
+[33mcommit e68ca07d1052144f7bda6aa7f3554f0ba6831aa8[m
+Author: alexis Algoud <alexis@atm-consulting.fr>
+Date:   Wed Oct 25 17:09:54 2017 +0200
+
+    fix total amount
+
+[33mcommit 209aef2659fc584956064bb89ec4ceb3c3781241[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Merge: 07d16fe d5ff31b
+Author: SAINT-PATRICE <asp@atm-consulting.fr>
+Date:   Wed Feb 15 14:51:17 2017 +0100
+
+    Merge pull request #28 from ATM-Consulting/fix_only_unpaid
+    
+    Fix only unpaid
+
+[33mcommit d5ff31b89e32931ffdff43a60bbe40e5d5326ce9[m[33m ([m[1;31morigin/fix_only_unpaid[m[33m)[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Feb 15 11:30:29 2017 +0100
+
+    Skip comment :)
+
+[33mcommit 22bf283957f0eaa3fa3ee4bfbf19d4e81a1d46dc[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Feb 15 11:26:06 2017 +0100
+
+    New : default customer invoice if amount > 0 else supplier invoice
+
+[33mcommit 5b971878a932dc1ac3f29bb184c8c87ee8549827[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Feb 15 11:25:47 2017 +0100
+
+    Fix : display only unpaid invoices
+
+[33mcommit 07d16fe984c37707b2441698bff960f1ddd376d2[m
+Author: Quentin Vial-Gouteyron <quentin@mail.atm-consulting.fr>
+Date:   Wed Nov 2 16:08:37 2016 +0100
+
+    FIX : empty links revele.php
+
+[33mcommit 6181672094bcf3189998c2bd447fefebfa7e0030[m
+Author: arnaud <arnaud.saint-patrice@atm-consulting.fr>
+Date:   Thu Sep 29 12:12:38 2016 +0200
+
+    FIX oublis du dollar avant la variable php ...
+
+[33mcommit fd4f839d01a84243dc340defd55ea1c07795f4e8[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 14:37:18 2016 +0200
+
+    Fix trans key
+
+[33mcommit 209243d1f47905c97addcd87f7e95df103f278cf[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 14:33:30 2016 +0200
+
+    Fix lang
+
+[33mcommit 2ef28502be6413714981234f67d995be34d28e1e[m
+Merge: 7df3c8e 325f16b
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 14:28:40 2016 +0200
+
+    Merge branch 'fix_4121'
+
+[33mcommit 325f16b59e17f39ce78c0fa86b17609602a7629a[m[33m ([m[1;31morigin/fix_4121[m[33m)[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 14:28:10 2016 +0200
+
+    Fix lang
+
+[33mcommit 7df3c8e1591338d0d4d1cd9e97828bf6bf30c39e[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 12:21:40 2016 +0200
+
+    Update num version
+
+[33mcommit a3981164f5bd7a879e8e8fffbbe75d1d45cbc9da[m
+Merge: faa098e 6d44121
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Wed Aug 24 12:10:59 2016 +0200
+
+    Merge pull request #27 from ATM-Consulting/fix_4121
+    
+    Fix 4121 - c'est un scandale ce fix comment ça marche #phtropfort ;)
+
+[33mcommit 6d44121f0f881c85f531f62db39bffe7496c1914[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Aug 24 11:40:29 2016 +0200
+
+    Fix 4121 - c'est un scandale ce fix comment ça marche #phtropfort ;)
+
+[33mcommit faa098e7bbdcf958007822d0444c9edbebdbd351[m
+Author: florian HENRY <florian.henry@atm-consulting.fr>
+Date:   Tue Aug 2 10:48:58 2016 +0200
+
+    git ignore
+
+[33mcommit 507d0e022cba058396a9ca9997404cc6d7a42097[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri Jun 24 11:22:19 2016 +0200
+
+    NEW : enregistrement du label de la ligne d'écriture si existante
+
+[33mcommit cdcb25617ce9b925febf8718a5d139f435b323ff[m
+Merge: efd81c8 ca7d11e
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Fri Jun 24 11:18:03 2016 +0200
+
+    Merge pull request #26 from ATM-Consulting/NEW_allow_freelines
+    
+    NEW : autoriser le rapprochement d'écritures non liées à un règlement…
+
+[33mcommit ca7d11ef41969ab3972f7b2151514d8bc0570b1a[m[33m ([m[1;31morigin/NEW_allow_freelines[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri Jun 24 10:56:15 2016 +0200
+
+    NEW : autoriser le rapprochement d'écritures non liées à un règlement (comme dans la v1)
+
+[33mcommit efd81c8d08767d837d39fee1544874b15764844c[m
+Merge: 74d69e8 a8cedab
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Thu Jun 23 17:19:25 2016 +0200
+
+    Merge pull request #25 from ATM-Consulting/NEW_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL
+    
+    NEW : conf pour chercher les lignes d'écritures bancaires par montant…
+
+[33mcommit a8cedab0a9d6557d584032b1cc9366aa0bca482d[m[33m ([m[1;31morigin/NEW_MATCH_BANKLINES_BY_AMOUNT_AND_LABEL[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Thu Jun 23 17:13:05 2016 +0200
+
+    NEW : conf pour chercher les lignes d'écritures bancaires par montant ET par libellé
+
+[33mcommit 74d69e8b6261cd48b0ff5f2671be7625e19a347e[m
+Merge: a7a2d49 5241913
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Mon Jun 20 16:24:13 2016 +0200
+
+    Merge pull request #24 from atm-florian/master
+    
+    FIX : HTML bad closure
+
+[33mcommit 5241913b4bbe9e69d73436d74ac678ef6979671c[m
+Author: florian HENRY <florian.henry@atm-consulting.fr>
+Date:   Mon Jun 20 16:11:03 2016 +0200
+
+    FIX : HTML bad closure
+
+[33mcommit a7a2d49ca01e64ee9adb248f79c02fce5845f157[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue Jun 7 17:28:52 2016 +0200
+
+    Arghhhhhh !!!!
+
+[33mcommit a6f84e4c3dad0487b2a8d9625eb1869cca7020df[m
+Merge: 710424b ab751e4
+Author: FAVRE Pierre-Henry <phf@atm-consulting.fr>
+Date:   Tue May 31 16:03:32 2016 +0200
+
+    Merge pull request #22 from ATM-Consulting/NEW_auto_create_discount_on_deposit
+    
+    NEW : conf pour convertir automatiquement les acomptes en reduction f…
+
+[33mcommit ab751e4c4fd35cc1ea74865cd9b6b41914f4ac24[m[33m ([m[1;31morigin/NEW_auto_create_discount_on_deposit[m[33m)[m
+Merge: 94f45c6 710424b
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 31 16:00:33 2016 +0200
+
+    Merge branch 'master' of github.com:ATM-Consulting/dolibarr_module_bankimport into NEW_auto_create_discount_on_deposit
+
+[33mcommit 710424b7707ddfa7d54c3c5634a147cdf718b3be[m
+Merge: 53e10e2 d9df74c
+Author: FAVRE Pierre-Henry <phf@atm-consulting.fr>
+Date:   Tue May 31 15:58:19 2016 +0200
+
+    Merge pull request #21 from ATM-Consulting/NEW_all_lines_unchecked
+    
+    NEW : conf pour décocher toutes les lignes lors de l'affichage des tr…
+
+[33mcommit 53e10e2d92e5a4d7099640ae87942105cacefd8e[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 31 13:08:23 2016 +0200
+
+    FIX : nombre renseignés avec des virgules
+
+[33mcommit 94f45c6f4b97b2eb77384f30ee248b4dedd63e08[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 31 12:09:30 2016 +0200
+
+    NEW : conf pour convertir automatiquement les acomptes en reduction future si totalement réglés
+
+[33mcommit d9df74c5be22dae5c323e6830e3e2533f5cbe798[m[33m ([m[1;31morigin/NEW_all_lines_unchecked[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 31 11:09:57 2016 +0200
+
+    NEW : conf pour décocher toutes les lignes lors de l'affichage des transactions provenant du fichier
+
+[33mcommit a0c768ce56afa31dcda720fd7f45c6a9ee8de83a[m
+Merge: 93e900a e19c000
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Fri May 27 16:34:43 2016 +0200
+
+    Merge pull request #20 from ATM-Consulting/NEW_use_no_csv_files
+    
+    New use no csv files
+
+[33mcommit e19c000f4be9f620c7fe35449acc3ff85955da3b[m[33m ([m[1;31morigin/NEW_use_no_csv_files[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri May 27 16:02:47 2016 +0200
+
+    FIX
+
+[33mcommit 227863a932754a890ca55b9de88f232ca04b6dd6[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri May 27 15:24:30 2016 +0200
+
+    fix
+
+[33mcommit 7806005337dcd361768cf3e7bf435480634dcf12[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri May 27 15:18:25 2016 +0200
+
+    NEW : gestion des fichiers en colonnes (non CSV)
+
+[33mcommit 93e900a579c4cdc16201bd6ca736f6eea7750c11[m
+Merge: 5edd083 deb8f03
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Thu May 12 18:36:29 2016 +0200
+
+    Merge pull request #19 from ATM-Consulting/NEW_paiement_on_several_thirdparties
+    
+    NEW : total affiché lorsqu'on rentre un prix
+
+[33mcommit deb8f03c3feece5782d2ac08ac07b5abd29034c3[m[33m ([m[1;31morigin/NEW_paiement_on_several_thirdparties[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed May 11 12:02:37 2016 +0200
+
+    NEW : total affiché lorsqu'on rentre un prix
+
+[33mcommit 5edd0834919f7bd1fd960982e2c227bdac08b261[m
+Merge: 815975b 67111d4
+Author: FAVRE Pierre-Henry <phf@atm-consulting.fr>
+Date:   Wed May 11 11:39:26 2016 +0200
+
+    Merge pull request #18 from ATM-Consulting/NEW_paiement_on_several_thirdparties
+    
+    New paiement on several thirdparties
+
+[33mcommit 67111d4346d7f0ef503a3263c6393d59913119af[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed May 11 09:19:50 2016 +0200
+
+    FIX : retours de PH suite PR
+
+[33mcommit 9c750b08c6ee00c7974a170de39765460d5023b3[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 10 15:09:09 2016 +0200
+
+    FIX : little fix
+
+[33mcommit de6dc8877f80447ba04191624219a94ca36a67d8[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon May 9 15:06:50 2016 +0200
+
+    FIX : gros blaireau gauthier...
+
+[33mcommit 6fe6c330a0e063aa1347769c7176ae5c07f3d845[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon May 9 14:44:58 2016 +0200
+
+    suite
+
+[33mcommit 2bc231db8bd45ec98e1de1f28409a04085c45acb[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon May 9 13:48:03 2016 +0200
+
+    suite
+
+[33mcommit 4b3b84a3d6b9c16b6f9e13b4f0a4fef6b8de0e79[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon May 9 10:32:39 2016 +0200
+
+    NEW : rapprochement sur tiers dsifférents soumis à activation d'une configuration
+
+[33mcommit e9da77a09455a94b54a812b2ecd2471b4183aaaa[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed May 4 17:39:12 2016 +0200
+
+    NEW : affichage de toutes les factures liées à un règlement
+
+[33mcommit 054462b1e852ffdf8d15e09e825244aa78eb633e[m
+Merge: 43c75c0 815975b
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 3 15:44:46 2016 +0200
+
+    Merge branch 'master' of github.com:ATM-Consulting/dolibarr_module_bankimport into NEW_paiement_on_several_thirdparties
+
+[33mcommit 815975bfa5f3392eb93f1dfbe31b8e8b8ea38a0c[m
+Merge: dbbdffa a4940cb
+Author: FAVRE Pierre-Henry <phf@atm-consulting.fr>
+Date:   Tue May 3 15:07:59 2016 +0200
+
+    Merge pull request #17 from ATM-Consulting/NEW_allow_reconcile_draft_invoice
+    
+    NEW : conf pour pourvoir ajouter un paiement sur des factures brouill…
+
+[33mcommit a4940cb8c4c3dcc6155b283a392cc9586959c5db[m[33m ([m[1;31morigin/NEW_allow_reconcile_draft_invoice[m[33m)[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 3 13:34:47 2016 +0200
+
+    NEW : conf pour pourvoir ajouter un paiement sur des factures brouillon (validation auto de la facture + création du paiement)
+
+[33mcommit 43c75c00afd668178ae3ffc96bb6b7159f13ff88[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 3 10:35:28 2016 +0200
+
+    suite
+
+[33mcommit c456fac32521c2ec8d6a533b489ad49278c26594[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Tue May 3 09:23:50 2016 +0200
+
+    suite
+
+[33mcommit 4dba97ebebceb8dd098029dd7daf9f6a66902d5b[m
+Author: gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon May 2 18:01:29 2016 +0200
+
+    sélection factures multi tiers
+
+[33mcommit dbbdffab8f7b004f9d8cddfe4b7bdaa4555e7960[m
+Merge: 5c270e6 fa30e76
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Fri Feb 26 11:57:01 2016 +0100
+
+    Merge pull request #16 from ATM-Consulting/develop
+    
+    Develop
+
+[33mcommit fa30e76a0264c14312a54c952034d0d91ca4d265[m[33m ([m[1;31morigin/develop[m[33m)[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Fri Feb 26 11:38:43 2016 +0100
+
+    Fix obligation de remplir les champs de type require avec info si non fait
+
+[33mcommit 34716288ac33f99ea74b27704ed670f25d7cec1e[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 18:13:28 2016 +0100
+
+    Fix affichage + ajout du lien facture
+
+[33mcommit 89654c29608e6cdb49ab13d9da5213a1b7849cc4[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 17:30:50 2016 +0100
+
+    Fix insert dans la table historique
+    Add conf dans l'admin
+    Rewrite 2 conf
+
+[33mcommit 95cb248d17d969fc33e1a4a8cf0627e15088e3e7[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 17:17:20 2016 +0100
+
+    UPDATE trad
+    REMOVE useless code
+
+[33mcommit 9a26feaa6bcc2def636c8b8e88ea3817c015ca1c[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 16:58:40 2016 +0100
+
+    Fix insert table history + affichage des relevés
+
+[33mcommit b1fb95906d2b3bfea5c80058ed524c42f307288b[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 12:15:27 2016 +0100
+
+    NEW remplacement de l'onglet standard "releves" sur la fiche d'un compte bancaire par celui du module
+    UPDATE version 2.0 => 2.1
+
+[33mcommit f2266855a0f831d167fbab59a24fe73f1aa19508[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Wed Feb 17 11:58:39 2016 +0100
+
+    REFACTORING
+    NEW enregistrement dans la table bankimport_history
+    COSMETIC pour satisfaire Max ;)
+
+[33mcommit ac79dfa26669068ee5b361958440d19331c9c0e7[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Tue Feb 16 17:26:06 2016 +0100
+
+    New class TBankImportHistory + conf pour check abricot
+
+[33mcommit 774d9a2a8b8af3f816c37eb7731d486fcee52a55[m
+Author: phf <phf@atm-consulting.fr>
+Date:   Tue Feb 16 16:56:47 2016 +0100
+
+    Update cosmetique
+    Fix inclusion class facture
+
+[33mcommit 5c270e682dc9476fd519160aab099d3a082ebcd5[m
+Merge: e3c1875 b92f491
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Thu Feb 4 22:35:08 2016 +0100
+
+    Merge pull request #15 from GPCsolutions/fiche_end
+    
+    Properly close Dolibarr card
+
+[33mcommit b92f491074b22dec3137648a26927b9124095066[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Thu Feb 4 19:39:32 2016 +0100
+
+    Properly close Dolibarr card
+
+[33mcommit e3c1875cb57d616c9c9809be22052e2684f8c2e0[m
+Author: Gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Fri Dec 11 12:21:44 2015 +0100
+
+    trad espagnole
+
+[33mcommit 447a9ff8f0ca8cfac7385d6af1f75faeeb04d7f5[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Nov 9 12:12:44 2015 +0100
+
+    FIX trace
+
+[33mcommit ae7ef93a246d969df7048cdd15a5956b32329daf[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Nov 9 12:02:09 2015 +0100
+
+    version
+
+[33mcommit 947e90b2236195673407382f6e39fc238881a2f4[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Fri Oct 30 12:02:34 2015 +0100
+
+    NEW config
+
+[33mcommit 6212b02ca98d65d0a5ff275b9730200c8885235a[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Fri Oct 23 15:40:53 2015 +0200
+
+    Final ventil regelemnt
+
+[33mcommit faaf16efa7116bc1948a62545b8cfe119d9f4231[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Fri Oct 16 12:07:48 2015 +0200
+
+    Ajout de l'affichage de la ventilation si non reconnu
+
+[33mcommit 1b6a91763c1b2afcbf66002d74c5ff2a85f65599[m[33m ([m[1;31morigin/v1[m[33m, [m[1;31morigin/1.0[m[33m)[m
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Wed Sep 23 11:41:02 2015 +0200
+
+    Update modBankImport.class.php
+
+[33mcommit 0ab0a2638f38652dfcaf82f2f6d98654ebac29c4[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Wed Sep 23 11:38:57 2015 +0200
+
+    FIX fichier
+
+[33mcommit 5e052dd2c1d3482c840266a46094d19b69a59fc7[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Mon Aug 3 16:51:35 2015 +0200
+
+    Review (thanks rdoursenaud)
+
+[33mcommit 98ce220eb9912d0b6103c23422145062e48411c4[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Mon Aug 3 15:59:49 2015 +0200
+
+    New mod declaration + setup and about pages
+
+[33mcommit e5862c586b38b30de5597207ab0412742176fd0c[m
+Merge: 330a612 57a4590
+Author: Maxime Kohlhaas <mko@atm-consulting.fr>
+Date:   Mon Aug 3 13:53:56 2015 +0200
+
+    Merge pull request #14 from GPCsolutions/4
+    
+    NEW #4 Add a link to reconciliation page after import
+
+[33mcommit 330a61231c1005fcda6fb625d56a336aad5ae915[m
+Merge: 00e896c 6de50bf
+Author: Maxime Kohlhaas <mko@atm-consulting.fr>
+Date:   Mon Aug 3 13:53:31 2015 +0200
+
+    Merge pull request #13 from GPCsolutions/12
+    
+    Fix #12 Admin page translation
+
+[33mcommit 57a4590a8e587e9e3b8cf17946a6ed2943a4c1b0[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Mon Aug 3 12:37:03 2015 +0200
+
+    NEW #4 Add a link to reconciliation page after import
+
+[33mcommit 6de50bfae1f8584c061d64c828c401f9dbc5bcf0[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Mon Aug 3 12:23:32 2015 +0200
+
+    Fix #12 Admin page translation
+
+[33mcommit 00e896ce071253cc1b75b834cf6e72b890770039[m
+Merge: fc8a8cd 3d761ea
+Author: Maxime Kohlhaas <mko@atm-consulting.fr>
+Date:   Mon Aug 3 12:21:29 2015 +0200
+
+    Merge pull request #10 from GPCsolutions/3
+    
+    NEW #3 Can declare file header presence in admin
+
+[33mcommit 3d761ea0a2fe284150708e71d32ff00a2e1923b5[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Mon Aug 3 12:18:31 2015 +0200
+
+    NEW #3 Can declare file header presence in admin
+
+[33mcommit fc8a8cd019935ce43f673397d8d1688f35956349[m
+Merge: 96e4682 6aaf6d8
+Author: Maxime Kohlhaas <mko@atm-consulting.fr>
+Date:   Mon Aug 3 11:28:44 2015 +0200
+
+    Merge pull request #5 from GPCsolutions/direction-support
+    
+    Direction support
+
+[33mcommit 6aaf6d8595cd11a500ffd635f011ffac922be161[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 19:52:48 2015 +0200
+
+    Direction support
+    
+    Useful if the CSV file has only one unsigned amount and a separate column indicating direction
+    
+    Fixes #2
+
+[33mcommit 96e4682618f5f511a8763ea0fbf8e5cdcf3008e2[m
+Merge: dd2eda1 952a09f
+Author: Maxime Kohlhaas <mko@atm-consulting.fr>
+Date:   Mon Aug 3 11:00:21 2015 +0200
+
+    Merge pull request #1 from GPCsolutions/review
+    
+    Review
+
+[33mcommit 952a09f38a2cc17bbfb92f1d0a23b024a7e48c0f[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Sat Aug 1 01:30:17 2015 +0200
+
+    Better wordings
+
+[33mcommit acd506e008eb54b377e536a1e7f158391e30bf44[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 18:09:18 2015 +0200
+
+    [Qual] Coding style
+
+[33mcommit 517fbf9a0c0bbade53212d26b7404aadb9e5a2d2[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:49:03 2015 +0200
+
+    Fix: Deprecated field
+    
+    Yes, name exists back in Dolibarr 3.3 and is working fine
+
+[33mcommit 26413acaba9d7957cc38aa7b1ab740fb3e28730f[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:30:01 2015 +0200
+
+    Fix: More labels for form elements
+
+[33mcommit a3c780ee8589c5e61662e9cccb48e09117c09b91[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:20:30 2015 +0200
+
+    Fix: Removed unused variables
+
+[33mcommit 41e6f35a4b63c28f85e57139ae4a2f97095e54c4[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:17:56 2015 +0200
+
+    Fix: Removed undefined variable
+
+[33mcommit 5130773d4bfafb939fb5e4eb701cc68f8437eff2[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:17:45 2015 +0200
+
+    Fix: Make sure variable is initialized
+
+[33mcommit b7cb1f7da8063342699168f42553d4696e3dfcba[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:15:49 2015 +0200
+
+    Fix: Properly set class properties visibility
+    
+    This is 2015: PHP 4 is dead, long live PHP 5!
+
+[33mcommit f5c3c0647a3f19ec8d0f0eda0a38765589233956[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:13:50 2015 +0200
+
+    Fix: Added missing globals and removed unused ones
+
+[33mcommit 25bf2e0e1eb8fb3475dc9c55df0fafb6a0d74bfc[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 17:05:56 2015 +0200
+
+    Fix: Added missing labels to form elements
+
+[33mcommit 2408375409485493bea13be5c5611fa4f59146a3[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 16:58:42 2015 +0200
+
+    Fix: Wrong translation key
+
+[33mcommit 1a930ec35554099d5e40779844ce7120372f2447[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 16:56:57 2015 +0200
+
+    Fix: HTML center tag is deprecated
+    
+    Replaced by a proper div with center CSS class
+
+[33mcommit 64c377085b47c03e95ed9cca87a635377d32d5a6[m
+Author: Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
+Date:   Fri Jul 31 16:54:31 2015 +0200
+
+    Fix: jQuery select all
+    
+    Properly quoted inputs so referencing works
+    attr is deprecated, prop is to be used since jQuery 1.6
+
+[33mcommit dd2eda187e2decbabdb3499b0753e630c279ec5e[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Apr 20 12:26:20 2015 +0200
+
+    fix nothing
+
+[33mcommit 31db0ed40b202f5ba862b58f3ae6b8f1b43eed11[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Apr 20 11:56:36 2015 +0200
+
+    Ajout des options en visible
+
+[33mcommit 638854ff9920734d754ff517455eb650622df241[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Feb 12 09:04:55 2015 +0100
+
+    Gestion fin de ligne MAC
+
+[33mcommit e0bcb15f0c20b842f59c9e3d2979652e259bf204[m
+Author: Alexis ALGOUD <alexis@atm-consulting.fr>
+Date:   Fri Feb 6 23:28:31 2015 +0100
+
+    Ajout du check/uncheckall
+
+[33mcommit 5c46d510cf55a0e16841e2739846fb1a46757948[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Sep 10 14:30:11 2014 +0200
+
+    Traduction
+
+[33mcommit 55d80e964631c87ba6ffe3cf4ba0f26262c2d423[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Sep 10 14:30:00 2014 +0200
+
+    Traductions + help
+
+[33mcommit 6ea0c99cb8e5a7473fcc02d7a3423f0fb824399b[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Sep 10 11:57:50 2014 +0200
+
+    Affichage de l'élément lié à l'écriture bancaire
+
+[33mcommit e0513f5743fa2bed330e990f67d8f146a71ceb67[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Jun 5 15:58:41 2014 +0200
+
+    // TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
+
+[33mcommit 30574eb128dad7fdc6d5abcb1b543962dc0d6678[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Thu Apr 3 09:44:28 2014 +0200
+
+    Correction quand entete pourrie
+
+[33mcommit e18a076d6861a2d8389666cb0e6e634775ea557f[m
+Author: Gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed Apr 2 09:04:18 2014 +0200
+
+    suite correction short open tag
+
+[33mcommit ad7ec3fb0695afbdce49fd2aad5c3d00e832147c[m
+Author: Gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed Apr 2 08:58:45 2014 +0200
+
+    Correction short open tag
+
+[33mcommit 9356ce7e491e55e0400272f9ee6d8e4fb363afb6[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Thu Mar 27 14:40:26 2014 +0100
+
+    pb entete
+
+[33mcommit a7ef3d69e0ead029c6fbd5db8a0ea94c513503f7[m
+Author: Gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Wed Jan 15 11:49:23 2014 +0100
+
+    Correction parsing date
+
+[33mcommit 27492fefb2b2245a6e16616c8fdeabce967046b5[m
+Author: Gauthier <gauthier.verdol@atm-consulting.fr>
+Date:   Mon Jan 13 12:08:59 2014 +0100
+
+    Correction date
+
+[33mcommit 7b21b069efd4226bf3f1c15c195c128a61def9b5[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Thu Jan 9 17:26:01 2014 +0100
+
+    Ajout fichier exemple
+
+[33mcommit dc00dda2f1b1b1f71c2bd2d10979b4df66953633[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Thu Jan 9 17:22:04 2014 +0100
+
+    Suppression strptime fonction pourrie qui marche que sur linux
+
+[33mcommit 31114bdafdc56ede015adaa3538945f8b1532e47[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Oct 30 11:55:05 2013 +0100
+
+    Ajout lien numéro de relevé
+
+[33mcommit e50b05e8ccaf44af330575fbff0019ca39853c4e[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Wed Oct 30 09:15:50 2013 +0100
+
+    Amélioration affichage + traductions
+
+[33mcommit 7f72688b80a4a21e2a755c7cd6062154a7752aab[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Oct 29 09:15:32 2013 +0100
+
+    Debug
+
+[33mcommit ab35d96ca92e756012bb3e488895428076509324[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Oct 29 09:03:53 2013 +0100
+
+    Ajout gestion avec une seule colonne montant
+
+[33mcommit 3993e910f43634348467596b0d60edfd703b18cc[m
+Merge: 2b15fb1 eabd9ec
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Oct 29 08:57:58 2013 +0100
+
+    Merge branch 'master' of atmsrv1:doli-bankimport
+
+[33mcommit 2b15fb1d13468efd1e43fe357c00b5fe38fb5e9e[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Oct 29 08:57:55 2013 +0100
+
+    Ajout de la gestion du header + gestion debit positif => transformé en négatif
+
+[33mcommit eabd9ec4c6abf06831d9aadad7500979702d7033[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Oct 28 16:28:50 2013 +0100
+
+    Suppression test MIME fichier après résultat client : application/octet-stream
+
+[33mcommit 8131d7a7fdeafa17a568fd5712471dd8c375eb85[m
+Author: Alexis Algoud <alexis@atm-consulting.fr>
+Date:   Mon Oct 28 14:55:25 2013 +0100
+
+    tentative de résoluion problème import
+
+[33mcommit 75d371157d9544f745ac86b1b1eb88b2bda607a6[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Fri Sep 27 10:20:12 2013 +0200
+
+    Correction mineure
+
+[33mcommit c400c7242c51be3ae7c0ddf311cc9d5c56493945[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Sep 26 16:31:08 2013 +0200
+
+    Changelog
+
+[33mcommit 4313fd0a212b9dee7c3e7e2bfab7762ab0ae426b[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Sep 26 16:30:58 2013 +0200
+
+    Ajout images
+
+[33mcommit 5c83c708dbdb9c8d8f99919b8222252022b31a39[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Sep 26 16:21:12 2013 +0200
+
+    Traductions
+
+[33mcommit d53288ab07c2a3616ce19bddd89fe94ac1467bd2[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Sep 26 16:03:48 2013 +0200
+
+    Configuration module + trad
+
+[33mcommit 4ab4d8a69c2ea4f490278a9d427d35cafdb7dd1c[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Sep 24 16:11:14 2013 +0200
+
+    Correction + affichage
+
+[33mcommit f8c495935d63a7a5b86f54cf3486460c64405884[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Tue Sep 24 09:08:33 2013 +0200
+
+    Gestion erreur mapping
+
+[33mcommit f871c835358f9c2fda34dc06e13cdc497db30247[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Mon Sep 23 17:16:52 2013 +0200
+
+    Finalisation + comments
+
+[33mcommit ed9eb33c998710297220a509097b54c08d6fe15b[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Fri Sep 20 16:11:34 2013 +0200
+
+    Préparation actions auto
+
+[33mcommit e4138c2198f336093b16fde24a27569dfe3a893c[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Fri Sep 20 15:37:52 2013 +0200
+
+    Gestion des chèques
+
+[33mcommit 43555b4582bfbd4659c241635a0447bf67745cb4[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Thu Sep 19 09:02:28 2013 +0200
+
+    Comparaison écritures affichage résultat
+
+[33mcommit de0d25555c712d5fdb0c42ddb3e2fc12e91ebb8c[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Mon Sep 16 18:30:29 2013 +0200
+
+    Class métier + début process import
+
+[33mcommit dbc2376da85a8725e7874e527a436b5694486bb3[m
+Author: Maxime Kohlhaas <maxime@atm-consulting.fr>
+Date:   Mon Sep 16 12:06:11 2013 +0200
+
+    Base du module
