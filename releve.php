@@ -60,13 +60,13 @@ if ($user->{$socidVersion}) $socid=$user->{$socidVersion};
 
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
 
-if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
+if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && ! empty($dvid))
 {
 	$al = new AccountLine($db);
 	$al->datev_next($dvid);
 }
 
-if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
+if ($user->hasRight('banque', 'consolidate') && $action == 'dvprev' && ! empty($dvid))
 {
 	$al = new AccountLine($db);
 	$al->datev_previous($dvid);
@@ -844,7 +844,7 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 
 	print "<td align=\"right\" class='nowrap' >".price($total)."</td>\n";
 
-	if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+	if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate'))
 	{
 		// Description
 		$bankLineUrl = DOL_URL_ROOT.'/compta/bank/line.php';

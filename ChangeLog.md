@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-
+- NEW : COMPATV19 - *07/12/2023* - 2.5.0  
 
 ## Version 2.4
 

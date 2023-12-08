@@ -49,7 +49,7 @@
 			<td><?php echo $langs->trans("RelatedItem") ?></td>
 			<td width="80"><?php echo $langs->trans("Amount") ?></td>
 			<td><label for="checkall"><?php echo $langs->trans("PlannedAction") ?></label></td>
-			<td align="center"><input type="checkbox" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
+			<td align="center"><input type="checkbox" <?php !getDolGlobalString('BANKIMPORT_UNCHECK_ALL_LINES') ? print 'checked="checked"' : ''; ?> id="checkall" name="checkall" value="1" onchange="checkAll()" /></td>
 		</tr>
 
 		<?php foreach($TTransactions as $i => $line) { ?>
@@ -88,7 +88,7 @@
 				<td class="fields_required" colspan="5">
 					<select class="flat" name="TLine[type][<?php echo $i ?>]" id="select_line_type_<?php echo $i ?>">
 						<?php
-							if(!empty($conf->global->BANKIMPORT_ALLOW_FREELINES)) {
+							if(getDolGlobalString('BANKIMPORT_ALLOW_FREELINES')) {
 								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
 							}
 							if(!empty($conf->facture->enabled)) {
@@ -141,7 +141,7 @@
 
 						var type = $('#select_line_type_<?php echo $i ?>').val();
 
-						<?php if(!empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+						<?php if(getDolGlobalString('BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD')) { ?>
 
 							if(this.name.toString().indexOf('TLine[type]') !== -1) {
 								$("#line_pieces_<?php echo $i; ?>").empty();
@@ -168,7 +168,7 @@
 							}
 						}).done(function( data) {
 
-							<?php if(empty($conf->global->BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD)) { ?>
+							<?php if(!getDolGlobalString('BANKIMPORT_ALLOW_INVOICE_FROM_SEVERAL_THIRD')) { ?>
 
 								$("#line_pieces_<?php echo $i ?>").html(data);
 
@@ -238,7 +238,7 @@
 
 				</script></td>
 				<td><?php echo $langs->trans('BankTransactionWillBeCreatedAndReconciled', $import->numReleve) ?></td>
-				<td align="center"><input type="checkbox" rel="doImport" <?php empty($conf->global->BANKIMPORT_UNCHECK_ALL_LINES) ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
+				<td align="center"><input type="checkbox" rel="doImport" <?php !getDolGlobalString('BANKIMPORT_UNCHECK_ALL_LINES') ? print 'checked="checked"' : ''; ?> name="TLine[new][]" value="<?php echo $i ?>" /></td>
 			<?php } ?>
 
 			<?php $var = !$var ?>
