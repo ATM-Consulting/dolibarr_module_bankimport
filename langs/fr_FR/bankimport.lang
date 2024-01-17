@@ -61,3 +61,6 @@ SupplierInvoices=Factures fournisseur
 
 bankimport_no_customer_selected_click_to_select_one=Aucun tiers associé, cliquez ici pour un choisir un
 bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour choisir un autre tiers)
+ImportBankFile = Import de fichier banqueBankImportSetup = Configuration du module d'importation bancaire
+BankImportAbout = A propos du module d'importation bancaire
+Action = Action prévue

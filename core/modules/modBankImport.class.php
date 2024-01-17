@@ -54,14 +54,14 @@ class modBankImport extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-		$this->family = 'ATM Consulting';
+		$this->family = 'financial';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Allow to import csv files to reconcile bank accounts";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-		$this->version = '2.5.0';
+		$this->version = '2.6.0';
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -70,7 +70,7 @@ class modBankImport extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='bankimport@bankimport';
+		$this->picto='module.svg@bankimport';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /bankimport/core/xxxxx) (0=disable, 1=enable)
@@ -108,6 +108,10 @@ class modBankImport extends DolibarrModules
 		$this->phpmin = array(7,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(15,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("bankimport@bankimport");
+
+		// Url to the file with your last numberversion of this module
+		require_once __DIR__ . '/../../class/techatm.class.php';
+		$this->url_last_version = \bankimport\TechATM::getLastModuleVersionUrl($this);
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)

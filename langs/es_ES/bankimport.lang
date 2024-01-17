@@ -61,3 +61,6 @@ SupplierInvoices = Factura de proveedor
 
 bankimport_no_customer_selected_click_to_select_one = No hay terceros asociados, pulse aquí para elegir uno
 bankimport_customer_selected_click_to_select_another_one = %s (pulse aquí para elegir otro tercero)
+Action = Acción prevista
+BankImportAboutPage = Acerca del módulo de importación de bancos
+ImportBankFile = Importación de ficheros bancarios
