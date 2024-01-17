@@ -1,3 +1,5 @@
+<fieldset>
+	<legend><?php print $langs->trans("ImportBankFile"); ?></legend>
 <form method="post" enctype="multipart/form-data" name="bankimport">
 	<input type="hidden" name="token" value=" <?php echo function_exists('newToken') ? newToken() : $_SESSION['newtoken'];?> ">
 	<table class="border" width="100%">
@@ -46,7 +48,7 @@
 		<input type="submit" class="button" name="compare" value="<?php echo dol_escape_htmltag($langs->trans("BankCompareTransactions")) ?>">
 	</div>
 </form>
-
+</fieldset>
 <script type="text/javascript">
 	$(function() {
 		$('form[name=bankimport]').submit(function(event) {

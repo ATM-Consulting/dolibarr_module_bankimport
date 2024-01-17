@@ -53,4 +53,13 @@ LineDoesNotMatchWithMapping = File line doesn't match mapping
 BankImport_FatalError_PaymentType_NotPossible=Error : type of payment [%s] is not possible
 
 bankimport_no_customer_selected_click_to_select_one=No thirdparty found, click here to choose one
-bankimport_customer_selected_click_to_select_another_one=%s (click here to choose another thirdparty)
+bankimport_customer_selected_click_to_select_another_one=%s (click here to choose another thirdparty)BankImportSetupPage = Configuring the bank import module
+BankImportAboutPage = About the bank import module
+bankImportUncheckAllLines = Uncheck all lines when displaying transactions from the
+bankImportAutoCreateDiscount = Automatically convert down payments into future reductions if fully settled
+bankImportMatchBanklinesByAmountAndLabel = Search for bank entry lines by amount AND name
+bankImportAllowFreelines = Authorize the creation of free bank entries (not linked to a settlement)
+PlannedAction = Planned action
+bankImportCretaFreeLine = Free banking entry
+SupplierInvoices = Supplier invoices
+ImportBankFile = Bank file import

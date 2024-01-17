@@ -86,15 +86,15 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
     . $langs->trans("BackToModuleList") . '</a>';
-print_fiche_titre($langs->trans($page_name), $linkback);
+print load_fiche_titre($langs->trans($page_name), $linkback, 'tools');
 
 // Configuration header
 $head = bankimportAdminPrepareHead();
-dol_fiche_head(
+print dol_get_fiche_head(
     $head,
     'settings',
     $langs->trans("Module104020Name"),
-    0,
+    -1,
     "bankimport@bankimport"
 );
 
@@ -240,7 +240,7 @@ print '</td></tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end(-1);
 
 llxFooter();
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   width="64"
+   height="64"
+   viewBox="0 0 5.04 4.56"
+   enable-background="new 0 0 63 57"
+   xml:space="preserve"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:export-filename="/home/john/WWW/dolibarr/htdocs/custom/bankimport/img/object_bankimport.png"
+   inkscape:export-xdpi="72"
+   inkscape:export-ydpi="72"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"><defs
+   id="defs17">
+	
+</defs><sodipodi:namedview
+   id="namedview15"
+   pagecolor="#505050"
+   bordercolor="#ffffff"
+   borderopacity="1"
+   inkscape:pageshadow="0"
+   inkscape:pageopacity="0"
+   inkscape:pagecheckerboard="1"
+   showgrid="false"
+   inkscape:zoom="20.336391"
+   inkscape:cx="21.168948"
+   inkscape:cy="37.322256"
+   inkscape:window-width="1920"
+   inkscape:window-height="1043"
+   inkscape:window-x="3840"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1" />
+<title
+   id="title2">Bank</title>
+<desc
+   id="desc4">Created with Sketch.</desc>
+<g
+   id="Bank"
+   transform="matrix(0.04424305,0,0,0.04424305,0.03539422,1.0298745)"
+   sketch:type="MSLayerGroup"
+   style="fill:#cb4f24;fill-opacity:1;stroke:#00384e;stroke-opacity:1">
+		<path
+   id="Shape"
+   style="fill:#cb4f24;fill-opacity:1;stroke:#00384e;stroke-opacity:1"
+   d="M 17.583984 16.125 L 4.4941406 25.226562 L 4.4941406 25.789062 L 3.9335938 25.789062 C 3.3155956 25.789062 2.8085937 26.294111 2.8085938 26.912109 L 2.8085938 28.935547 C 2.8085938 29.553545 3.3155956 30.169922 3.9335938 30.169922 L 5.5625 30.169922 L 5.5625 39.609375 L 3.3710938 39.609375 C 2.7530956 39.609375 2.2480469 40.114424 2.2480469 40.732422 L 2.2480469 42.361328 L 1.6855469 42.361328 C 1.0675487 42.361328 0.5625 42.86833 0.5625 43.486328 L 0.5625 45.226562 C 0.5625 45.844561 1.0675487 46.351562 1.6855469 46.351562 L 33.595703 46.351562 C 34.213701 46.351562 34.720703 45.844561 34.720703 45.226562 L 34.720703 43.486328 C 34.720703 42.980693 34.213701 42.474609 33.595703 42.474609 L 33.035156 42.474609 L 33.035156 40.845703 C 33.035156 40.227705 32.530108 39.722656 31.912109 39.722656 L 30.226562 39.722656 L 30.226562 30.169922 L 31.292969 30.169922 C 31.910967 30.169922 32.416016 29.664873 32.416016 29.046875 L 32.416016 27.025391 C 32.416016 26.407392 31.910967 25.789062 31.292969 25.789062 L 30.730469 25.789062 L 30.730469 25.226562 L 17.583984 16.125 z M 8.8769531 30.169922 L 11.123047 30.169922 L 11.123047 39.722656 L 8.8769531 39.722656 L 8.8769531 30.169922 z M 13.933594 30.169922 L 16.179688 30.169922 L 16.179688 39.722656 L 13.933594 39.722656 L 13.933594 30.169922 z M 19.550781 30.169922 L 21.798828 30.169922 L 21.798828 39.722656 L 19.550781 39.722656 L 19.550781 30.169922 z M 24.607422 30.169922 L 26.855469 30.169922 L 26.855469 39.722656 L 24.607422 39.722656 L 24.607422 30.169922 z "
+   transform="matrix(1.7799406,0,0,1.7799406,-0.79999503,-28.702237)" />
+		
+			<circle
+   id="Oval"
+   sketch:type="MSShapeGroup"
+   fill="none"
+   stroke="#6b6c6e"
+   stroke-width="2"
+   stroke-linejoin="round"
+   cx="31"
+   cy="9"
+   r="3"
+   style="fill:#cb4f24;fill-opacity:1;stroke:#00384e;stroke-opacity:1">
+		</circle>
+		
+			
+		
+			
+		
+			
+		
+			
+	</g>
+<metadata
+   id="metadata834"><rdf:RDF><cc:Work
+       rdf:about=""><dc:title>Bank</dc:title></cc:Work></rdf:RDF></metadata><path
+   d="m 4.5837212,1.2967905 c -0.04012,-0.03998 -0.08815,-0.06846 -0.14036,-0.08666 v 0.574413 h 0.574414 c -0.0182,-0.05221 -0.04654,-0.100235 -0.08666,-0.140209 l -0.347392,-0.347542 z m -0.289519,0.63682 v -0.745796 h -1.193278 v 1.193277 h -0.596637 v 0.149158 h 0.596639 v 1.044118 h 1.939074 v -1.640755 h -0.745798 z m -0.618416,1.062616 -0.105456,-0.105457 0.360369,-0.360517 h -0.680614 v -0.149162 h 0.680614 l -0.360368,-0.360369 0.105455,-0.105456 0.540406,0.540405 -0.540406,0.540555 z"
+   fill-rule="evenodd"
+   id="path2"
+   style="fill:#00384e;fill-opacity:1;stroke-width:0.00132068" /></svg>
