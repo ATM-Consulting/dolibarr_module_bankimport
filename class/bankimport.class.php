@@ -726,7 +726,7 @@ class BankImport
 		// Update value date
         if (is_int($bankLine->datev)){
             $dateDiff = ($fileLine['datev'] - $bankLine->datev) / 24 / 3600;
-        }elseif (is_string($bankLine->datev)) {
+        } else {
             $dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
         }
 		$bankLine->datev_change($bankLine->id, $dateDiff);
