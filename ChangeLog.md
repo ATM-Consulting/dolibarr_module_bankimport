@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 
 ## Release 2.6
+- FIX : Ticket DA024988 - bankline date was convert twice - *24/05/2024* - 2.6.2
 - FIX : Update include path for main.inc.php in setup page - *19/04/2024* - 2.6.1
 - NEW : TechATM + Page About + logo + fix visu tpl - *07/12/2023* - 2.6.0
 - NEW : COMPATV19 - *07/12/2023* - 2.5.0  

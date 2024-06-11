@@ -724,7 +724,11 @@ class BankImport
 		$bankLine->update_conciliation($user, 0);
 
 		// Update value date
-		$dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
+        if (is_int($bankLine->datev)){
+            $dateDiff = ($fileLine['datev'] - $bankLine->datev) / 24 / 3600;
+        } else {
+            $dateDiff = ($fileLine['datev'] - strtotime($bankLine->datev)) / 24 / 3600;
+        }
 		$bankLine->datev_change($bankLine->id, $dateDiff);
 
 		$this->nbReconciled++;
