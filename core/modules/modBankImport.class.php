@@ -89,7 +89,7 @@ class modBankImport extends DolibarrModules
 	 	//							'js' => array('/bankimport/js/bankimport.js'),          // Set this to relative path of js file if module must load a js on all pages
 		//							'hooks' => array('hookcontext1','hookcontext2')  	// Set here all hooks context managed by module
 		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
-		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@bankimport')) // Set here all workflow context managed by module
+		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'isModEnabled('module1') && isModEnabled('module2')', 'picto'=>'yourpicto@bankimport')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array();
 
@@ -126,8 +126,8 @@ class modBankImport extends DolibarrModules
 		);
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@bankimport:$user->rights->bankimport->read:/bankimport/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:Title2:mylangfile@bankimport:$user->rights->othermodule->read:/bankimport/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@bankimport:$user->hasRight('bankimport', 'read'):/bankimport/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
+        //                              'objecttype:+tabname2:Title2:mylangfile@bankimport:$user->hasRight('othermodule', 'read'):/bankimport/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2
         //                              'objecttype:-tabname:NU:conditiontoremove');                                                     						// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -150,19 +150,19 @@ class modBankImport extends DolibarrModules
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
         $this->tabs = array(
-			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
-			,'bank:-statement:NU:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT'
+			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:isModEnabled('bankimport') && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
+			,'bank:-statement:NU:isModEnabled('bankimport') && $conf->global->BANKIMPORT_HISTORY_IMPORT'
 		);
 
         // Dictionaries
-	    if (! isset($conf->bankimport->enabled))
+	    if (! isModEnabled('bankimport'))
         {
         	$conf->bankimport=new stdClass();
         	$conf->bankimport->enabled=0;
         }
 		$this->dictionaries=array();
         /* Example:
-        if (! isset($conf->bankimport->enabled)) $conf->bankimport->enabled=0;	// This is to avoid warnings
+        if (! isModEnabled('bankimport')) $conf->bankimport->enabled=0;	// This is to avoid warnings
         $this->dictionaries=array(
             'langs'=>'mylangfile@bankimport',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
@@ -173,7 +173,7 @@ class modBankImport extends DolibarrModules
             'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->bankimport->enabled,$conf->bankimport->enabled,$conf->bankimport->enabled)												// Condition to show each dictionary
+            'tabcond'=>array(isModEnabled('bankimport'),isModEnabled('bankimport'),isModEnabled('bankimport'))												// Condition to show each dictionary
         );
         */
 
@@ -192,13 +192,13 @@ class modBankImport extends DolibarrModules
 		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
 		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->hasRight('permkey', 'level1', 'level2'))
+		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->hasRight('permkey', 'level1', 'level2'))
 		// $r++;
 		$this->rights[$r][0] = 104021; 				// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Import bancaire';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->hasRight('permkey', 'level1', 'level2'))
 		$r++;
 
 
@@ -217,8 +217,8 @@ class modBankImport extends DolibarrModules
 		//							'url'=>'/bankimport/pagetop.php',
 		//							'langs'=>'mylangfile@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
-		//							'enabled'=>'$conf->bankimport->enabled',	// Define condition to show or hide menu entry. Use '$conf->bankimport->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->bankimport->level1->level2' if you want your menu with a permission rules
+		//							'enabled'=>'isModEnabled('bankimport')',	// Define condition to show or hide menu entry. Use 'isModEnabled('bankimport')' if entry must be visible if module is enabled.
+		//							'perms'=>'1',			                // Use 'perms'=>'$user->hasRight('bankimport', 'level1', 'level2')' if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
@@ -232,8 +232,8 @@ class modBankImport extends DolibarrModules
 		//							'url'=>'/bankimport/pagelevel2.php',
 		//							'langs'=>'mylangfile@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
-		//							'enabled'=>'$conf->bankimport->enabled',  // Define condition to show or hide menu entry. Use '$conf->bankimport->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->bankimport->level1->level2' if you want your menu with a permission rules
+		//							'enabled'=>'isModEnabled('bankimport')',  // Define condition to show or hide menu entry. Use 'isModEnabled('bankimport')' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+		//							'perms'=>'1',			                // Use 'perms'=>'$user->hasRight('bankimport', 'level1', 'level2')' if you want your menu with a permission rules
 		//							'target'=>'',
 		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
@@ -245,8 +245,8 @@ class modBankImport extends DolibarrModules
 									'url'=>'/bankimport/import.php',
 									'langs'=>'bankimport@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
-									'enabled'=>'$conf->bankimport->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-									'perms'=>'$user->rights->bankimport->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+									'enabled'=>'isModEnabled('bankimport')',  // Define condition to show or hide menu entry. Use 'isModEnabled('mymodule')' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'perms'=>'$user->hasRight('bankimport', 'read')',			                // Use 'perms'=>'$user->hasRight('mymodule', 'level1', 'level2')' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

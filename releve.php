@@ -536,7 +536,7 @@ else
 
 			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
 
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate'))
 			{
 				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
 				print img_edit();
