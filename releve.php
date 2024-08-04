@@ -637,10 +637,10 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 
 	// Date de valeur
 	print '<td align="center" valign="center" class="standard_td nowrap">';
-	print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
+	print '<a href="releve.php?action=dvprev&num='.$num.'&token='.newToken().'&account='.$acct->id.'&dvid='.$objp->rowid.'">';
 	print img_previous().'</a> ';
 	print dol_print_date($db->jdate($objp->dv),"day") .' ';
-	print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$acct->id.'&amp;dvid='.$objp->rowid.'">';
+	print '<a href="releve.php?action=dvnext&num='.$num.'&token='.newToken().'&account='.$acct->id.'&dvid='.$objp->rowid.'">';
 	print img_next().'</a>';
 	print "</td>\n";
 
