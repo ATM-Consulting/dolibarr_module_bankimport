@@ -150,12 +150,12 @@ class modBankImport extends DolibarrModules
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
         $this->tabs = array(
-			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
-			,'bank:-statement:NU:$conf->bankimport->enabled && $conf->global->BANKIMPORT_HISTORY_IMPORT'
+			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:isModEnabled(\'bankimport\') && $conf->global->BANKIMPORT_HISTORY_IMPORT:/bankimport/releve.php?account=__ID__'
+			,'bank:-statement:NU:isModEnabled(\'bankimport\') && $conf->global->BANKIMPORT_HISTORY_IMPORT'
 		);
 
         // Dictionaries
-	    if (! isset($conf->bankimport->enabled))
+	    if (!isModEnabled('bankimport'))
         {
         	$conf->bankimport=new stdClass();
         	$conf->bankimport->enabled=0;
@@ -245,7 +245,7 @@ class modBankImport extends DolibarrModules
 									'url'=>'/bankimport/import.php',
 									'langs'=>'bankimport@bankimport',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>100,
-									'enabled'=>'$conf->bankimport->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+									'enabled'=>'isModEnabled(\'bankimport\')',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->bankimport->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
 									'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both

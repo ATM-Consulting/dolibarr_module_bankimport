@@ -91,15 +91,15 @@
 							if(getDolGlobalString('BANKIMPORT_ALLOW_FREELINES')) {
 								print '<option value="freeline">'.$langs->trans('bankImportCretaFreeLine').'</option>';
 							}
-							if(!empty($conf->facture->enabled)) {
+							if(isModEnabled('facture')) {
 								$sel = ($line['amount'] > 0 ? ' selected="selected"' : '');
 								print '<option value="facture"'.$sel.'>'.$langs->trans('Invoices').'</option>';
 							}
-							if(!empty($conf->fournisseur->enabled)) {
+							if(isModEnabled('fournisseur')) {
 								$sel = ($line['amount'] < 0 ? ' selected="selected"' : '');
 								print '<option value="fournfacture"'.$sel.'>'.$langs->trans('SupplierInvoices').'</option>';
 							}
-							if(!empty($conf->tax->enabled)) {
+							if(isModEnabled('tax')) {
 								print '<option value="charge">'.$langs->trans('Charges').'</option>';
 							}
 						?>
