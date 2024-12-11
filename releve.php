@@ -536,7 +536,7 @@ else
 
 			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
 
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+			if ($user->hasRight("banque", "modifier") || $user->hasRight("banque", "consolidate"))
 			{
 				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
 				print img_edit();
@@ -805,7 +805,12 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	{
 		$sql = "SELECT label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_class as cl";
+		if(version_compare(DOL_VERSION , '21.0.0', '<')) {
+			$sql .= ", " . MAIN_DB_PREFIX . "bank_class as cl";
+		}else{
+			$sql .= ", " . MAIN_DB_PREFIX . "category_bankline as cl";
+		}
+
 		$sql.= " WHERE ct.rowid = cl.fk_categ";
 		$sql.= " AND ct.entity = ".$conf->entity;
 		$sql.= " AND cl.lineid = ".$objp->rowid;

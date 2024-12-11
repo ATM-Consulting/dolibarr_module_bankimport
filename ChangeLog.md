@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- NEW : CompatV21 - *10/12/2024* - 2.8.0  
 
 ## Release 2.7
 
