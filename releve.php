@@ -805,7 +805,11 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	{
 		$sql = "SELECT label";
 		$sql.= " FROM ". $db->prefix() ."bank_categ as ct";
-		$sql.= ", ". $db->prefix() ."bank_class as cl";
+		if(version_compare(DOL_VERSION , '21.0.0', '<')) {
+			$sql .= ", " . $db->prefix() . "bank_class as cl";
+		}else {
+			$sql .= ", " . $db->prefix() . "category_bankline as cl";
+		}
 		$sql.= " WHERE ct.rowid = cl.fk_categ";
 		$sql.= " AND ct.entity = ".$conf->entity;
 		$sql.= " AND cl.lineid = ".$objp->rowid;
