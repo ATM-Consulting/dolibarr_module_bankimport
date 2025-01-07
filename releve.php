@@ -116,7 +116,7 @@ if (empty($num))
 	 *	Vue liste tous releves confondus
 	 */
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " FROM ".$db->prefix()."bank as b";
 	$sql.= " WHERE b.fk_account = ".$acct->id;
 	$sql.= " ORDER BY numr DESC";
 
@@ -194,7 +194,7 @@ else
 	{
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " FROM ".$db->prefix()."bank as b";
 		$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
@@ -216,7 +216,7 @@ else
 	{
 		// Recherche valeur pour num = numero releve precedent
 		$sql = "SELECT DISTINCT(b.num_releve) as num";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " FROM ".$db->prefix()."bank as b";
 		$sql.= " WHERE b.num_releve > '".$db->escape($num)."'";
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
@@ -267,7 +267,7 @@ else
 */
 	// Calcul du solde de depart du releve
 	$sql = "SELECT sum(b.amount) as amount";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= " FROM ".$db->prefix()."bank as b";
 	$sql.= " WHERE b.num_releve < '".$db->escape($num)."'";
 	$sql.= " AND b.fk_account = ".$acct->id;
 
@@ -286,9 +286,9 @@ else
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel, bih.rowid AS historyId, bih.line_imported_title, bih.line_imported_value";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bankimport_history bih ON (b.rowid = bih.fk_bank)";
+	$sql.= " FROM ".$db->prefix()."bank_account as ba";
+	$sql.= ", ".$db->prefix()."bank as b";
+	$sql.= " LEFT JOIN ".$db->prefix()."bankimport_history bih ON (b.rowid = bih.fk_bank)";
 	$sql.= " WHERE b.num_releve='".$db->escape($num)."'";
 	if (!isset($num))	$sql.= " OR b.num_releve is null";
 	$sql.= " AND b.fk_account = ".$acct->id;
@@ -684,8 +684,8 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 				print '<br />'.$paymentstatic->getNomUrl(1);
 
 				$sql = "SELECT pf.fk_facture
-						FROM ".MAIN_DB_PREFIX."paiement_facture as pf
-							LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON (p.rowid = pf.fk_paiement)
+						FROM ".$db->prefix()."paiement_facture as pf
+							LEFT JOIN ".$db->prefix()."paiement as p ON (p.rowid = pf.fk_paiement)
 						WHERE p.rowid = ".$paymentstatic->id;
 				$resql = $db->query($sql);
 				$res = $db->fetch_object($resql);
@@ -706,8 +706,8 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 				print '<br />'.$paymentsupplierstatic->getNomUrl(1);
 
 				$sql = "SELECT pf.fk_facturefourn
-						FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf
-							LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
+						FROM ".$db->prefix()."paiementfourn_facturefourn as pf
+							LEFT JOIN " . $db->prefix() . "paiementfourn as p ON (p.rowid = pf.fk_paiementfourn)
 						WHERE p.rowid = ".$paymentsupplierstatic->id;
 				$resql = $db->query($sql);
 				$res = $db->fetch_object($resql);
@@ -804,8 +804,12 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	if ($ve)
 	{
 		$sql = "SELECT label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_class as cl";
+		$sql.= " FROM ". $db->prefix() ."bank_categ as ct";
+		if(version_compare(DOL_VERSION , '21.0.0', '<')) {
+			$sql .= ", " . $db->prefix() . "bank_class as cl";
+		}else {
+			$sql .= ", " . $db->prefix() . "category_bankline as cl";
+		}
 		$sql.= " WHERE ct.rowid = cl.fk_categ";
 		$sql.= " AND ct.entity = ".$conf->entity;
 		$sql.= " AND cl.lineid = ".$objp->rowid;
@@ -874,8 +878,8 @@ function getListFacture($id_reglement, $fourn='') {
 	$sql = 'SELECT pf.fk_facture'.$fourn;
 	// empty($fourn) = Spécificité pour les factures clients
 	if(empty($fourn)) $sql.= ', rem.fk_facture  as fac_finale';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement'.$fourn.'_facture'.$fourn.' as pf';
-	if(empty($fourn)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_except as rem ON (pf.fk_facture = rem.fk_facture_source)';
+	$sql.= ' FROM ' . $db->prefix() . 'paiement'.$fourn.'_facture'.$fourn.' as pf';
+	if(empty($fourn)) $sql.= ' LEFT JOIN ' . $db->prefix() . 'societe_remise_except as rem ON (pf.fk_facture = rem.fk_facture_source)';
 	$sql.= ' WHERE fk_paiement'.$fourn.' = '.$id_reglement;
 	//echo $sql;exit;
 	$resql = $db->query($sql);
