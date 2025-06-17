@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- NEW : add  german langs - *17/06/2025* - 2.8.0  
 
 ## Release 2.7
 - FIX : Compat v21 *07/01/2025* - 2.7.1
