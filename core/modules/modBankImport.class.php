@@ -61,7 +61,7 @@ class modBankImport extends DolibarrModules
 		$this->description = "Allow to import csv files to reconcile bank accounts";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 
-		$this->version = '2.8.0';
+		$this->version = '2.8.1';
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -91,23 +91,23 @@ class modBankImport extends DolibarrModules
 		//							'dir' => array('output' => 'othermodulename'),      // To force the default directories names
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@bankimport')) // Set here all workflow context managed by module
 		//                        );
-		$this->module_parts = array();
+		$this->module_parts = [];
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/bankimport/temp");
-		$this->dirs = array();
+		$this->dirs = [];
 
 		// Config pages. Put here list of php page, stored into bankimport/admin directory, to use to setup module.
-		$this->config_page_url = array("bankimport_setup.php@bankimport");
+		$this->config_page_url = ["bankimport_setup.php@bankimport"];
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('');		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
-		$this->phpmin = array(7,0);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(16,0);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("bankimport@bankimport");
+		$this->depends = [];		// List of modules id that must be enabled if this module is enabled
+		$this->requiredby = [];	// List of modules id to disable if this one is disabled
+		$this->conflictwith = [];	// List of modules id this module is in conflict with
+		$this->phpmin = [7,0];					// Minimum version of PHP required by module
+		$this->need_dolibarr_version = [16,0];	// Minimum version of Dolibarr required by module
+		$this->langfiles = ["bankimport@bankimport"];
 
 		// Url to the file with your last numberversion of this module
 		require_once __DIR__ . '/../../class/techatm.class.php';
@@ -118,12 +118,12 @@ class modBankImport extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(
-			0 => array('BANKIMPORT_MAPPING', 'chaine', 'date;label;debit;credit', 'CSV file mapping for bank import', 1, 'current', 0),
-			1 => array('BANKIMPORT_SEPARATOR', 'chaine', ';', 'Data separator for bank import', 1, 'current', 0),
-			2 => array('BANKIMPORT_DATE_FORMAT', 'chaine', 'd/m/Y', 'Date format in CSV file', 1, 'current', 0),
-			3 => array('BANKIMPORT_HEADER', 'bool', true, 'File header line presence', 1, 'current', 0)
-		);
+		$this->const = [
+			0 => ['BANKIMPORT_MAPPING', 'chaine', 'date;label;debit;credit', 'CSV file mapping for bank import', 1, 'current', 0],
+			1 => ['BANKIMPORT_SEPARATOR', 'chaine', ';', 'Data separator for bank import', 1, 'current', 0],
+			2 => ['BANKIMPORT_DATE_FORMAT', 'chaine', 'd/m/Y', 'Date format in CSV file', 1, 'current', 0],
+			3 => ['BANKIMPORT_HEADER', 'bool', true, 'File header line presence', 1, 'current', 0]
+		];
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@bankimport:$user->rights->bankimport->read:/bankimport/mynewtab1.php?id=__ID__',  	// To add a new tab identified by code tabname1
@@ -149,10 +149,10 @@ class modBankImport extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array(
+        $this->tabs = [
 			'bank:+bankimport_statement:'.$langs->trans('AccountStatements').':bankimport@bankimport:isModEnabled(\'bankimport\') && getDolGlobalString("BANKIMPORT_HISTORY_IMPORT"):/bankimport/releve.php?account=__ID__'
 			,'bank:-statement:NU:isModEnabled(\'bankimport\') && getDolGlobalString("BANKIMPORT_HISTORY_IMPORT")'
-		);
+		];
 
         // Dictionaries
 	    if (!isModEnabled('bankimport'))
@@ -160,7 +160,7 @@ class modBankImport extends DolibarrModules
         	$conf->bankimport=new stdClass();
         	$conf->bankimport->enabled=0;
         }
-		$this->dictionaries=array();
+		$this->dictionaries=[];
         /* Example:
         if (! isset($conf->bankimport->enabled)) $conf->bankimport->enabled=0;	// This is to avoid warnings
         $this->dictionaries=array(
@@ -179,12 +179,12 @@ class modBankImport extends DolibarrModules
 
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-        $this->boxes = array();			// List of boxes
+        $this->boxes = [];			// List of boxes
 		// Example:
 		//$this->boxes=array(array(0=>array('file'=>'myboxa.php','note'=>'','enabledbydefaulton'=>'Home'),1=>array('file'=>'myboxb.php','note'=>''),2=>array('file'=>'myboxc.php','note'=>'')););
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = [];		// Permission array used by this module
 		$r=0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
@@ -203,7 +203,7 @@ class modBankImport extends DolibarrModules
 
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
+		$this->menu = [];			// List of menus to add
 		$r=0;
 
 		// Add here entries to declare new menus
@@ -237,7 +237,7 @@ class modBankImport extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=bank',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]= ['fk_menu'=>'fk_mainmenu=bank',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 									'type'=>'left',			                // This is a Left menu entry
 									'titre'=>'LeftMenuBankImport',
 									'mainmenu'=>'bank',
@@ -248,7 +248,7 @@ class modBankImport extends DolibarrModules
 									'enabled'=>'isModEnabled(\'bankimport\')',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 									'perms'=>'$user->rights->bankimport->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 									'target'=>'',
-									'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+									'user'=>0];				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 
@@ -280,7 +280,7 @@ class modBankImport extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		$sql = array();
+		$sql = [];
 
 		define('INC_FROM_DOLIBARR',true);
 
@@ -302,7 +302,7 @@ class modBankImport extends DolibarrModules
 	 */
 	function remove($options='')
 	{
-		$sql = array();
+		$sql = [];
 
 		return $this->_remove($sql, $options);
 	}
