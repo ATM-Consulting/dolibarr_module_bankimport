@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## Release 2.8
+- FIX : DA026669 Depends - *2025-06-26* - 2.8.1
 - NEW : add  german langs - *17/06/2025* - 2.8.0  
 
 ## Release 2.7
