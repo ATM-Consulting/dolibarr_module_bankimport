@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ## Release 2.8
+- FIX : Compat V22 - *2025-10-02* - 2.8.3
 - FIX remove echoing select_comptes *2025-08-12* - 2.8.2
 - FIX : DA026669 Depends - *2025-06-26* - 2.8.1
 - NEW : add  german langs - *17/06/2025* - 2.8.0  
