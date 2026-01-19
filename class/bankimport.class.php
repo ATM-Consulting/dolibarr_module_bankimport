@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2025 ATM Consulting
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 dol_include_once('/compta/bank/class/account.class.php');
 dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
@@ -667,6 +682,12 @@ class BankImport
 		}
 	}
 
+	/**
+	 * Parse header
+	 *
+	 * @param string $headerToParse Header string to parse
+	 * @return array Parsed header
+	 */
 	public function parseHeader($headerToParse)
 	{
 		global $conf;
@@ -687,6 +708,12 @@ class BankImport
 		return ucfirst($strToClean);
 	}
 
+	/**
+	 * Parse line
+	 *
+	 * @param array $lineArrayToParse Line array to parse
+	 * @return array Parsed line
+	 */
 	public function parseLine($lineArrayToParse)
 	{
 		$line = array_map(array('BankImport', 'cleanStringForLine'), $lineArrayToParse);

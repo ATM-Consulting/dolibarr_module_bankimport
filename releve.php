@@ -53,9 +53,7 @@ $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
 $newToken = function_exists('newToken')?newToken():$_SESSION['newtoken'];
 $socidVersion = "socid";
-if (DOL_VERSION < 13){
-	$socidVersion = "societe_id";
-}
+
 if ($user->{$socidVersion}) $socid=$user->{$socidVersion};
 
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
@@ -536,7 +534,7 @@ else
 
 			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
 
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate'))
 			{
 				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
 				print img_edit();
@@ -654,9 +652,6 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 
 	// Description
 	$bankLineUrl = DOL_URL_ROOT.'/compta/bank/line.php';
-	if(version_compare(DOL_VERSION , '13.0.0', '<')){
-		$bankLineUrl = DOL_URL_ROOT.'/compta/bank/ligne.php';
-	}
 
 	print '<td valign="center" class="standard_td nowrap"><a href="'.$bankLineUrl.'?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 	$reg=array();
@@ -852,9 +847,6 @@ function printStandardValues(&$db, &$user, &$langs, &$acct, &$objp, &$num, &$tot
 	{
 		// Description
 		$bankLineUrl = DOL_URL_ROOT.'/compta/bank/line.php';
-		if(version_compare(DOL_VERSION , '11.0.0', '<')){
-			$bankLineUrl = DOL_URL_ROOT.'/compta/bank/ligne.php';
-		}
 
 		print '<td align="center"><a href="'.$bankLineUrl.'?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 		print img_edit();
