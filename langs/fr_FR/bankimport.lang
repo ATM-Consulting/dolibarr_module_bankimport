@@ -64,3 +64,7 @@ bankimport_customer_selected_click_to_select_another_one=%s (cliquez ici pour ch
 ImportBankFile = Import de fichier banqueBankImportSetup = Configuration du module d'importation bancaire
 BankImportAbout = A propos du module d'importation bancaire
 Action = Action prévue
+
+ErrorDateStartNotSelected = Date de début non sélectionnée
+ErrorDateEndNotSelected = Date de fin non sélectionnée
+ErrorDateFormatNotValid = Format de date non valide
