@@ -63,3 +63,7 @@ PlannedAction = Planned action
 bankImportCretaFreeLine = Free banking entry
 SupplierInvoices = Supplier invoices
 ImportBankFile = Bank file import
+
+ErrorDateStartNotSelected = Start date not selected
+ErrorDateEndNotSelected = End date not selected
+ErrorDateFormatNotValid = Date format not valid

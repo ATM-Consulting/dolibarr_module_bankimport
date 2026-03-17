@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2025 ATM Consulting
+/* Copyright (C) 2025	ATM Consulting
+ * Copyright (C) 2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +71,19 @@ class BankImport
 		}
 
 		// Start and end date regarding bank statement
-		$this->dateStart = $dateStart;
-		$this->dateEnd = $dateEnd;
+		if((int) $dateStart <= 0) {
+			setEventMessage($langs->trans('ErrorDateStartNotSelected'), 'errors');
+			return false;
+		} else {
+			$this->dateStart = $dateStart;
+		}
+
+		if((int) $dateEnd <= 0) {
+			setEventMessage($langs->trans('ErrorDateEndNotSelected'), 'errors');
+			return false;
+		} else {
+			$this->dateEnd = $dateEnd;
+		}
 
 		// Statement number
 		$this->numReleve = $numReleve;
@@ -247,7 +259,6 @@ class BankImport
 
 				// TODO : Apparemment createFromFormat ne fonctionne pas si PHP < 5.3 ....
 				$datetime = DateTime::createFromFormat($dateFormat, $data['date']);
-
 				$data['datev'] = ($datetime === false) ? 0 : $datetime->getTimestamp();
 
 				$data['error'] = '';
@@ -436,6 +447,11 @@ class BankImport
 
 				$fk_payment = $TLine['fk_payment'][$iFileLine];
 				$date_paye = $this->TFile[$iFileLine]['datev'];
+
+				if((int) $date_paye <= 0) {
+					setEventMessage($langs->trans('ErrorDateFormatNotValid'), 'errors');
+					return false;
+				}
 
 				foreach($TObject as $typeObject=>$TAmounts)
 				{

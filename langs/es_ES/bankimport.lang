@@ -64,3 +64,7 @@ bankimport_customer_selected_click_to_select_another_one = %s (pulse aquí para 
 Action = Acción prevista
 BankImportAboutPage = Acerca del módulo de importación de bancos
 ImportBankFile = Importación de ficheros bancarios
+
+ErrorDateStartNotSelected = La fecha de inicio no está seleccionada
+ErrorDateEndNotSelected = La fecha de finalización no está seleccionada
+ErrorDateFormatNotValid = El formato de fecha no es válido

@@ -61,3 +61,7 @@ SupplierInvoices = Factura de proveïdor
 
 bankimport_no_customer_selected_click_to_select_one = No hi ha tercers associats, premeu aquí per triar un
 bankimport_customer_selected_click_to_select_another_one = %s (premeu aquí per triar un altre tercer)
+
+ErrorDateStartNotSelected = La data d'inici no està seleccionada
+ErrorDateEndNotSelected = La data de finalització no està seleccionada
+ErrorDateFormatNotValid = El format de data no és vàlid
