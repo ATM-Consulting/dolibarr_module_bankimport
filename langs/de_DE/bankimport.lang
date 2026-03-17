@@ -18,7 +18,6 @@ bankImportAllowInvoiceFromSeveralThird = Abgleich/Zahlung von Rechnungen verschi
 bankImportAllowDraftInvoice = Abgleich mit Rechnungen im Entwurfsstatus erlauben (Rechnung validieren und Zahlung erstellen)
 UseMacCompatibility = Mac-Kompatibilität aktivieren
 
-
 # MENU
 LeftMenuBankImport = Bankimport
 
@@ -64,3 +63,7 @@ PlannedAction = Geplante Aktion
 bankImportCretaFreeLine = Freier Banking-Eintrag
 SupplierInvoices = Lieferantenrechnungen
 ImportBankFile = Import von Bankdateien
+
+ErrorDateStartNotSelected = Startdatum nicht ausgewählt
+ErrorDateEndNotSelected = Enddatum nicht ausgewählt
+ErrorDateFormatNotValid = Datumsformat nicht gültig

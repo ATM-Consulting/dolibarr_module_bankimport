@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ## Release 2.8
+- FIX : Fatal on import with no date - *2026-03-17* - 2.8.5
 - FIX : Compat V23 - *2026-19-01* - 2.8.4
 - FIX : Compat V22 - *2025-10-02* - 2.8.3
 - FIX remove echoing select_comptes *2025-08-12* - 2.8.2
